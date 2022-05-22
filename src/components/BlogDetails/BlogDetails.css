@@ -1,0 +1,163 @@
+#blog-description-section
+{
+    background: #f8f9fa;
+    padding: 40px 0px;
+    position: relative;
+}
+
+.Recent-post-blog
+{
+    background-color: white;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+.social-link-card,.new-letter-section
+{
+    background-color: white;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.social-link-card h3,.Recent-post-blog h3, .new-letter-section h3{
+    font-weight: bold;
+    color: black;
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px;
+    padding-bottom: 20px;
+
+    
+}
+.content-padding-10
+{
+    padding-left: 10px;
+}
+.social-link-container ul
+{
+display: flex;
+width: 100%;
+}
+.social-link-container ul li
+{
+    border: 1px solid #ef6831;
+    background-color: rgba(29, 161, 242, 0);
+    border-radius: 50%;
+    width: 35px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    padding: 10px;
+    margin-right: 10px;
+}
+
+.social-link-container .fa
+{
+    color: black;
+}
+.social-link-container ul li:hover
+{
+   cursor: pointer;
+   background-color: #ef6831 !important;
+
+}
+.social-link-container ul li:hover .fa
+{
+ color: white !important;
+
+}
+
+.blog-description-title
+{
+    
+    background-color:white;
+}
+
+
+.blog-image_container
+{
+    height: 450px;
+    width: 100%;
+    position: relative;
+}
+
+.blog-image_container > img {
+    max-height: 100%;
+    max-width: 100%;
+    height: auto;
+    width: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.blog-padding-10
+{
+    padding: 30px 10px;
+}
+.blog-description-title h5
+{
+color: #EFA421;
+padding-bottom: 10px;
+}
+.blog-description-title h3
+{
+color: black;
+padding-bottom: 10px;
+font-family: 'Poppins', sans-serif;
+font-weight: 700;
+}
+.blog-description-title p
+{
+
+    font-size: 16px;
+    padding-bottom: 20px;
+}
+.quotes-container
+{
+    padding: 10px 0px;
+}
+
+.quotes-container p
+{
+  padding-left: 20px;
+}
+.quotes-container
+{
+    border-left: 2px solid #CB2027;
+}
+
+.recent-post-image
+{
+    display: flex;
+    padding-bottom: 10px;
+}
+.recent-post-image img{
+    height: 120px;
+    width: 120px;
+    border-radius: 5px;
+}
+.recent-post-image h6 , .recent-post-image span{
+    padding-left: 10px;
+    text-align: left !important;
+}
+
+/* Facebook  Iframe*/
+
+
+.Hiring_Button:hover
+{
+    cursor: pointer;
+}
+
+
+/* End Facebook Iframe */
+
+
+@media (max-width: 767px)
+{
+    .blog-image_container {
+        height: 200px;
+        width: 100%;
+        position: relative;
+    }
+}

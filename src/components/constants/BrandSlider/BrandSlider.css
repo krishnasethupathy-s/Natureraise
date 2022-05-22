@@ -1,0 +1,24 @@
+/* brand-section */
+
+
+.brand-image-wrapper img
+{
+    width: 200px;
+}
+
+
+
+@media(max-width:776px)
+{
+    .brand-section {
+        padding: 30px;
+    }
+   
+    .brand-image-wrapper img
+{
+    width: 100%;
+}
+}
+
+
+/* brand-section */

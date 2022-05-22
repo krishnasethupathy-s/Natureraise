@@ -1,0 +1,97 @@
+#news-blog-section
+{
+    background: #f8f9fa;
+    padding: 40px 0px;
+    position: relative;
+}
+#news-blog-section h2
+{
+    font-family: 'Poppins', sans-serif;
+    padding-bottom: 30px;
+    font-size: 28px;
+    text-align: center;
+    color: #171A42;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+.sub_headings_underling
+{
+    color: #295832;
+}
+#news-blog-section .slick-prev
+    {
+display: none !important;
+    }
+    #news-blog-section .slick-next
+    {
+        display: none !important;
+    }
+   
+    .news-card-section {
+        display: block;
+        position: relative;
+        background: #fff;
+        border: 1px solid rgba(0,0,0,.02);
+        box-shadow: 0 5px 21px -14px rgba(0,0,0,.14);
+        margin: 5px;
+    }
+  
+    #news-blog-section .card
+    {
+        margin: 10px;
+    }
+  .News_Blog_Card .card
+  {
+      height: 450px;
+  }
+  .News-Blog_Read
+  {
+      padding: 1.25rem;
+  }
+  .News-Blog_Read:hover
+  {
+      cursor: pointer;
+  }
+  .News_Blog_Card .card-img-top
+  {
+      height: 200px;
+  }
+    .new-testimonial-card p{
+        padding-bottom: 20px;
+    }
+    .read-more-buton
+    {
+        float: right;
+        color: #EFA421;
+        font-weight: bold;
+    }
+    .news-blog-showbutton
+    {
+        padding-top: 30px;
+    }
+    .show_button
+    {
+        background-color: #171A42;
+        border-color: #171A42;
+    }
+    .show_button:hover{
+        background-color: #295832;
+        border-color: #295832;
+    }
+    .card-title
+    {
+        font-size: 16px;
+    color: black;
+    font-weight: 600;
+    }
+
+
+    @media (max-width:768px) { 
+        .news-blog-showbutton
+        {
+            padding-top: 50px;
+        }
+        .Hiring_Button {
+            width: 100% !important;
+        }
+      }

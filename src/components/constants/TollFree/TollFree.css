@@ -1,0 +1,42 @@
+
+/* Toll free section */
+
+.consultancy_toll
+{   
+    background-color: #57B33E;
+    background-image: url('../../../assets/natureraise/homepage/toll/bg.png');
+    background-position: bottom left;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.consultancy_content
+{
+    padding: 50px;
+    text-align: center;
+    color: white;
+}
+.consultancy_content p
+{
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+.consultancy_form
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #171a42;
+}
+.consultancy_form .form-control
+{
+    background: transparent;
+}
+.get_it_now
+{
+    background-color: #ef6831;
+    border-color: #ef6831;
+}
+
+/* End Toll free section */

@@ -1,0 +1,521 @@
+
+
+/* MyAccount_SubHeading */
+#My_Profile_Account_Section{
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+#My_Profile_Account_Section h6:hover{
+    color: #fc4150;
+    cursor: pointer;
+}
+.MyAccount_SubHeading
+{
+    padding-left: 2.1rem;
+    font-size: 14px;
+    font-weight: 500px;
+}
+.active_background
+{
+    color: #EFA421 !important;
+}
+.fa-arrow-right
+{
+    color: #878787;
+    cursor: pointer;
+}
+.fa-arrow-right:hover
+{
+    color:#fc4150;
+    cursor: pointer;
+}
+
+/* End MyAccount_SubHeading */
+
+/* My_Profile_Account_Section Details Section */
+
+#My_Profile_Account_Section .My_Account_Basic_Details
+{
+    padding: 1rem;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+    display: flex;
+    align-items: center;
+    border-radius: .25rem;
+    background-color: #fff;
+
+}
+.My_Account_Profile_Image 
+{
+    width: 80px;
+    border-radius: 50%;
+    height: 80px;
+}
+.My_Account_Profile_Image img
+{
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+   overflow: hidden;
+   border-radius: 50%;
+}
+#My_Profile_Account_Section .My_Account_Heading_Section
+{
+    width: 100%!important;
+    align-items: center!important;
+    justify-content: space-between!important;
+    display: flex!important;
+}
+#My_Profile_Account_Section .My_Account_Heading_Text
+{
+    padding-left: 1.5rem!important;
+    align-items: center!important;
+    margin-bottom: 0!important;
+    font-size: 14px;
+}
+#My_Profile_Account_Section .Padding_left
+{
+    padding-left: 1.5rem!important;
+    font-size: 12px;
+    color: #171a42;
+}
+.My_Account_Heading_Section .fa
+{
+    color:#fc4150;
+}
+
+
+
+/* End My_Profile_Account_Section Details Section */
+
+
+/* Profile Deatils col-md-8 Section */
+
+.My_Account_Profile_Details
+{
+    padding: 1rem;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+    /* display: flex; */
+    align-items: center;
+    border-radius: .25rem;
+    /* background-color: #efe7e7;
+    background-image: url('../../assets/Account/account-bottom.png');
+    background-position: bottom;
+    background-repeat: no-repeat; */
+}
+.Personal_Information_Heading h6{
+    padding-bottom: 5px;
+}
+.Personal_Information_Heading  .form-control
+{
+    font-size: 14px;
+}
+.faq_Main_Section h5
+{
+    color:#fc4150;
+    padding-bottom: 10px;
+}
+
+.faq_Main_Section p
+{
+    font-size: 14px;
+}
+
+/* End Profile Deatils col-md-8 Section */
+
+
+
+/* Address Deatils Section */
+
+.MyAddress_Details_Section
+{
+    padding: 1rem;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+    /* display: flex; */
+    align-items: center;
+    border-radius: .25rem;
+    background-color: #fff;
+}
+
+.MyAddress_Details_Section_Heading h6{
+   
+    color: black;
+    font-size: 12px;
+}
+.MyAddress_Add_Section
+{
+   
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0px;
+
+}
+.MyAddress_Details_Section_Heading .form-control
+{
+    font-size: 14px;
+}
+.MyAddress_Add_Section .fa{
+    color:#fc4150;
+    font-size: 22px;
+}
+
+
+.MyAddress_Border_Section
+{
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    border-radius: 2px;
+    margin-top: 10px;
+    padding: 7px 14px;
+}
+.MyAddress_Details_Section .Submit_Button_Section
+{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.Address_Details_Border_Section
+{
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    border-radius: 2px;
+    margin-bottom: 30px;
+    padding: 20px;
+    margin: 10px 0px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.Address_Details_Main_Section
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.Address_Details_Main_Section h6
+{
+   padding-bottom: 0px;
+}
+.fa-trash 
+{
+    color:#fc4150;
+}
+.fa-trash:hover
+{
+    color:#fc4150;
+    cursor: pointer;
+}
+.fa:hover
+{
+    cursor: pointer;
+}
+.Address_Details_Type h6{
+    text-transform: uppercase;
+    font-size: 11px;
+    color: #878787;
+    vertical-align: middle;
+    padding: 4px 7px;
+    border-radius: 2px;
+    background-color: #f0f0f0;
+    font-weight: 500;
+    margin-right: 15px;
+}
+.Address_Name_Details_Section
+{
+    display: flex;
+    justify-content: space-between;
+}
+.Address_Name_Details_Section h6
+{
+   padding-bottom: 0px ;
+   font-size: 14px;
+}
+.Address_Full_Details_Section h6
+{
+    font-size: 14px; 
+}
+/* End Address Details Section */
+
+/* Buton Container */
+
+.Mobile_Button_container
+{
+    display: flex;
+    padding: 20px;
+    justify-content: center;
+}
+.MyAccount_Update_Button
+{
+    color: #fb3f50  !important;
+  border-color: #fa3d51 !important;
+}
+.MyAccount_Update_Button:hover
+{
+    color: #fff !important;
+    background-color: #000000 !important;
+    border-color: #000000 !important;
+}
+
+/* End Button Container */
+
+/* Radio Button Container */
+
+.Radio_button_Container
+{
+    display: flex;
+    justify-content: space-evenly;
+    padding: 10px;
+}
+
+/* End Radio Button Container */
+
+
+
+
+/* Add_Listing_Card_Section */
+
+.Add_Listing_Card_Section
+{
+    padding: 15px 0;
+}
+.Main_Card_Box
+{
+    padding: 5px 5px 5px 80px;
+    position: relative;
+    border-radius: 100px 25px 25px 100px;
+    height: 70px;
+    background-color: white;
+    border: 3px solid #f4fff4;
+
+
+}
+.Circle_Main_Section {
+    background-image: linear-gradient(180deg, red, yellow);
+    width: 70px;
+    height: 70px;
+    border-radius: 42px;
+    position: absolute;
+    top: 44px;
+    left: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 18px;
+}
+/* End Add_Listing_Card_Section */
+
+
+/* Country Section */
+.Country_Section
+{
+    position: relative;
+  padding: 10px;
+    background-color: white;
+    border: 3px solid #f4fff4;
+}
+.Country_Section h6{
+    padding-bottom: 10px;
+}
+.Country_Section .Radio_Section
+{
+    display: flex;
+    justify-content: space-between;
+}
+.My_Account_Profile_Details h6{
+    color: black;
+    /* font-weight: bold; */
+
+}
+/* End Country Section */
+/* Tab_Panel_Section */
+.Tab_Panel_Section
+{
+    padding: 10px 0px;
+}
+.Card_Details_Icon_Header
+{
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.Proerty_Information_List_Section
+{
+    display: flex;
+    flex-wrap: wrap;
+}
+.Proerty_Information_List_Section li{
+    color: white;
+    background-color: #949393;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    padding: 6px 10px;
+    cursor: pointer;
+    margin: 5px;
+    display: flex;
+}
+.Round_Section_list_item_Rooms li
+{
+    padding: 2px 10px;
+}
+
+.Proerty_Information_List_Section .active
+{
+    background-color: red;
+}
+.Proerty_Information_List_Section li:nth-child(1n+2){
+ margin-left: 3px;
+  }
+.Proerty_Information_List_Section li span{
+    padding-left: 2px;
+}
+.Building_Type_Section  {
+    padding-top: 10px;
+}
+.Building_Type_Section p 
+{
+    padding-bottom: 10px;
+}
+
+.Form_Input_Section
+{
+    padding-top: 15px;
+}
+.Size_Drop_Select_Section
+{
+    display: flex;
+}
+.Size_Drop_Select_Section span{
+    padding-left: 10px;
+}
+.Size_Drop_Select_Section .form-control
+{
+    padding: 0px;
+    height: 23px;
+    font-size: 12px;
+}
+
+.Form_Input_Section .form-control
+
+{
+    border: 0;
+    border-bottom: 1px solid gainsboro;
+}
+
+.react-datepicker__input-container input, input::-webkit-input-placeholder {
+    font-size: 15px;
+    line-height: 3;
+    border: 0px;
+    border-bottom: 1px solid gainsboro;
+    outline: none;
+}
+
+.Submit_Button_Form_Action
+{
+    display: flex;
+    justify-content: center;
+    padding: 10px 0px;
+}
+
+/* End Tab_Panel_Section */
+
+
+/* Mulitple_Image_Upload */
+.Mulitple_Image_Upload input
+{
+    line-height:unset !important;
+}
+.Preview_Image_Container
+{
+    height: 50px;
+    width: 50px;
+    border-radius: 50px;
+    background-color: #fc4250;
+    position: relative;
+    overflow: hidden;
+    margin: 20px 0px;
+
+}
+.Preview_Image_Container1
+{
+  
+    width: 100px;
+ 
+    position: relative;
+    overflow: hidden;
+    margin: 20px 0px;
+
+}
+.Preview_Image_Container1 img{
+    width: 100%;
+    height: 100%;
+}
+.Preview_Image_Container img{
+    width: 100%;
+    height: 100%;
+}
+.Preview_Icon_Main
+{
+    display: flex;
+    align-items: center;
+}
+
+.Preview_Main_Container{
+
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+.Preview_DropDown
+{
+    margin: auto;
+}
+.Card-header-next
+{
+    display: flex;
+    justify-content: flex-end;
+}
+.Card-header-next p{
+    color: red;
+    font-weight: bold;
+}
+
+.site-upload-button
+{
+    display: flex;
+
+    align-items: center;
+}
+.site-upload-button .form-label
+{
+    padding-right: 10px;
+}
+/* Mulitple_Image_Upload */
+
+
+  /* Inner Nav Media query */
+  @media only screen and (min-width: 360px) and (max-width: 640px) {
+   .My_Account_Profile_Details
+   {
+       margin: 10px;
+   }
+   .MyAddress_Details_Section 
+   {
+       margin: 10px;
+   }
+}
+
+@media only screen and (min-width: 320px) and (max-width:568px) {
+    .My_Account_Profile_Details
+    {
+        margin: 10px;
+    }
+    .MyAddress_Details_Section 
+    {
+        margin: 10px;
+    }
+}
+
+/* End Nav Media Query */

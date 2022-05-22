@@ -1,0 +1,91 @@
+
+#news-list-container
+{
+    background: #f8f9fa;
+    padding: 40px 0px;
+    position: relative;
+}
+
+.news-list-title p
+{
+  padding-bottom: 10px;
+}
+.news-list-title h2{
+    font-size: 24px;
+    display: block;
+    text-transform: capitalize;
+    border-bottom: 1px solid #eee;
+    color: black;
+    font-weight: 700;
+}
+.news-list-title span{
+    border-bottom: 1px solid rgba(0,0,0,.44);
+    display: inline-block;
+    padding-bottom: 20px;
+    margin-bottom: -1px;
+    text-transform: capitalize;
+}
+.news-list-details .card
+{
+    margin-top: 15px;
+}
+
+.news-list-image
+{
+    height: 50px;
+   width: 50px;
+   overflow: hidden;
+
+  margin: 10px 0px;
+}
+.news-list-image img
+{
+  border-radius: 50%;
+}
+.news-list-profile
+{
+    display: flex;
+    align-items: center;
+}
+
+.Recent-post-heading h6
+{
+    font-size: 13px;
+    color: black;
+    font-weight: 600;
+}
+
+.Recent-post-heading span{
+    color: #efa421;
+  
+}
+
+.news-list-author
+{
+    padding: 0px 10px;
+    display: flex;
+    justify-content: space-between;
+}
+.news-list-readmore
+{
+    display: flex;
+    justify-content: flex-end;
+}
+.Twitter-container
+{
+  max-height: 500px;
+}
+
+@media (max-width: 1440px)
+{
+    .recent-post-image img {
+        height: 50px;
+        width: 50px;
+    }
+    .Recent-post-heading h6 {
+        font-size: 12px;
+        color: black;
+        font-weight: 700;
+    }
+}
+

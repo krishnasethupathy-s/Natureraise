@@ -1,0 +1,16 @@
+.product_showing_wrap
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    
+}
+
+.product_showing_wrap .form-control
+{
+    border-radius: 0px;
+    height: 40px;
+    border: 1px solid #d6d6d6 !important;
+    font-size: 12px;
+}

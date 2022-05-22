@@ -1,0 +1,65 @@
+.order_address_wrap>.order_title
+{
+    font-size: 14px;
+    color: black;
+    padding-bottom: 5px;  
+}
+
+.order_address_wrap>.order_name
+{
+    font-size: 14px;
+    color: black;
+    padding-bottom: 10px;   
+}
+.order_address_wrap>.order_address
+{
+    font-size: 12px;
+    color: gray;
+    padding-bottom: 10px;
+}
+
+.order_image_size
+{
+    width: 30px;
+   
+}
+.order_image_wrap
+{
+    display: flex;
+    padding-top: 10px;
+}
+.order_subtitle_wrap
+{
+    padding-left: 10px;
+}
+.order_subtitle
+{
+    font-size: 14px;
+    color: black; 
+    padding-bottom: 5px;
+}
+.order_descritpion
+{
+    font-size: 12px;
+    color: black; 
+}
+
+
+
+
+.order_download_wrap
+{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.order_download_button
+{
+    padding: 10px 20px;
+    border: 1px solid black;
+}
+.order_download_button>p{
+    color: black;
+    font-weight: 500;
+}

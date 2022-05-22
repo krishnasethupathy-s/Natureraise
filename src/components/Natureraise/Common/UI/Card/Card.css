@@ -1,0 +1,11 @@
+/* Card_wrapper */
+.Card_wrapper
+{
+    box-shadow: 10px 11px 38px rgb(0 0 0 / 10%);
+    background-color: #ffff;
+    position: relative;
+    cursor: pointer;
+}
+
+
+/* Card_wrapper */

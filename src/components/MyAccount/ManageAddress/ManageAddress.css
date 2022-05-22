@@ -1,0 +1,36 @@
+.Manage_footer_container
+{
+    flex: 1;
+    justify-content: flex-end;
+}
+.Address_Details_Type
+{
+    padding-bottom: 10px;
+}
+.Address_Full_Details_Section
+{
+    padding-top: 10px;
+}
+
+.Address_Details_Main_Section .fa
+{
+    background-color: #171a42;
+    color: white;
+    border-radius: 50%;
+    padding: 7px;
+    box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
+    font-size: 12px;
+}
+.Address_Details_Main_Section .fa:hover{
+color:white;
+background-color: #efa421;
+box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
+}
+
+/* .MyAddress_Details_Section 
+{
+    background-image: url('../../../assets/Account/account-bottom.png');
+    background-position: bottom;
+    background-repeat: no-repeat;
+    background-size:cover;
+} */

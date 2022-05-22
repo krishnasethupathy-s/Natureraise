@@ -1,0 +1,292 @@
+.about_banner
+{
+    background-image: url('../../../assets/natureraise/about/banner.jpg');
+    background-position: inherit;
+    background-size: cover;
+    height: 300px;
+    position: relative;
+    background-repeat: no-repeat;
+}
+.about_overlay
+{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: black;
+    height: 300px;
+    width: 100%;
+    opacity: .4;
+}
+.about_subtitles
+{
+    text-align: center;
+    font-size: 18px;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+.about_subtitles .fa
+{
+    padding: 0px 10px;
+}
+.about_title
+{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    
+}
+.about_title h3{
+    font-family: 'Poppins', sans-serif;
+	font-size: 45px;
+	font-weight: 600;
+}
+/* Packers Our */
+
+
+/* banner images */
+.about_wrapper
+{
+    background-image: url('../../../assets/natureraise/about/about_bg.png');
+    background-repeat: no-repeat;
+}
+.about_image1
+{
+    position: relative;
+}
+.about_image2
+{
+    position: absolute;
+    top: 10px;
+}
+
+.about_counsultancy
+{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding-top: 30px;
+    align-items: center;
+}
+.about_counsultancy_button
+{
+    padding: 20px;
+    color: white;
+    background-color: #ef6831;
+}
+.about_counsultancy_button p{
+    color: white;
+}
+.about_counsult_icons
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.about_counsult_icons .fa
+{
+    color: #295832;
+    font-size: 18px;
+    margin-right: 10px;
+}
+.about_counsult_icons p{
+    color: #171a42;
+    font-weight: bold;
+    font-size: 18px;
+
+}
+
+/* end banner images */
+
+
+
+/* project information */
+
+.project_information
+{
+    background-color: #171a42;
+    margin-bottom: 20px;
+}
+.project_information_alignment
+{
+    text-align: center;
+    color: white;
+}
+.project_information_alignment p{
+    color: white;
+}
+.project_information_alignment img{
+    width: 50px;
+    margin-bottom: 10px;
+}
+
+/* project information */
+
+/* steps  */
+
+.steps_work_content
+{
+    text-align: center;
+}
+.steps_work_content p
+{
+    color: #295832;
+    font-size: 16px;
+    font-weight: 600;
+    padding-bottom: 10px;
+    max-width: 80%;
+    margin: 0 auto;
+    /* padding: 23px 0px; */
+    /* padding-bottom: 30px; */
+}
+.steps_work_content h4
+{
+color: #171a42;
+font-size: 36px;
+line-height: 48px;
+font-weight: inherit;
+font-weight: 700;
+padding-bottom: 20px;
+}
+.center_double_line
+{
+    
+        top: -48px;
+        left: 50%;
+        transform: translateX(-50%);
+        text-transform: uppercase;
+        -webkit-text-stroke-color: rgba(214, 214, 214, 0.5);
+        display: inline;
+        position: absolute;
+        opacity: 1;
+        color: transparent !important;
+        -webkit-text-stroke-width: 1px;
+        font-size: 150px;
+        line-height: 160px;
+        font-weight: 900;
+        white-space: nowrap;
+        -webkit-user-select: none;
+        user-select: none;
+        z-index: -1;
+    
+}
+.steps_card
+{
+    padding: 28px 40px 40px 40px;
+    position: relative;
+    box-shadow: 9px 12px 38px 0px rgb(0 0 0 / 10%);
+    transition: all 0.5s;
+ 
+}
+.steps_card:hover{
+    background-image: url('../../../assets/natureraise/about/steps1.jpg'); 
+    background-size: cover;
+
+}
+
+/* not working  */
+
+.steps_card:hover  .steps_card_title h6, .steps_card:hover .steps_card_title h4{
+    color: white  ;
+}
+
+
+.steps_card:hover  .steps_card_title h6,  .steps_card_title h4{
+    color: white  ;
+}
+
+
+.steps_card:hover p{
+    color: white;
+}
+.steps_card_second:hover{
+    background-image: url('../../../assets/natureraise/about/steps2.jpg'); 
+    background-size: cover;
+   
+}
+.steps_card_third:hover{
+    background-image: url('../../../assets/natureraise/about/steps3.jpg'); 
+    background-size: cover;
+}
+.number_double_line
+{
+    top: -40px;
+    left: 21%;
+    transform: translateX(-50%);
+    text-transform: uppercase;
+    -webkit-text-stroke-color: rgba(214, 214, 214, 0.5);
+    display: inline;
+    position: absolute;
+    opacity: 1;
+    color: transparent !important;
+    -webkit-text-stroke-width: 1px;
+    font-size: 70px;
+    line-height: 160px;
+    font-weight: 900;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    user-select: none;
+    z-index: -1;
+
+}
+
+.steps_card p
+{
+    color: #295832;
+    font-size: 18px;
+}
+.steps_card p::before
+{   content: '';
+    position: absolute;
+    width: 2px;
+    background-color: #295832;
+    height: 20px;
+    /* left: 24px; */
+    left: 24px;
+}
+.steps_card_title
+{
+    padding-top: 30px;
+   
+}
+.steps_card_title h4{
+    padding-bottom: 10px;
+    color: black;
+    font-weight: 600;
+
+}
+.steps_card_title h6{
+    font-size: 14px;
+    line-height: 24px;
+}
+/* end steps */
+
+
+@media (max-width: 776px)
+{
+    .about_title h3{
+        font-size: 30px;
+    }
+    .padding_top_bottom
+    {
+        margin-top: 60px;
+        padding-bottom: 20px;
+    }
+    .about_counsultancy
+    {
+        width: 100%;
+    }
+    
+    .project_information [class*=col-md-3] {
+        margin-bottom: 20px;
+    }
+    .center_double_line
+    {
+        font-size: 80px;
+    }
+
+
+}

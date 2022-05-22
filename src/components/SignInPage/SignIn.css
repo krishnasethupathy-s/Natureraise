@@ -1,0 +1,169 @@
+
+.Inner_nav {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .Inner_nav li {
+    display: inline-block;
+    margin: 0px 20px 0px 0px;
+ 
+  }
+  .Inner_nav li a {
+    color: white !important;
+   
+}
+#SignIn_Main_Section .jumbotron {
+    padding: 2rem 1rem;
+    margin-bottom: 2rem;
+    background-image: -webkit-linear-gradient(0deg,#171a42 0,#c4e3ef 100%);
+}
+#SignIn_Main_Section h4{
+    color: white;
+   font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+}
+
+
+.SignIn
+{
+  color: #fff !important;
+    background-color: #EFA421 !important;
+    border-color:#EFA421 !important;
+    box-shadow: 0 0 0 0.2rem #8BC34A !important;
+    width: 50%;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+.SignIn:hover {
+  color: #EFA421 !important;
+  background-color: #fff !important;
+  border-color: #fff !important;
+}
+.SignIn:not(:disabled):not(.disabled).active, .SignIn:not(:disabled):not(.disabled):active, .show>.SignIn.dropdown-toggle {
+  color: #EFA421 !important;
+  background-color: #fff !important;
+  border-color: #fff !important;
+  box-shadow:#EFA421 !important;
+}
+.SignIn_Form_Section
+{
+  text-align: center;
+  padding: 4rem;
+  margin: 4rem;
+}
+
+.form_card_details
+{
+  box-shadow: 9px 12px 38px 0px rgb(0 0 0 / 10%);
+  transition: all 0.5s;
+  padding: 30px;
+  background-color: #ffff;
+  max-width: 500px;
+  margin: 0 auto;
+  border-radius: 10px;
+}
+.form_card_details h1{
+  padding-bottom: 20px;
+  font-size: 24px;
+  color: black;
+  font-weight: 700;
+}
+
+  .form-control:focus {
+    color: #495057 !important;
+    background-color: #fff !important;
+    border-color: unset !important;
+    outline: 0 !important;
+    box-shadow: unset !important;
+}
+.btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+  color: #fff;
+  background-color: #727a84;
+  border-color: #EFA421;
+}
+
+.Forget_Text_Password
+{
+  padding-bottom: 20px;
+}
+.Create_Account_Text 
+{
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+
+}
+.Create_Account_Text h6{
+  font-size: 13px;
+  color: #171a42;
+}
+.Create_Account_Text h6:hover
+{
+  cursor: pointer;
+}
+
+
+
+
+/* social login */
+.sign_in_socialicons ul
+{
+  display: flex;
+  justify-content: center;
+  padding-bottom: 10px;
+}
+.sign_in_socialicons ul li{
+  padding: 10px;
+  width: 43px;
+  background-color: #171a42;
+  margin: 10px;
+  border-radius: 50%;
+  color: white;
+  box-shadow: 0 0 10px .1px #171a42;
+
+}
+.ortext
+{
+  padding: 10px 0px;
+}
+.ortext h6{
+  font-size: 13px;
+  color: #171a42;
+}
+
+
+/* end social login */
+
+
+
+
+
+
+
+
+
+/* Media Query */
+
+@media only screen and (min-width: 360px) and (max-width: 640px) {
+  .SignIn_Form_Section
+{
+  text-align: center;
+  padding:20px;
+  margin: 0px;
+}
+
+
+}
+
+@media only screen and (min-width: 320px) and (max-width: 568px) {
+
+.SignIn_Form_Section {
+  text-align: center;
+  padding:20px;
+  margin: 0px;
+}
+
+
+}

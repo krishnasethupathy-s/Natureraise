@@ -1,0 +1,163 @@
+
+/* Enquiry_Section */
+
+.contact_banner
+{
+    background-image: url('https://irecco.wgl-demo.net/wp-content/uploads/2019/12/contact_page-title.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-position: bottom center;
+    background-color: #f2f2f4;
+    height: 300px;
+    position: relative;
+  
+}
+.contact_overlay
+{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: black;
+    height: 300px;
+    width: 100%;
+    opacity: .4;
+}
+.contact_title
+{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    
+}
+.contact_title h3{
+    font-family: 'Poppins', sans-serif;
+	font-size: 45px;
+	font-weight: 600;
+}
+
+/* contact double */
+
+
+.contact_double
+{
+    top: -48px;
+    left: 50%;
+    transform: translateX(-28%);
+    text-transform: uppercase;
+    -webkit-text-stroke-color: rgba(214, 214, 214, 0.5);
+    display: inline;
+    position: absolute;
+    opacity: 1;
+    color: transparent !important;
+    -webkit-text-stroke-width: 1px;
+    font-size: 150px;
+    line-height: 160px;
+    font-weight: 900;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    z-index: -1;  
+}
+.contact_enquiry_address
+{
+    padding: 10px 0px;
+}
+.contact_enquiry_address h6
+{
+    font-size: 14px;
+    line-height: 24px;
+    margin-bottom: 10px;
+    color:#171a42;
+
+}
+
+.btn-primary
+{
+    background-color: #ef6831;
+    color: #fff;
+    border-color:#ef6831;
+}
+.btn-primary:hover{
+    background-color: #295832;
+}
+
+.contact_enquiry_address img{
+    width: 20px;
+    margin-right: 10px;
+}
+
+
+.contact_wrapper_social ul
+{
+    display: flex;
+    padding-top: 10px;
+}
+.contact_wrapper_social .fa
+{
+    color: #ef6831;
+}
+.contact_wrapper_social ul li:hover
+{
+   cursor: pointer;
+   background-color: #ef6831 !important;
+
+}
+.contact_wrapper_social ul li:hover .fa
+{
+ color: white !important;
+
+}
+.contact_wrapper_social ul li
+{
+   
+    border: 1px solid #ef6831;
+    background-color: rgba(29, 161, 242, 0);
+    display: inline-block;
+    border-radius: 50%;
+    width: 35px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    padding: 5px;
+    margin-right: 10px;
+  
+}
+
+/* End contact double  */
+
+
+
+
+
+
+
+
+
+.contact_enquiry_card
+{
+    position: relative;
+    box-shadow: 9px 12px 38px 0px rgb(0 0 0 / 10%);
+    transition: all 0.5s;
+    background-color: #ffffff;
+    margin: 25px 0px 0px 0px;
+    padding: 45px 50px 28px 50px;
+}
+
+
+/* Enquiry_Section */
+
+
+
+@media(max-width:776px)
+{
+    .contact_double
+    {
+        font-size: 55px;
+        transform: translateX(-70%);
+    }
+}
