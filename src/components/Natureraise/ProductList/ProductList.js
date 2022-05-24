@@ -33,7 +33,8 @@ class ProductList extends Component {
       page_number: "",
       data_limit: "",
       item_name: "",
-      categories_id: localStorage.getItem("categories_id"),
+      // categories_id: localStorage.getItem("categories_id"),
+      categories_id: this.props.match.params.id,
       isLoading: true,
     };
   }
@@ -60,8 +61,8 @@ class ProductList extends Component {
     // );
   }
   getSnapshotBeforeUpdate(prevProps, prevState) {
-    if (prevState.categories_id !== localStorage.getItem("categories_id")) {
-      this.setState({ categories_id: localStorage.getItem("categories_id") });
+    if (prevState.categories_id !== this.props.match.params.id) {
+      this.setState({ categories_id: this.props.match.params.id });
       return true;
     } else {
       return false;
@@ -73,7 +74,7 @@ class ProductList extends Component {
     if (snapshot) {
       this.props.dispatch(
         ProductActions.getItemListBySubCategory(
-          localStorage.getItem("categories_id"),
+          categories_id,
           page_number,
           data_limit,
           item_name
