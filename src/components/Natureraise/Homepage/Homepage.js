@@ -13,10 +13,9 @@ import * as AccountData from "../../constants/AccountData";
 import Slider from "react-slick";
 import ProductCard from "../Common/Components/ProductCard/ProductCard";
 
-import DeliveryProcess from '../Common/Components/DeliveryProcess/DeliveryProcess';
-import SecondOfferSection from '../Common/Components/SecondOfferSection/SecondOfferSection';
+import DeliveryProcess from "../Common/Components/DeliveryProcess/DeliveryProcess";
+import SecondOfferSection from "../Common/Components/SecondOfferSection/SecondOfferSection";
 import PageLoading from "../../constants/PageLoader/PageLoading";
-
 
 class HomePage extends Component {
   constructor(props) {
@@ -41,9 +40,8 @@ class HomePage extends Component {
   // navigate product list page
   navigate_function = (item) => {
     localStorage.setItem("product_id", item.id);
-    this.props.history.push("/ProductDescription");
+    this.props.history.push(`/ProductDescription/${item.id}`);
   };
-
 
   // add to cart Function
   add_to_card = (id) => {
@@ -146,7 +144,7 @@ class HomePage extends Component {
         },
       ],
     };
-    
+
     return (
       <div>
         <HeaderNavbar />
@@ -154,9 +152,9 @@ class HomePage extends Component {
 
         <div>
           <Carousel>
-            {this.props.banner_list.map((image) => {
+            {this.props.banner_list.map((image, idx) => {
               return (
-                <Carousel.Item>
+                <Carousel.Item key={idx}>
                   <img
                     className="d-block w-100 banner-image-size"
                     src="https://cdn.shopify.com/s/files/1/2980/5140/articles/Main_Banner_Design_1800x_a5ed6c61-aa26-4e7d-87d7-8eb95d63f1fd_2x.jpg?v=1610512794"
@@ -169,7 +167,7 @@ class HomePage extends Component {
         </div>
 
         <section>
-        <DeliveryProcess deliveryprocess={AccountData.DELIVERY_PROCESS} />
+          <DeliveryProcess deliveryprocess={AccountData.DELIVERY_PROCESS} />
         </section>
 
         <section className="product-list-wrapper" id="product-list-wrapper">
@@ -196,10 +194,10 @@ class HomePage extends Component {
                 <div className="product-card-mobile">
                   <Slider {...settings}>
                     {(this.props.product_list_data.slice(0, 12) || []).map(
-                      (x, index) => {
+                      (x) => {
                         return (
                           <ProductCard
-                            key={index}
+                            key={x.id}
                             percentage={x.percentage}
                             navigate_function={() => {
                               this.navigate_function(x);
@@ -263,26 +261,25 @@ class HomePage extends Component {
                     </div>
                   </Col>
                   <Col md={4}>
-                  <div className="offer-banner-wrap">
-                    <img
+                    <div className="offer-banner-wrap">
+                      <img
                         src={images.offer_banner3}
-                      alt="Natureraise"
-                      className="img-fluid"
-                    />
+                        alt="Natureraise"
+                        className="img-fluid"
+                      />
                     </div>
-
                   </Col>
                   <Col md={4}>
-                  <div className="offer-banner-wrap">
+                    <div className="offer-banner-wrap">
                       <img
-                          src={images.offer_banner4}
+                        src={images.offer_banner4}
                         alt="Natureraise"
                         className="img-fluid"
                       />
                     </div>
                     <div className="offer-banner-wrap">
                       <img
-                         src={images.offer_banner5}
+                        src={images.offer_banner5}
                         alt="Natureraise"
                         className="img-fluid"
                       />
@@ -318,10 +315,10 @@ class HomePage extends Component {
                 <div className="product-card-mobile">
                   <Slider {...featuresilder}>
                     {(this.props.product_list_data.slice(0, 12) || []).map(
-                      (x, index) => {
+                      (x) => {
                         return (
                           <ProductCard
-                            key={index}
+                            key={x.id}
                             percentage={x.percentage}
                             navigate_function={() => {
                               this.navigate_function(x);
@@ -351,10 +348,8 @@ class HomePage extends Component {
         </section>
 
         <section className="offers-second-section" id="offers-second-section">
-        <SecondOfferSection offersdata={AccountData.DELIVERY_PROCESS} />
-        
+          <SecondOfferSection offersdata={AccountData.DELIVERY_PROCESS} />
         </section>
-
 
         <section className="product-list-wrapper" id="product-list-wrapper">
           <Container>
@@ -399,13 +394,9 @@ class HomePage extends Component {
                   </Slider>
                 </div>
               </Col>
-           
             </Row>
           </Container>
         </section>
-
-
-
 
         <Footer />
       </div>

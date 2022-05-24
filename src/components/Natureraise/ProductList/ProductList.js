@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import "./ProductList.css";
 import { Container, Row, Col, Card, Form, Accordion } from "react-bootstrap";
 import HeaderNavbar from "../HeaderNavbar/HeaderNavbar";
@@ -20,7 +20,6 @@ import { Redirect } from "react-router-dom";
 import ProductCard from "../Common/Components/ProductCard/ProductCard";
 import PageLoading from "../../constants/PageLoader/PageLoading";
 
-
 class ProductList extends Component {
   constructor(props) {
     super(props);
@@ -36,19 +35,16 @@ class ProductList extends Component {
       item_name: "",
       categories_id: localStorage.getItem("categories_id"),
       isLoading: true,
-
     };
   }
-
   componentDidMount() {
-
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     setTimeout(() => {
       this.props.dispatch({ type: "IS_LOADING", is_loading: false });
     }, 1000);
-    window.scrollTo(0,0);
+    window.scrollTo(0, 0);
     const { page_number, data_limit, item_name } = this.state;
-    var productdata_id = localStorage.getItem("categories_id");
+    const productdata_id = this.props.match.params.id;
     this.props.dispatch(
       ProductActions.getItemListBySubCategory(
         productdata_id,
@@ -64,14 +60,12 @@ class ProductList extends Component {
     // );
   }
   getSnapshotBeforeUpdate(prevProps, prevState) {
-
     if (prevState.categories_id !== localStorage.getItem("categories_id")) {
       this.setState({ categories_id: localStorage.getItem("categories_id") });
       return true;
     } else {
       return false;
     }
-
   }
   componentDidUpdate(prevProps, prevState, snapshot) {
     const { page_number, data_limit, item_name, categories_id } = this.state;
@@ -101,22 +95,17 @@ class ProductList extends Component {
   };
   navigate_function = (item) => {
     localStorage.setItem("product_id", item.id);
-    this.props.history.push("/ProductDescription");
+    this.props.history.push(`/ProductDescription/${item.id}`);
   };
 
-
-  add_to_card =(id)=>
-  {
-    if(this.props.product_quantity===0)
-    {
+  add_to_card = (id) => {
+    if (this.props.product_quantity === 0) {
       this.addtocart_function(id);
     }
-   this.props.history.push('/CheckOut');
-  }
-
+    this.props.history.push("/CheckOut");
+  };
 
   addtocart_function = (id) => {
-
     let cart_id = id;
     this.props.dispatch(ProductActions.addtocart(cart_id));
   };
@@ -172,7 +161,7 @@ class ProductList extends Component {
                     <div className="product_unorder_list ">
                       {SLIDER_IMAGE.map((data, index) => {
                         return (
-                          <Form.Group id="formGridCheckbox">
+                          <Form.Group id="formGridCheckbox" key={data.id}>
                             <Form.Check
                               type="checkbox"
                               label={data.name}
@@ -210,7 +199,7 @@ class ProductList extends Component {
                           <Card.Body>
                             {CUSTOMER_RATING.map((data, index) => {
                               return (
-                                <Form.Group id="formGridCheckbox">
+                                <Form.Group id="formGridCheckbox" key={data.id}>
                                   <Form.Check
                                     type="checkbox"
                                     label={data.name}
@@ -235,7 +224,7 @@ class ProductList extends Component {
                           <Card.Body>
                             {PRODUCT_DISCOUNT.map((data, index) => {
                               return (
-                                <Form.Group id="formGridCheckbox">
+                                <Form.Group id="formGridCheckbox" key={data.id}>
                                   <Form.Check
                                     type="checkbox"
                                     label={data.name}
@@ -256,7 +245,7 @@ class ProductList extends Component {
                     </div>
                     {(SLIDER_IMAGE || []).map((x, index) => {
                       return (
-                        <Row>
+                        <Row key={x.id}>
                           <Col md={4} xs={4}>
                             <div className="related_products_card">
                               <img
@@ -301,11 +290,11 @@ class ProductList extends Component {
                       onChange={this.property_data_fun}
                     >
                       {SORT_LIST.map((item) => (
-                        <>
+                        <Fragment key={item.id}>
                           <option key={item.id} value={item.id}>
                             {item.name}
                           </option>
-                        </>
+                        </Fragment>
                       ))}
                     </Form.Control>
                   </div>
@@ -314,19 +303,18 @@ class ProductList extends Component {
                   <Row>
                     {(this.props.product_list_data || []).map((x, index) => {
                       return (
-                      <Col md={4} xl={4} className="mb-2">
+                        <Col md={4} xl={4} className="mb-2" key={x.id}>
                           <ProductCard
-                        key={index}
-                        percentage={x.percentage}
-                        navigate_function={() => {
-                          this.navigate_function(x);
-                        }}
-                        item_name={x.item_name}
-                        special_price={x.special_price}
-                        selling_price={x.selling_price}
-                        retail_price={x.retail_price}
-                      />
-                      </Col>
+                            percentage={x.percentage}
+                            navigate_function={() => {
+                              this.navigate_function(x);
+                            }}
+                            item_name={x.item_name}
+                            special_price={x.special_price}
+                            selling_price={x.selling_price}
+                            retail_price={x.retail_price}
+                          />
+                        </Col>
                       );
                     })}
                   </Row>
@@ -345,8 +333,6 @@ const mapStateToProps = (state) => {
     product_list_data: state.ProductActions.product_list || [],
     product_quantity: state.ProductActions.product_quantity,
     is_loading: state.ProductActions.is_loading,
-
-
   };
 };
 

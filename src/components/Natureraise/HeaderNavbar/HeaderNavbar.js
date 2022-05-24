@@ -15,7 +15,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import images from "../../constants/images";
 import { connect } from "react-redux";
-import { withRouter } from 'react-router-dom'
+import { withRouter } from "react-router-dom";
 import * as ProductActions from "../store/actions/Product/ProductActions";
 
 class HeaderNavbar extends Component {
@@ -35,17 +35,17 @@ class HeaderNavbar extends Component {
 
   Logout_Function = () => {
     localStorage.clear();
-    this.props.history.push('/SignUp');
+    this.props.history.push("/SignUp");
   };
 
   product_navigate = (id) => {
-    localStorage.setItem('categories_id', id);
-    this.props.history.push('/ProductList');
-  }
+    localStorage.setItem("categories_id", id);
+    this.props.history.push(`/Products/${id}`);
+  };
 
   handle_to_cart_navigation = () => {
-    this.props.history.push('/Checkout');
-  }
+    this.props.history.push("/Checkout");
+  };
 
   render() {
     return (
@@ -54,19 +54,17 @@ class HeaderNavbar extends Component {
           <Container>
             <Row>
               <Col md={2} className="d-none d-sm-block">
-                <Navbar.Brand href="/">
-                  <Link to="/">
-                    <img src={images.nature_logo} alt="Logo" />
-                  </Link>
+                <Navbar.Brand as={Link} to="/">
+                  <img src={images.nature_logo} alt="Logo" />
                 </Navbar.Brand>
               </Col>
               <Col md={6}>
                 <div>
-                  <Form.Group controlId="formBasicEmail">
+                  <Form.Group controlId="formBasicSearch">
                     <Form.Label></Form.Label>
                     <Form.Control type="text" placeholder="Search" />
                     <div className="search_inner_nav_icon">
-                      <i class="fa fa-search" aria-hidden="true"></i>
+                      <i className="fa fa-search" aria-hidden="true"></i>
                     </div>
                   </Form.Group>
                 </div>
@@ -75,9 +73,14 @@ class HeaderNavbar extends Component {
                 <div className="search_shopping_mobile">
                   <Row>
                     <Col md={2} xs={3}>
-
-                      <div className="search_shopping_wrap" onClick={this.handle_to_cart_navigation}>
-                        <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                      <div
+                        className="search_shopping_wrap"
+                        onClick={this.handle_to_cart_navigation}
+                      >
+                        <i
+                          className="fa fa-shopping-cart"
+                          aria-hidden="true"
+                        ></i>
                         <div className="search_cart_badge">
                           <span>{this.props.cart_product_list.length}</span>
                         </div>
@@ -88,7 +91,7 @@ class HeaderNavbar extends Component {
                       <>
                         <Col md={2} xs={3}>
                           <div className="search_shopping_wrap">
-                            <i class="fa fa-user" aria-hidden="true"></i>
+                            <i className="fa fa-user" aria-hidden="true"></i>
                           </div>
                           <div></div>
                         </Col>
@@ -143,10 +146,8 @@ class HeaderNavbar extends Component {
         <section className="Header_Inner_Background">
           <Navbar className="p-0 container" bg="light" expand="lg">
             <div className="d-block d-sm-none">
-              <Navbar.Brand href="/">
-                <Link to="/">
-                  <img src={images.nature_logo} alt="Logo" />
-                </Link>
+              <Navbar.Brand as={Link} to="/">
+                <img src={images.nature_logo} alt="Logo" />
               </Navbar.Brand>
             </div>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -159,10 +160,18 @@ class HeaderNavbar extends Component {
                       title={item.item_category_name}
                       id={item.id}
                       renderMenuOnMount={true}
+                      // onClick={() => {
+                      //   this.product_navigate(item.id);
+                      // }}
                     >
                       {item.itemSubCategory.map((x, index) => {
                         return (
-                          <NavDropdown.Item onClick={() => { this.product_navigate(x.id) }}>
+                          <NavDropdown.Item
+                            onClick={() => {
+                              this.product_navigate(x.id);
+                            }}
+                            key={x.id}
+                          >
                             {x.item_sub_category_name}
                           </NavDropdown.Item>
                         );
