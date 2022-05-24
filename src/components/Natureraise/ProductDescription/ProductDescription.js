@@ -780,7 +780,7 @@ class ProductDescription extends Component {
                           key={index}
                           percentage={x.percentage}
                           navigate_function={() => {
-                            this.navigate_function(x);
+                            this.props.history.push(x.id);
                           }}
                           item_name={x.item_name}
                           special_price={x.special_price}

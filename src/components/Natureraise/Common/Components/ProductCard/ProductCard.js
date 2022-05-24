@@ -34,6 +34,7 @@ const ProductCard = (props) => {
         onClick={() => {
           props.navigate_function(props.x);
         }}
+        style={{ cursor: "pointer" }}
       >
         <img
           src="https://www.solarclue.com/image/cache/catalog/Products/Solar%20Water%20Heater/V-Guard/solar-water-heater-v-hot-commercial-series-222x222.jpg"
