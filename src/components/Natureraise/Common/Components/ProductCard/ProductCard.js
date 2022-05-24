@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import "./ProductCard.css";
 
 const ProductCard = (props) => {
@@ -12,7 +12,7 @@ const ProductCard = (props) => {
       </div>
       <div className="wish_list_icon">
         <i
-          class="fa fa-heart"
+          className="fa fa-heart"
           aria-hidden="true"
           style={{ color: props.wishcolor }}
         ></i>

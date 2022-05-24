@@ -9,13 +9,13 @@ const NatureraiseSubscribe = (props) => {
       <p>Subscribe to our newsletter! Stay always in touch!</p>
       <div className="form_subscribe">
         <Form>
-          <Form.Group controlId="formBasicEmail">
+          <Form.Group controlId="formBasicFooterEmail">
             <Form.Label></Form.Label>
             <div>
               <Form.Control type="email" placeholder="Enter email" />
             </div>
             <div className="email_subscribe">
-              <i class="fa fa-envelope" aria-hidden="true"></i>
+              <i className="fa fa-envelope" aria-hidden="true"></i>
             </div>
             <Form.Text className="text-muted">
               * Don't worry, we don't spam.

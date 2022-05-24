@@ -11,7 +11,7 @@ const SecondOfferSection = (props) => {
             <Row>
               {props.offersdata.map((deliverydata, delivery_id) => {
                 return (
-                  <Col md={4} lg={4} xl={4}>
+                  <Col md={4} lg={4} xl={4} key={delivery_id}>
                     <div>
                       <img
                         src="https://rukminim1.flixcart.com/flap/480/480/image/7f5aa61dc593dbd7.jpg?q=50"
