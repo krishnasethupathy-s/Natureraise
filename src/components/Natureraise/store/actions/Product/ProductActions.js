@@ -17,7 +17,6 @@ export const REMOVE_TO_CART_ITEM = "REMOVE_TO_CART_ITEM";
 export const COUPON_VALIDATION = "COUPON_VALIDATION";
 export const IS_LOADING = "IS_LOADING";
 
-
 export const empty_message = () => {
   return async (dispatch) => {
     dispatch({ type: "SUCCESS_MESSAGE", success_title: "" });
@@ -30,13 +29,13 @@ export const getCategory1 = () => {
   return async (dispatch) => {
     const Authorization = Config.getRequestToken();
     const query = gql`
-    query getCategory($Authorization: String) {
-      getCategory(Authorization: $Authorization) {
-        id
-        item_category_name
+      query getCategory($Authorization: String) {
+        getCategory(Authorization: $Authorization) {
+          id
+          item_category_name
+        }
       }
-    }
-  `;
+    `;
 
     Config.client
       .query({
@@ -45,14 +44,14 @@ export const getCategory1 = () => {
         variables: { Authorization },
       })
       .then((result) => {
-        console.log(result.data.getCategory)
+        console.log(result.data.getCategory);
         dispatch({
           type: "PRODUCTCATEGORIES",
           category_data_list: result.data.getCategory,
         });
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         dispatch({ type: "SUCCESS_MESSAGE", success_title: "catch error" });
         dispatch({ type: "ERROR_MESSAGE", error_title: error });
       });
@@ -86,162 +85,169 @@ export const getItemListBySubCategory = (
   item_name
 ) => {
   return async (dispatch) => {
-  const item_sub_category_id = id;
-  const Authorization = Config.getRequestToken();
-  const query = gql`
-    query getItemListBySubCategory(
-      $Authorization: String
-      $item_sub_category_id: String
-      $page_number: String
-      $data_limit: String
-      $item_name: String
-    ) {
-      getItemListBySubCategory(
-        Authorization: $Authorization
-        item_sub_category_id: $item_sub_category_id
-        page_number: $page_number
-        data_limit: $data_limit
-        item_name: $item_name
+    const item_sub_category_id = id;
+    const Authorization = Config.getRequestToken();
+    const query = gql`
+      query getItemListBySubCategory(
+        $Authorization: String
+        $item_sub_category_id: String
+        $page_number: String
+        $data_limit: String
+        $item_name: String
       ) {
-        item_name
-        item_sub_category_id
-        retail_price
-        selling_price
-        percentage
-        uom
-        item_size
-        type_name
-        id
-        image_address
-        cart_list
-        wish_list
-        net_amount
-        total_amount
-        cart_count
-        brand_name
-        generic_id
-        save_price
-        retail_price
-        special_price
-        availability
+        getItemListBySubCategory(
+          Authorization: $Authorization
+          item_sub_category_id: $item_sub_category_id
+          page_number: $page_number
+          data_limit: $data_limit
+          item_name: $item_name
+        ) {
+          item_name
+          item_sub_category_id
+          retail_price
+          selling_price
+          percentage
+          uom
+          item_size
+          type_name
+          id
+          image_address
+          cart_list
+          wish_list
+          net_amount
+          total_amount
+          cart_count
+          brand_name
+          generic_id
+          save_price
+          retail_price
+          special_price
+          availability
+        }
       }
-    }
-  `;
-  Config.client
-    .query({
-      query: query,
-      fetchPolicy: "no-cache",
-      variables: {
-        Authorization,
-        item_sub_category_id,
-        page_number,
-        data_limit,
-        item_name,
-      },
-    })
-    .then((result) => {
-      dispatch({
-        type: "GETITEMLISTBYSUBCATEGORY",
-        get_item_list: result.data.getItemListBySubCategory,
+    `;
+    Config.client
+      .query({
+        query: query,
+        fetchPolicy: "no-cache",
+        variables: {
+          Authorization,
+          item_sub_category_id,
+          page_number,
+          data_limit,
+          item_name,
+        },
+      })
+      .then((result) => {
+        dispatch({
+          type: "GETITEMLISTBYSUBCATEGORY",
+          get_item_list: result.data.getItemListBySubCategory,
+        });
+      })
+      .catch((error) => {
+        dispatch({ type: "SUCCESS_MESSAGE", success_title: "catch error" });
+        dispatch({ type: "ERROR_MESSAGE", error_title: error });
       });
-    })
-    .catch((error) => {
-      dispatch({ type: "SUCCESS_MESSAGE", success_title: "catch error" });
-      dispatch({ type: "ERROR_MESSAGE", error_title: error });
-    });
     return true;
   };
 };
 
-export const getItemListByMasterId = (
-  id, pin
-) => {
-  
+export const getItemListByMasterId = (id, pin) => {
   return async (dispatch) => {
-  const master_id = id;
-  const pincode = pin;
-  const Authorization = Config.getRequestToken();
-  const query = gql`
-    query getItemListByMasterId(
-      $Authorization: String
-      $master_id: String
-      $pincode: String
-    ) {
-      getItemListByMasterId(
-        Authorization: $Authorization
-        master_id: $master_id,
-        pincode: $pincode
+    const master_id = id;
+    const pincode = pin;
+    const Authorization = Config.getRequestToken();
+    const query = gql`
+      query getItemListByMasterId(
+        $Authorization: String
+        $master_id: String
+        $pincode: String
       ) {
-        item_name
-        item_sub_category_id
-        retail_price
-        selling_price
-        percentage
-        uom
-        item_size
-        item_color
-        type_name
-        id
-        image_address
-        cart_list
-        wish_list
-        net_amount
-        total_amount
-        cart_count
-        brand_name
-        generic_id
-        save_price
-        retail_price
-        special_price
-        availability
-        productDescription{
-          description_title
-          description_details
-        }
-        productImage{
-          product_id
-          product_images
+        getItemListByMasterId(
+          Authorization: $Authorization
+          master_id: $master_id
+          pincode: $pincode
+        ) {
+          item_name
+          item_sub_category_id
+          retail_price
+          selling_price
+          percentage
+          uom
+          item_size
+          item_color
+          type_name
+          id
+          image_address
+          cart_list
+          wish_list
+          net_amount
+          total_amount
+          cart_count
+          brand_name
+          generic_id
+          save_price
+          retail_price
+          special_price
+          availability
+          productDescription {
+            description_title
+            description_details
+          }
+          productImage {
+            product_id
+            product_images
+          }
         }
       }
-    }
-  `;
-  Config.client
-    .query({
-      query: query,
-      fetchPolicy: "no-cache",
-      variables: {
-        Authorization,
-        master_id,
-        pincode
-      },
-    })
-    .then((result) => {      
-      dispatch({
-        type: "PRODUCT_MASTER_LIST",
-        product_master_list: result.data.getItemListByMasterId,
+    `;
+    Config.client
+      .query({
+        query: query,
+        fetchPolicy: "no-cache",
+        variables: {
+          Authorization,
+          master_id,
+          pincode,
+        },
+      })
+      .then((result) => {
+        dispatch({
+          type: "PRODUCT_MASTER_LIST",
+          product_master_list: result.data.getItemListByMasterId,
+        });
+        dispatch({
+          type: "SUCCESS_MESSAGE",
+          success_title: "PRODUCT_MASTER_LIST_SUCCESS",
+        });
+        return true;
+      })
+      .catch((error) => {
+        dispatch({ type: "SUCCESS_MESSAGE", success_title: "catch error" });
+        dispatch({ type: "ERROR_MESSAGE", error_title: error });
       });
-      dispatch({ type: "SUCCESS_MESSAGE", success_title: "PRODUCT_MASTER_LIST_SUCCESS" });
-      return true;
-    })
-    .catch((error) => {
-      dispatch({ type: "SUCCESS_MESSAGE", success_title: "catch error" });
-      dispatch({ type: "ERROR_MESSAGE", error_title: error });
-    });
   };
 };
 
 export const getProductDetails = (id, unique_id) => {
   console.log("action");
-  console.log(id)
-  console.log(unique_id)
+  console.log(id);
+  console.log(unique_id);
   return function (dispatch) {
-    dispatch({ type: "PRODUCT_DETAILS",  product_id:unique_id});
+    dispatch({ type: "PRODUCT_DETAILS", product_id: unique_id });
   };
 };
 
-export const addtocart = (id) => {
+export const addtocart = (id, color, size) => {
   return function (dispatch) {
-    dispatch({ type: "ADD_TO_CART", cart_product_id: id });
+    dispatch({
+      type: "ADD_TO_CART",
+      payload: {
+        cart_product_id: id,
+        color: color,
+        size: size,
+      },
+    });
     dispatch({ type: "IS_LOADING", is_loading: false });
   };
 };
@@ -259,7 +265,6 @@ export const addtocart_decrement = (id) => {
   return function (dispatch) {
     dispatch({ type: "ADD_TO_CART_DECREMENT", cart_decrement_id: id });
     dispatch({ type: "IS_LOADING", is_loading: false });
-
   };
 };
 export const remove_cart_item = (id) => {
@@ -269,9 +274,12 @@ export const remove_cart_item = (id) => {
   };
 };
 
-export const getProductquantity = (id,unique_id) => {
+export const getProductquantity = (id, unique_id) => {
   return function (dispatch) {
-    dispatch({ type: "GET_PRODUCT_QUNATITY", get_Product_quantity_id: unique_id });
+    dispatch({
+      type: "GET_PRODUCT_QUNATITY",
+      get_Product_quantity_id: unique_id,
+    });
   };
 };
 

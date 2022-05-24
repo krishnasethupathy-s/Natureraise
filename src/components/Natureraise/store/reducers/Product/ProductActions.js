@@ -1,3 +1,4 @@
+/* eslint-disable default-case */
 import {
   SUCCESS_MESSAGE,
   ERROR_MESSAGE,
@@ -13,7 +14,7 @@ import {
   ADD_TO_CART_DECREMENT,
   REMOVE_TO_CART_ITEM,
   COUPON_VALIDATION,
-  IS_LOADING
+  IS_LOADING,
 } from "../../actions/Product/ProductActions";
 
 const initialState = {
@@ -35,7 +36,7 @@ const initialState = {
 };
 
 export default (state = initialState, action) => {
-  console.log(action)
+  console.log(action);
   switch (action.type) {
     case SUCCESS_MESSAGE: {
       return {
@@ -75,14 +76,13 @@ export default (state = initialState, action) => {
     }
     case PRODUCT_DETAILS: {
       let product_unique_id = action.product_id;
-      
-      
+
       console.log(product_unique_id);
       console.log(state.product_master_list);
-      let product_data_1 = {}
+      let product_data_1 = {};
       if (state.product_master_list) {
-        if(product_unique_id == '')
-          product_unique_id = state.product_master_list[0].id
+        if (product_unique_id == "")
+          product_unique_id = state.product_master_list[0].id;
         product_data_1 = state.product_master_list.find(
           (item) => item.id === product_unique_id
         );
@@ -91,12 +91,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         product_data: product_data_1,
-        unique_id : product_unique_id
+        unique_id: product_unique_id,
       };
     }
     case PRODUCT_IMAGES_LIST: {
       let product_unique_id = action.product_id;
-      let product_data_1 = {}
+      let product_data_1 = {};
       var imagesArray = [];
       if (state.product_master_list) {
         product_data_1 = state.product_master_list.find(
@@ -120,16 +120,18 @@ export default (state = initialState, action) => {
         products_image_list: imagesArray,
       };
     }
+
     case PRODUCT_DESCRIPTION_LIST: {
       let product_unique_id = action.product_id;
-      let product_data_1 = {}
+      let product_data_1 = {};
       let product_descriptions_list = [];
       if (state.product_master_list) {
         product_data_1 = state.product_master_list.find(
           (item) => item.id === product_unique_id
         );
         // product_descriptions_list = product_data_1["productDescription"];
-        product_descriptions_list = state.product_master_list[0]["productDescription"];
+        product_descriptions_list =
+          state.product_master_list[0]["productDescription"];
       }
       return {
         ...state,
@@ -149,13 +151,14 @@ export default (state = initialState, action) => {
     //   };
     // }
     case ADD_TO_CART: {
-      let cart_id = action.cart_product_id;
+      let cart_id = action.payload.cart_product_id;
       let existing_cart_id = state.cart_product_list.find(
         (item) => item.id === cart_id
       );
       if (existing_cart_id) {
         let cart_products = existing_cart_id;
         cart_products.card_quantity += 1;
+
         let new_totalamount1 =
           state.total_amount + cart_products.selling_price * 1;
         let new_save_amount1 = state.save_amount + cart_products.save_price * 1;
@@ -171,6 +174,8 @@ export default (state = initialState, action) => {
           (item) => item.id === cart_id
         );
         cart_products.card_quantity = 1;
+        cart_products.item_size = action.payload.size;
+        cart_products.item_color = action.payload.color;
         let new_totalamount =
           state.total_amount + cart_products.selling_price * 1;
         let new_save_amount = state.save_amount + cart_products.save_price * 1;
@@ -253,7 +258,7 @@ export default (state = initialState, action) => {
             save_amount: new_save_amount1,
             mrp_amount: mrp_amount1,
             cart_product_list: car_product_decrement_list,
-            coupon_validation_amount: 0
+            coupon_validation_amount: 0,
           };
         } else {
           return {
@@ -261,7 +266,7 @@ export default (state = initialState, action) => {
             total_amount: new_totalamount1,
             save_amount: new_save_amount1,
             mrp_amount: mrp_amount1,
-            coupon_validation_amount: 0
+            coupon_validation_amount: 0,
           };
         }
       }
@@ -279,9 +284,11 @@ export default (state = initialState, action) => {
         state.total_amount -
         itemToRemove.selling_price * itemToRemove.card_quantity;
       let new_save_amount1 =
-        state.save_amount - itemToRemove.save_price * itemToRemove.card_quantity;
+        state.save_amount -
+        itemToRemove.save_price * itemToRemove.card_quantity;
       let mrp_amount1 =
-        state.mrp_amount - itemToRemove.retail_price * itemToRemove.card_quantity;
+        state.mrp_amount -
+        itemToRemove.retail_price * itemToRemove.card_quantity;
 
       return {
         ...state,
@@ -289,7 +296,7 @@ export default (state = initialState, action) => {
         total_amount: newTotal,
         save_amount: new_save_amount1,
         mrp_amount: mrp_amount1,
-        coupon_validation_amount: 0
+        coupon_validation_amount: 0,
       };
     }
     case COUPON_VALIDATION: {
