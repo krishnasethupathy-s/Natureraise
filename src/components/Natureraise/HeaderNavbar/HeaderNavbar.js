@@ -17,8 +17,18 @@ import images from "../../constants/images";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import * as ProductActions from "../store/actions/Product/ProductActions";
+import { logout_user } from "../store/actions/User/UserActions";
 
 class HeaderNavbar extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      profile_pic: localStorage.getItem("image_address"),
+      first_name: localStorage.getItem("first_name"),
+      last_name: localStorage.getItem("last_name"),
+    };
+  }
+
   componentDidMount() {
     this.props.dispatch(ProductActions.getCategory());
     $(document).ready(
@@ -34,8 +44,10 @@ class HeaderNavbar extends Component {
   }
 
   Logout_Function = () => {
+    this.props.dispatch(ProductActions.resetCart());
+    this.props.dispatch(logout_user());
     localStorage.clear();
-    this.props.history.push("/SignUp");
+    this.props.history.push("/");
   };
 
   product_navigate = (id) => {
@@ -82,7 +94,7 @@ class HeaderNavbar extends Component {
                           aria-hidden="true"
                         ></i>
                         <div className="search_cart_badge">
-                          <span>{this.props.cart_product_list.length}</span>
+                          <span>{this.props.cart_items.length}</span>
                         </div>
                       </div>
                     </Col>
@@ -117,7 +129,11 @@ class HeaderNavbar extends Component {
                         <Col md={2} xs={3}>
                           <div>
                             <img
-                              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqkUYrITWyI8OhPNDHoCDUjGjhg8w10_HRqg&usqp=CAU"
+                              src={
+                                this.props.user.image_address ||
+                                this.state.profile_pic
+                              }
+                              // src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqkUYrITWyI8OhPNDHoCDUjGjhg8w10_HRqg&usqp=CAU"
                               className="Navbar_ProfileImage"
                               alt="profile_logo"
                             />
@@ -125,7 +141,12 @@ class HeaderNavbar extends Component {
                         </Col>
                         <Col md={6} xs={6}>
                           <div>
-                            <span>Welcome Ajith !</span>
+                            <span>
+                              Welcome{" "}
+                              {this.props.user.first_name ||
+                                this.state.first_name}{" "}
+                              !
+                            </span>
                             <div className="header_register_link">
                               <Link to="/MyAccount">
                                 <span>My Account</span>{" "}
@@ -193,6 +214,8 @@ const mapStateToProps = (state) => {
   return {
     product_categories_list: state.ProductActions.product_categories_list,
     cart_product_list: state.ProductActions.cart_product_list || [],
+    cart_items: state.ProductActions.cart.items || [],
+    user: state.UserActions.user,
   };
 };
 

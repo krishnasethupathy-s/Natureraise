@@ -4,8 +4,8 @@ import "./BlogList.css";
 import Footer from "../Natureraise/Footer/Footer";
 import HeaderInnerNavbar from "../Natureraise/HeaderNavbar/HeaderNavbar";
 import Config from "../../Config";
-import Facebook from '../mincomponent/Facebook/Facebook'
-import * as Moment from 'moment';
+import Facebook from "../mincomponent/Facebook/Facebook";
+import * as Moment from "moment";
 
 export default class BlogList extends Component {
   constructor(props) {
@@ -16,7 +16,7 @@ export default class BlogList extends Component {
     };
   }
   componentDidMount() {
-    window.scrollTo(0, 0)
+    window.scrollTo(0, 0);
     this.fetchPropertyList();
   }
   async fetchPropertyList() {
@@ -44,9 +44,9 @@ export default class BlogList extends Component {
     }
   }
   news_navigate = (id) => {
-    localStorage.setItem('blog_id', id);
-    this.props.history.push('/BlogDetails');
-  }
+    localStorage.setItem("blog_id", id);
+    this.props.history.push("/BlogDetails");
+  };
   render() {
     return (
       <div>
@@ -64,57 +64,66 @@ export default class BlogList extends Component {
               </Col>
               <Col md={9} lg={9} xl={9} className="news-list-details">
                 <Row>
-                  {
-                    this.state.news_list.map((data) => {
-                      return (
-                        <Col md={4} lg={4} xl={4}>
-                          <div className="News_Blog_Card">
-                            <Card>
-                              <Card.Img
-                                variant="top"
-                                src={data.image_address}
-                              />
-                              <Card.Body>
-                                <Card.Title>
-                                  {data.heading}
-                                </Card.Title>
-                                <Card.Text>
-                                  <p>{data.description.slice(0, 60) + "...."}</p>
-                                </Card.Text>
-                              </Card.Body>
-                              <div className="News-Blog_Read">
-                                <span className="pb-2"> {Moment(data.entry_date).format("MM-DD-YYYY")}</span>
-                                <span onClick={() => { this.news_navigate(data.id) }} className="read-more-buton" >READ MORE</span>{" "}
-                              </div>
-                            </Card>
-                          </div>
-                        </Col>
-                      )
-                    })
-                  }
+                  {this.state.news_list.map((data) => {
+                    return (
+                      <Col md={4} lg={4} xl={4} key={data.id}>
+                        <div className="News_Blog_Card">
+                          <Card>
+                            <Card.Img variant="top" src={data.image_address} />
+                            <Card.Body>
+                              <Card.Title>{data.heading}</Card.Title>
+                              <Card.Text>
+                                {data.description.slice(0, 60) + "...."}
+                              </Card.Text>
+                            </Card.Body>
+                            <div className="News-Blog_Read">
+                              <span className="pb-2">
+                                {" "}
+                                {Moment(data.entry_date).format("MM-DD-YYYY")}
+                              </span>
+                              <span
+                                onClick={() => {
+                                  this.news_navigate(data.id);
+                                }}
+                                className="read-more-buton"
+                              >
+                                READ MORE
+                              </span>{" "}
+                            </div>
+                          </Card>
+                        </div>
+                      </Col>
+                    );
+                  })}
                 </Row>
               </Col>
               <Col md={3} lg={3} xl={3}>
                 <div className="sticky-top">
                   <div className="Recent-post-blog ">
                     <h3>Recent Blogs</h3>
-                    {
-                      this.state.recent_data.map((data) => {
-                        return (
-                          <div className="recent-post-image">
-                            <img
-                              className="img-fluid"
-                              src={data.image_address}
-                              alt="news"
-                            />
-                            <div className="Recent-post-heading">
-                              <h6 onClick={() => { this.news_navigate(data.id) }}>{data.heading}</h6>
-                              <span>{Moment(data.entry_date).format("MM-DD-YYYY")}</span>
-                            </div>
+                    {this.state.recent_data.map((data) => {
+                      return (
+                        <div className="recent-post-image" key={data.id}>
+                          <img
+                            className="img-fluid"
+                            src={data.image_address}
+                            alt="news"
+                          />
+                          <div className="Recent-post-heading">
+                            <h6
+                              onClick={() => {
+                                this.news_navigate(data.id);
+                              }}
+                            >
+                              {data.heading}
+                            </h6>
+                            <span>
+                              {Moment(data.entry_date).format("MM-DD-YYYY")}
+                            </span>
                           </div>
-                        )
-                      })
-                    }
+                        </div>
+                      );
+                    })}
                   </div>
                   <div className="Twitter-container">
                     <Facebook />

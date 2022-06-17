@@ -16,7 +16,10 @@ const NatureraiseNavigation = (props) => {
               </li>
               <li>Profile</li>
               <li>Career Page</li>
-              <li>Company</li>
+              <li>
+                {" "}
+                <Link to="/About">Company</Link>
+              </li>
             </ul>
           </div>
         </Col>
@@ -26,8 +29,13 @@ const NatureraiseNavigation = (props) => {
               <li>
                 <Link to="/Faq">FAQs</Link>
               </li>
-              <li>Blog</li>
-              <li>Contact Us</li>
+              <li>
+                {" "}
+                <Link to="/Blog">Blog</Link>
+              </li>
+              <li>
+                <Link to="/Contact">Contact Us</Link>
+              </li>
               <li>
                 <Link to="/PrivacyPolicy">Terms Of Use</Link>
               </li>
