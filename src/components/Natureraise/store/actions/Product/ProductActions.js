@@ -9,10 +9,16 @@ export const PRODUCT_DETAILS = "PRODUCT_DETAILS";
 export const PRODUCT_IMAGES_LIST = "PRODUCT_IMAGES_LIST";
 export const PRODUCT_MASTER_LIST = "PRODUCT_MASTER_LIST";
 export const ADD_TO_CART = "ADD_TO_CART";
+export const GET_CART_LIST = "GET_CART_LIST";
+export const RESET_CART = "RESET_CART";
+export const ADD_TO_CART_LOCAL = "ADD_TO_CART_LOCAL";
 export const PRODUCT_DESCRIPTION_LIST = "PRODUCT_DESCRIPTION_LIST";
 export const GET_PRODUCT_QUNATITY = "GET_PRODUCT_QUNATITY";
 export const ADD_TO_CART_INCREMENT = "ADD_TO_CART_INCREMENT";
 export const ADD_TO_CART_DECREMENT = "ADD_TO_CART_DECREMENT";
+export const ADD_TO_CART_DECREMENT_LOCAL = "ADD_TO_CART_DECREMENT_LOCAL";
+export const ADD_TO_CART_INCREMENT_LOCAL = "ADD_TO_CART_INCREMENT_LOCAL";
+export const REMOVE_TO_CART_ITEM_LOCAL = "REMOVE_TO_CART_ITEM_LOCAL";
 export const REMOVE_TO_CART_ITEM = "REMOVE_TO_CART_ITEM";
 export const COUPON_VALIDATION = "COUPON_VALIDATION";
 export const IS_LOADING = "IS_LOADING";
@@ -62,18 +68,23 @@ export const getCategory1 = () => {
 export const getCategory = () => {
   return async (dispatch) => {
     const Authorization = Config.getRequestToken();
-    let response = await fetch(Config.BaseUrl + "GetItemCategoryList/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      },
-      body: JSON.stringify({ Authorization }),
-    });
-    let responseJsonData = await response.json();
-    dispatch({
-      type: "PRODUCTCATEGORIES",
-      category_data_list: responseJsonData,
-    });
+
+    try {
+      let response = await fetch(Config.BaseUrl + "GetItemCategoryList/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        },
+        body: JSON.stringify({ Authorization }),
+      });
+      let responseJsonData = await response.json();
+      dispatch({
+        type: "PRODUCTCATEGORIES",
+        category_data_list: responseJsonData,
+      });
+    } catch (error) {
+      console.log(error);
+    }
     return true;
   };
 };
@@ -109,6 +120,7 @@ export const getItemListBySubCategory = (
           percentage
           uom
           item_size
+          item_color
           type_name
           id
           image_address
@@ -269,7 +281,7 @@ export const addtocart_decrement = (id) => {
 };
 export const remove_cart_item = (id) => {
   return function (dispatch) {
-    dispatch({ type: "REMOVE_TO_CART_ITEM", remove_item_id: id });
+    dispatch({ type: REMOVE_TO_CART_ITEM_LOCAL, id: id });
     dispatch({ type: "IS_LOADING", is_loading: false });
   };
 };
@@ -379,7 +391,7 @@ export const getProductDescriptionList1 = (product_id) => {
 export const validateCouponCode = (order_amount, coupon_code_value) => {
   return async (dispatch) => {
     let coupon_code_for = "1";
-    const Authorization = Config.getRequestToken();
+    const Authorization = localStorage.getItem("Authorization");
     const mutation = `mutation validateCouponCode($coupon_code_for: String, $order_amount: String, $coupon_code_value: String, $Authorization: String) {
       validateCouponCode(coupon_code_for:$coupon_code_for, order_amount:$order_amount, coupon_code_value:$coupon_code_value, Authorization:$Authorization){
           message,coupon_amount,max_cashback_amount,min_purchase_amount
@@ -404,19 +416,19 @@ export const validateCouponCode = (order_amount, coupon_code_value) => {
     })
       .then((response) => response.json())
       .then((responseText) => {
-        if (responseText.data.validateCouponCode["message"] === "SUCCESS") {
+        console.log(responseText);
+        const { coupon_amount, max_cashback_amount, message } =
+          responseText.data.validateCouponCode;
+        if (message === "SUCCESS") {
           dispatch({
             type: "COUPON_VALIDATION",
-            coupon_amount:
-              responseText.data.validateCouponCode["coupon_amount"],
+            coupon_amount,
           });
           dispatch({
             type: "SUCCESS_MESSAGE",
             success_title: "Successfully Applied",
           });
-        } else if (
-          responseText.data.validateCouponCode["message"] === "Minimum"
-        ) {
+        } else if (message === "Minimum") {
           dispatch({ type: "SUCCESS_MESSAGE", success_title: "Minimum" });
           dispatch({
             type: "ERROR_MESSAGE",
@@ -436,5 +448,180 @@ export const validateCouponCode = (order_amount, coupon_code_value) => {
         console.log(error);
       });
     return true;
+  };
+};
+
+// ADD To Cart in DB
+
+export const addtocartdb = (
+  id,
+  action_type,
+  message = "Item added to the cart"
+) => {
+  return async function (dispatch) {
+    dispatch({ type: "IS_LOADING", is_loading: true });
+    const Authorization = localStorage.getItem("Authorization");
+    const cart_type = "0";
+    const mutation = `mutation addCartList($Authorization: String, $id: ID, $action_type:String ,$cart_type:String ) {
+      addCartList(Authorization:$Authorization, id:$id, action_type:$action_type,  cart_type:$cart_type  ){
+        message
+      }
+  }`;
+
+    fetch(Config.BaseUrl + "graphql", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        query: mutation,
+        fetchPolicy: "no-cache",
+        variables: { Authorization, id, action_type, cart_type },
+      }),
+    })
+      .then((response) => response.json())
+      .then((responseText) => {
+        console.log(responseText);
+        if (responseText.data.addCartList["message"] === "SUCCESS") {
+          // this.clearText();
+          dispatch({
+            type: "SUCCESS_MESSAGE",
+            success_title: message,
+          });
+          dispatch(getCartList());
+        } else {
+          if (responseText.data.addCartList["message"] === null) {
+          } else {
+            //alert(responseText.data.addCartList['message'])
+          }
+        }
+      })
+      .catch((error) => {
+        //alert(error);
+        console.log(error);
+      });
+
+    dispatch({ type: "IS_LOADING", is_loading: false });
+  };
+};
+
+export const getCartList = () => {
+  return async function (dispatch) {
+    dispatch({ type: "IS_LOADING", is_loading: true });
+    const Authorization = localStorage.getItem("Authorization");
+    const query = gql`
+      query getCartList($Authorization: String) {
+        getCartList(Authorization: $Authorization) {
+          item_name
+          item_sub_category_id
+          retail_price
+          selling_price
+          percentage
+          uom
+          item_color
+          type_name
+          description
+          brand_name
+          id
+          cart_list
+          item_size
+          image_address
+          net_amount
+          total_amount
+          cart_count
+          generic_id
+          special_price
+          save_price
+        }
+      }
+    `;
+
+    Config.client
+      .query({
+        query: query,
+        fetchPolicy: "no-cache",
+        variables: { Authorization },
+      })
+      .then((result) => {
+        // this.setState({ isLoadingComplete: false });
+        dispatch({
+          type: GET_CART_LIST,
+          data: result.data.getCartList,
+        });
+        dispatch({
+          type: "SUCCESS_MESSAGE",
+          success_title: "CART_SUCCESS",
+        });
+      })
+      .catch((error) => {
+        //alert(error);
+        console.log(error);
+      });
+
+    dispatch({ type: "IS_LOADING", is_loading: false });
+  };
+};
+
+export const addToCartLocal = (id) => (dispatch) => {
+  dispatch({
+    type: ADD_TO_CART_LOCAL,
+    id,
+  });
+  dispatch({ type: "IS_LOADING", is_loading: false });
+};
+
+export const addToCartIncrementLocal = (id) => (dispatch) => {
+  dispatch({
+    type: ADD_TO_CART_INCREMENT_LOCAL,
+    id,
+  });
+  dispatch({ type: "IS_LOADING", is_loading: false });
+};
+
+export const addToCartDecrementLocal = (id) => (dispatch) => {
+  dispatch({
+    type: ADD_TO_CART_DECREMENT_LOCAL,
+    id,
+  });
+  dispatch({ type: "IS_LOADING", is_loading: false });
+};
+
+export const syncLocalCart = (cartArray) => async (dispatch) => {
+  const Authorization = localStorage.getItem("Authorization");
+  dispatch({ type: "IS_LOADING", is_loading: true });
+  const form_Data1 = JSON.stringify({
+    Authorization,
+  });
+  const cart_list = cartArray;
+  const formData = new FormData();
+  formData.append("cart_list", JSON.stringify({ cart_list }));
+  formData.append("json", form_Data1);
+
+  console.log(formData.getAll("json"));
+  console.log(formData.getAll("cart_list"));
+
+  fetch(Config.BaseUrl + "AddCartArray", {
+    method: "POST",
+    headers: {
+      // "Access-Control-Allow-Origin": "*",
+      // "Content-Type": "multipart/form-data",
+    },
+    body: formData,
+  })
+    .then((res) => res.json())
+    .then((resJson) => {
+      console.log(resJson);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+  dispatch({ type: "IS_LOADING", is_loading: false });
+};
+
+export const resetCart = () => {
+  return {
+    type: RESET_CART,
   };
 };

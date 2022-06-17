@@ -9,6 +9,12 @@ import {
   PRODUCT_IMAGES_LIST,
   PRODUCT_DESCRIPTION_LIST,
   ADD_TO_CART,
+  ADD_TO_CART_LOCAL,
+  ADD_TO_CART_INCREMENT_LOCAL,
+  ADD_TO_CART_DECREMENT_LOCAL,
+  REMOVE_TO_CART_ITEM_LOCAL,
+  GET_CART_LIST,
+  RESET_CART,
   GET_PRODUCT_QUNATITY,
   ADD_TO_CART_INCREMENT,
   ADD_TO_CART_DECREMENT,
@@ -33,6 +39,14 @@ const initialState = {
   product_quantity: "",
   coupon_validation_amount: 0,
   is_loading: true,
+
+  cart: {
+    items: [],
+    save_amount: 0,
+    order_amount: 0,
+    mrp_amount: 0,
+    coupon_validation_amount: 0,
+  },
 };
 
 export default (state = initialState, action) => {
@@ -194,11 +208,11 @@ export default (state = initialState, action) => {
 
     case GET_PRODUCT_QUNATITY: {
       let product_quanity_id = action.get_Product_quantity_id;
-      let exit_product_quanity = state.cart_product_list.find(
+      let exit_product_quanity = state.cart.items.find(
         (item) => item.id === product_quanity_id
       );
       if (exit_product_quanity) {
-        let product_quanity_data = exit_product_quanity.card_quantity;
+        let product_quanity_data = exit_product_quanity.cart_list;
         return {
           ...state,
           product_quantity: product_quanity_data,
@@ -274,7 +288,7 @@ export default (state = initialState, action) => {
 
     case REMOVE_TO_CART_ITEM: {
       let itemToRemove = state.cart_product_list.find(
-        (item) => item.id === action.remove_item_id
+        (item) => item.id === action.id
       );
 
       let new_items = state.cart_product_list.filter(
@@ -300,11 +314,230 @@ export default (state = initialState, action) => {
       };
     }
     case COUPON_VALIDATION: {
+      const { coupon_amount } = action;
+      const new_order_amount = +state.cart.order_amount - coupon_amount;
       return {
         ...state,
-        coupon_validation_amount: action.coupon_amount,
+        cart: {
+          ...state.cart,
+          coupon_validation_amount: coupon_amount,
+          order_amount: new_order_amount,
+        },
       };
     }
+
+    case GET_CART_LIST: {
+      const { data } = action;
+      console.log(data);
+      let order_amount = 0;
+      let new_save_amount = 0;
+      let new_mrp_amount = 0;
+      data.forEach((item) => {
+        order_amount +=
+          +item.total_amount - +state.cart.coupon_validation_amount;
+
+        new_save_amount +=
+          item.save_price === "0.00" ? 0 : +item.save_price * +item.cart_list;
+        new_mrp_amount += +item.retail_price * +item.cart_list;
+      });
+      return {
+        ...state,
+        cart: {
+          ...state.cart,
+          items: data,
+          order_amount,
+          save_amount: new_save_amount,
+          mrp_amount: new_mrp_amount,
+        },
+      };
+    }
+
+    case ADD_TO_CART_LOCAL: {
+      const productId = action.id;
+
+      const extItem = state.cart.items.find(
+        (product) => product.id === productId
+      );
+
+      let order_amount = 0;
+      let new_save_amount = 0;
+      let new_mrp_amount = 0;
+      if (extItem) {
+        const productIdx = state.cart.items.findIndex(
+          (item) => item.id === productId
+        );
+        const items = [...state.cart.items];
+
+        items[productIdx].cart_list = +items[productIdx].cart_list + 1;
+        items[productIdx].total_amount =
+          items[productIdx].special_price === "0.00"
+            ? +items[productIdx].selling_price * +items[productIdx].cart_list
+            : items[productIdx].special_price * +items[productIdx].cart_list;
+        console.log(items[productIdx].total_amount);
+
+        order_amount = +items[productIdx].total_amount * 1;
+        new_save_amount =
+          +state.cart.save_amount + +items[productIdx].save_price * 1;
+
+        new_mrp_amount =
+          +state.cart.mrp_amount + +items[productIdx].retail_price * 1;
+        console.log(order_amount, new_save_amount, new_mrp_amount);
+
+        return {
+          ...state,
+          cart: {
+            ...state.cart,
+            items: items,
+            order_amount,
+            save_amount: new_save_amount,
+            mrp_amount: new_mrp_amount,
+          },
+        };
+      }
+
+      const item = state.product_master_list.find(
+        (product) => product.id === productId
+      );
+
+      item.cart_list = +item.cart_list + 1;
+      item.total_amount =
+        item.special_price === "0.00"
+          ? +item.selling_price
+          : +item.special_price;
+
+      order_amount = +state.cart.order_amount + +item.total_amount * 1;
+      new_save_amount = +state.cart.save_amount + +item.save_price * 1;
+      new_mrp_amount = +state.cart.mrp_amount + +item.retail_price * 1;
+      console.log(order_amount, new_save_amount, new_mrp_amount);
+
+      return {
+        ...state,
+        cart: {
+          ...state.cart,
+          items: [...state.cart.items, item],
+          order_amount,
+          save_amount: new_save_amount,
+          mrp_amount: new_mrp_amount,
+        },
+      };
+    }
+
+    case ADD_TO_CART_INCREMENT_LOCAL: {
+      const { id } = action;
+
+      const productIdx = state.cart.items.findIndex((item) => item.id === id);
+      const items = [...state.cart.items];
+
+      items[productIdx].cart_list = +items[productIdx].cart_list + 1;
+      items[productIdx].total_amount =
+        items[productIdx].special_price === "0.00"
+          ? +items[productIdx].selling_price * +items[productIdx].cart_list
+          : items[productIdx].special_price * +items[productIdx].cart_list;
+
+      let order_amount = 0;
+      let new_save_amount = 0;
+      let new_mrp_amount = 0;
+      order_amount = +items[productIdx].total_amount * 1;
+      new_save_amount =
+        +state.cart.save_amount + +items[productIdx].save_price * 1;
+
+      new_mrp_amount =
+        +state.cart.mrp_amount + +items[productIdx].retail_price * 1;
+      console.log(order_amount, new_save_amount, new_mrp_amount);
+
+      return {
+        ...state,
+        cart: {
+          ...state.cart,
+          items: items,
+          order_amount,
+          save_amount: new_save_amount,
+          mrp_amount: new_mrp_amount,
+        },
+      };
+    }
+
+    case ADD_TO_CART_DECREMENT_LOCAL: {
+      const { id } = action;
+
+      const product = state.cart.items.find((item) => item.id === id);
+      const productIdx = state.cart.items.findIndex((item) => item.id === id);
+      let items = [...state.cart.items];
+
+      items[productIdx].cart_list = +items[productIdx].cart_list - 1;
+      items[productIdx].total_amount =
+        items[productIdx].special_price === "0.00"
+          ? +items[productIdx].selling_price * +items[productIdx].cart_list
+          : items[productIdx].special_price * +items[productIdx].cart_list;
+
+      let order_amount = 0;
+      let new_save_amount = 0;
+      let new_mrp_amount = 0;
+      order_amount = +items[productIdx].total_amount * 1;
+      new_save_amount =
+        +state.cart.save_amount - +items[productIdx].save_price * 1;
+
+      new_mrp_amount =
+        +state.cart.mrp_amount - +items[productIdx].retail_price * 1;
+      console.log(order_amount, new_save_amount, new_mrp_amount);
+
+      if (
+        items[productIdx].cart_list === "0" ||
+        items[productIdx].cart_list === 0
+      ) {
+        items = items.filter((item) => item.id !== id);
+        order_amount -=
+          product.special_price === "0.00"
+            ? product.selling_price
+            : product.special_price;
+      }
+
+      return {
+        ...state,
+        cart: {
+          ...state.cart,
+          items: items,
+          order_amount,
+          save_amount: new_save_amount,
+          mrp_amount: new_mrp_amount,
+        },
+      };
+    }
+
+    case REMOVE_TO_CART_ITEM_LOCAL: {
+      let product = state.cart.items.find((item) => item.id === action.id);
+      console.log(product);
+
+      let items = state.cart.items.filter((item) => product.id !== item.id);
+
+      let order_amount = 0;
+      let new_save_amount = 0;
+      let new_mrp_amount = 0;
+      order_amount -=
+        product.special_price === "0.00"
+          ? product.selling_price
+          : product.special_price;
+      new_save_amount = +state.cart.save_amount - +product.save_price * 1;
+
+      new_mrp_amount = +state.cart.mrp_amount - +product.retail_price * 1;
+
+      return {
+        ...state,
+        cart: {
+          ...state.cart,
+          items: items,
+          order_amount,
+          save_amount: new_save_amount,
+          mrp_amount: new_mrp_amount,
+        },
+      };
+    }
+
+    case RESET_CART:
+      return {
+        ...state,
+        cart: initialState.cart,
+      };
   }
 
   return state;

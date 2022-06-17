@@ -1,109 +1,174 @@
-import Config from '../../../../../Config';
+import { min } from "moment";
+import Config from "../../../../../Config";
+import { syncLocalCart, resetCart } from "../Product/ProductActions";
 
+export const USER_REGISTER = "USER_REGISTER";
+export const SUCCESS_MESSAGE = "SUCCESS_MESSAGE";
+export const ERROR_MESSAGE = "ERROR_MESSAGE";
+export const SET_USER = "SET_USER";
+export const LOGOUT_USER = "LOGOUT_USER";
+export const REFRESH_TOKEN = "REFRESH_TOKEN";
 
-export const USER_REGISTER="USER_REGISTER";
-export const SUCCESS_MESSAGE="SUCCESS_MESSAGE";
-export const ERROR_MESSAGE="ERROR_MESSAGE";
+export const empty_message = () => {
+  return function (dispatch) {
+    dispatch({ type: "SUCCESS_MESSAGE", success_title: "" });
+    dispatch({ type: "ERROR_MESSAGE", error_title: "" });
+    return true;
+  };
+};
 
+export const set_user = (user) => (dispath) => {
+  dispath({
+    type: SET_USER,
+    data: user,
+  });
+};
+export const logout_user = () => (dispath) => {
+  dispath({
+    type: LOGOUT_USER,
+  });
+};
 
-export const empty_message=()=> {
-    return function(dispatch) {
-        dispatch({ type: "SUCCESS_MESSAGE", success_title: "" },);
-        dispatch({ type: "ERROR_MESSAGE", error_title: "" }); 
-        return true;
-    };
-  }
-
-export const register=(first_name,last_name,mobile_number1,email_id,password,client_ip)=>dispatch=>
-{
+export const register =
+  (first_name, last_name, mobile_number1, email_id, password, client_ip) =>
+  (dispatch) => {
     const request_token = Config.getRequestToken();
-       const mutation = `mutation SignUpAction($email_id:String, $mobile_number1:String, $first_name:String, $last_name:String,  
+    const mutation = `mutation SignUpAction($email_id:String, $mobile_number1:String, $first_name:String, $last_name:String,  
                                      $password:String, $request_token:String, $client_ip:String ) {
       SignUpAction(email_id:$email_id, mobile_number1:$mobile_number1, first_name:$first_name, last_name:$last_name, password:$password ,
         request_token:$request_token, client_ip:$client_ip){
           message
       }
   }`;
-        fetch(Config.BaseUrl + 'graphql', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                query: mutation,
-                variables: { email_id, mobile_number1, first_name, last_name, password, request_token, client_ip },
-            })
-        }).then(response => response.json())
-       
-            .then(responseText => {
-                
-                if (responseText.data.SignUpAction['message'] === "SUCCESS") {
-                    dispatch({ type: "SUCCESS_MESSAGE", success_title: responseText.data.SignUpAction['message'] },);
-                }
-                else if (responseText.data.SignUpAction['message'] === "0") {
-                    dispatch({ type: "SUCCESS_MESSAGE", success_title: responseText.data.SignUpAction['message'] },);
-                }
-                else {
-                    dispatch({ type: "SUCCESS_MESSAGE", success_title: "error" },);
-                    dispatch({ type: "ERROR_MESSAGE", error_title: "Please try again later..." });
-                }
-                //return responseText;
-            }).catch((error) => {
-                dispatch({ type: "SUCCESS_MESSAGE", success_title: "catch error" },);
-                dispatch({ type: "ERROR_MESSAGE", error_title: error});
-                //return '';
-            });
-            return Promise.resolve();
+    fetch(Config.BaseUrl + "graphql", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        query: mutation,
+        variables: {
+          email_id,
+          mobile_number1,
+          first_name,
+          last_name,
+          password,
+          request_token,
+          client_ip,
+        },
+      }),
+    })
+      .then((response) => response.json())
+
+      .then((responseText) => {
+        if (responseText.data.SignUpAction["message"] === "SUCCESS") {
+          dispatch({
+            type: "SUCCESS_MESSAGE",
+            success_title: responseText.data.SignUpAction["message"],
+          });
+        } else if (responseText.data.SignUpAction["message"] === "0") {
+          dispatch({
+            type: "SUCCESS_MESSAGE",
+            success_title: responseText.data.SignUpAction["message"],
+          });
+        } else {
+          dispatch({ type: "SUCCESS_MESSAGE", success_title: "error" });
+          dispatch({
+            type: "ERROR_MESSAGE",
+            error_title: "Please try again later...",
+          });
+        }
+        //return responseText;
+      })
+      .catch((error) => {
+        dispatch({ type: "SUCCESS_MESSAGE", success_title: "catch error" });
+        dispatch({ type: "ERROR_MESSAGE", error_title: error });
+        //return '';
+      });
+    return Promise.resolve();
   };
 
-
-
-
-  export const SignInAction=(username,password,client_ip)=>dispatch=>
-{
+export const SignInAction =
+  (username, password, client_ip, localCart) => (dispatch) => {
     const request_token = Config.getRequestToken();
-        const mutation = `mutation SignInAction($username:String, $password:String, $client_ip:String, $request_token:String) {
+    const mutation = `mutation SignInAction($username:String, $password:String, $client_ip:String, $request_token:String) {
             SignInAction(username:$username, password:$password, client_ip:$client_ip, request_token:$request_token){
           message,first_name,last_name,token,image_address,mobile_number1,email_id
       }
   }`;
 
-        fetch(Config.BaseUrl + 'graphql', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                query: mutation,
-                variables: { username, password, client_ip, request_token },
-            })
-        }).then(response => response.json())
-            .then(responseText => {
-                if (responseText.data.SignInAction['message'] === "SUCCESS") {
-                    dispatch({ type: "SUCCESS_MESSAGE", success_title: responseText.data.SignInAction['message'] },);
-                    localStorage.setItem('first_name', responseText.data.SignInAction['first_name']);
-                    localStorage.setItem('last_name', responseText.data.SignInAction['last_name']);
-                    localStorage.setItem('mobile_number1', responseText.data.SignInAction['mobile_number1']);
-                    localStorage.setItem('email_id', responseText.data.SignInAction['email_id']);
-                    localStorage.setItem('Authorization', responseText.data.SignInAction['token']);
-                    localStorage.setItem('image_address', responseText.data.SignInAction['image_address']);
-                }else {
-                    dispatch({ type: "ERROR_MESSAGE", error_title: "Invalid Crediental" });
-                }
-            }).catch((error) => {
-                dispatch({ type: "ERROR_MESSAGE", error_title: "error" });
+    fetch(Config.BaseUrl + "graphql", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        query: mutation,
+        variables: { username, password, client_ip, request_token },
+      }),
+    })
+      .then((response) => response.json())
+      .then((responseText) => {
+        console.log(responseText);
+        if (responseText.data.SignInAction["message"] === "SUCCESS") {
+          dispatch({
+            type: "SUCCESS_MESSAGE",
+            success_title: responseText.data.SignInAction["message"],
+          });
+          localStorage.setItem(
+            "first_name",
+            responseText.data.SignInAction["first_name"]
+          );
+          localStorage.setItem(
+            "last_name",
+            responseText.data.SignInAction["last_name"]
+          );
+          localStorage.setItem(
+            "mobile_number1",
+            responseText.data.SignInAction["mobile_number1"]
+          );
+          localStorage.setItem(
+            "email_id",
+            responseText.data.SignInAction["email_id"]
+          );
+          localStorage.setItem(
+            "Authorization",
+            responseText.data.SignInAction["token"]
+          );
+          localStorage.setItem(
+            "image_address",
+            responseText.data.SignInAction["image_address"]
+          );
 
-            });
-            return Promise.resolve();
+          const date = new Date();
+          const currentTimePulsNine = new Date(
+            date.getTime() + 11 * 60000
+          ).toISOString();
+          const data = responseText.data.SignInAction;
+          data.expiryTime = currentTimePulsNine;
+
+          localStorage.setItem("expiryTime", data.expiryTime);
+
+          dispatch(set_user(responseText.data.SignInAction));
+          console.log(localCart);
+          dispatch(syncLocalCart(localCart));
+        } else {
+          dispatch({
+            type: "ERROR_MESSAGE",
+            error_title: "Invalid Crediental",
+          });
+        }
+      })
+      .catch((error) => {
+        dispatch({ type: "ERROR_MESSAGE", error_title: "error" });
+      });
+    return Promise.resolve();
   };
 
-
-
-
-  export const CustomerUpdation=(first_name, last_name, mobile_number1, email_id)=>dispatch=>
-  {
+export const CustomerUpdation =
+  (first_name, last_name, mobile_number1, email_id) => (dispatch) => {
     const Authorization = localStorage.getItem("Authorization");
 
     const mutation = `mutation CustomerUpdation($email_id:String, $mobile_number1:String, $first_name:String, $last_name:String,  
@@ -135,24 +200,64 @@ export const register=(first_name,last_name,mobile_number1,email_id,password,cli
 
       .then((responseText) => {
         if (responseText.data.CustomerUpdation["message"] === "SUCCESS") {
-        dispatch({ type: "SUCCESS_MESSAGE", success_title: "CUSTOMER_PROFILE_UPDATE" });
+          dispatch({
+            type: "SUCCESS_MESSAGE",
+            success_title: "CUSTOMER_PROFILE_UPDATE",
+          });
 
-        
-
-
-          localStorage.setItem('first_name',first_name);
-          localStorage.setItem('last_name',last_name);
-          localStorage.setItem('mobile_number1',mobile_number1);
-          localStorage.setItem('email_id',email_id);
-       
+          localStorage.setItem("first_name", first_name);
+          localStorage.setItem("last_name", last_name);
+          localStorage.setItem("mobile_number1", mobile_number1);
+          localStorage.setItem("email_id", email_id);
         } else {
-            dispatch({ type: "ERROR_MESSAGE", error_title: responseText.data.CustomerUpdation["message"]});
+          dispatch({
+            type: "ERROR_MESSAGE",
+            error_title: responseText.data.CustomerUpdation["message"],
+          });
         }
       })
       .catch((error) => {
-        dispatch({ type: "ERROR_MESSAGE", error_title: error});
-        
-     
+        dispatch({ type: "ERROR_MESSAGE", error_title: error });
       });
-              return Promise.resolve();
-    };
+    return Promise.resolve();
+  };
+
+export const refreshAuthToken = () => async (dispatch) => {
+  const Authorization = localStorage.getItem("Authorization");
+  const form_Data1 = JSON.stringify({ Authorization });
+
+  fetch(Config.BaseUrl + "RefreshToken", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+    },
+    body: form_Data1,
+  })
+    .then((res) => res.json())
+    .then((resJson) => {
+      if (resJson.message !== "SUCCESS")
+        throw new Error("Something Went wrong");
+
+      const date = new Date();
+      const currentTimePulsNine = new Date(
+        date.getTime() + 8 * 60000
+      ).toISOString();
+      const expiryTime = currentTimePulsNine;
+
+      localStorage.setItem("expiryTime", expiryTime);
+      localStorage.setItem("Authorization", resJson.token);
+      console.log(resJson);
+      dispatch({
+        type: REFRESH_TOKEN,
+        data: {
+          expiryTime,
+          token: resJson.token,
+        },
+      });
+    })
+    .catch((err) => {
+      localStorage.clear();
+      dispatch(resetCart());
+      dispatch(logout_user());
+    });
+};
