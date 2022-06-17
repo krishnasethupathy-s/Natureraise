@@ -35,7 +35,7 @@ const COLOR_DATA = [
   },
 ];
 
-class ProductDescription extends Component {
+class ProductDescription1 extends Component {
   constructor(props) {
     super(props);
     this.onStarClick = this.onStarClick.bind(this);
@@ -50,41 +50,10 @@ class ProductDescription extends Component {
     this.Authorization = localStorage.getItem("Authorization");
     this.unique_id = "";
     this.uniqueColors = [];
-    this.props.product_master_list.map((prod) => {
-      if (this.uniqueColors.indexOf(prod.item_color) === -1) {
-        this.uniqueColors.push(prod.item_color);
-      }
-    });
-
-    this.uniqueSizes = [];
-    this.props.product_master_list.map((prod) => {
-      if (this.uniqueSizes.indexOf(prod.item_size) === -1) {
-        this.uniqueSizes.push(prod.item_size);
-      }
-    });
-    this.uniqueSizes = this.uniqueSizes.sort(function (a, b) {
-      return a - b;
-    });
-    this.size = this.uniqueSizes[0];
     this.size_colors = [];
-
-    this.props.product_master_list.map((prod) => {
-      if (prod.item_size === this.size) {
-        this.size_colors.push(prod.item_color);
-        // this.color = prod.item_color;
-        // return true
-      }
-    });
-    this.color = this.size_colors.length > 0 ? this.size_colors[0] : "";
-
-    this.props.product_master_list.some((prod) => {
-      if (prod.item_size === this.size && prod.item_color === this.color) {
-        // localStorage.setItem("product_id", prod.id);
-        this.unique_id = prod.id;
-        // this.setState({ unique_id: prod.id });
-        return true;
-      }
-    });
+    this.uniqueSizes = [];
+    this.size = "";
+    this.color = "";
   }
 
   productId = this.props.match.params.id;
@@ -100,6 +69,40 @@ class ProductDescription extends Component {
 
   componentDidUpdate = async (prevProps) => {
     if (this.props.success_message === "PRODUCT_MASTER_LIST_SUCCESS") {
+      this.props.product_master_list.map((prod) => {
+        if (this.uniqueColors.indexOf(prod.item_color) === -1) {
+          this.uniqueColors.push(prod.item_color);
+        }
+      });
+
+      this.props.product_master_list.map((prod) => {
+        if (this.uniqueSizes.indexOf(prod.item_size) === -1) {
+          this.uniqueSizes.push(prod.item_size);
+        }
+      });
+      this.uniqueSizes = this.uniqueSizes.sort(function (a, b) {
+        return a - b;
+      });
+      this.size = this.uniqueSizes[0];
+
+      this.props.product_master_list.map((prod) => {
+        if (prod.item_size === this.size) {
+          this.size_colors.push(prod.item_color);
+          // this.color = prod.item_color;
+          // return true
+        }
+      });
+      this.color = this.size_colors.length > 0 ? this.size_colors[0] : "";
+
+      this.props.product_master_list.some((prod) => {
+        if (prod.item_size === this.size && prod.item_color === this.color) {
+          // localStorage.setItem("product_id", prod.id);
+          this.unique_id = prod.id;
+          // this.setState({ unique_id: prod.id });
+          return true;
+        }
+      });
+
       this.props.dispatch({ type: "IS_LOADING", is_loading: false });
       this.props.dispatch(ProductActions.empty_message());
       this.props.dispatch(
@@ -120,6 +123,12 @@ class ProductDescription extends Component {
 
     if (this.props.cart_message === "CART_ITEM_UPDATED") {
       this.props.dispatch(ProductActions.getCartList());
+      this.props.dispatch(ProductActions.empty_message());
+    }
+    if (this.props.success_message === "CART_SUCCESS") {
+      this.props.dispatch(
+        ProductActions.getProductquantity(this.productId, this.unique_id)
+      );
       this.props.dispatch(ProductActions.empty_message());
     }
   };
@@ -520,6 +529,7 @@ class ProductDescription extends Component {
                           placeholder="Pincode"
                           value={this.state.pincode}
                           onChange={this.pinhandleChange}
+                          disabled={this.state.pincode_label === "Change"}
                         />
                         <div className="product_delivery_map">
                           <i
@@ -853,4 +863,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, null)(ProductDescription);
+export default connect(mapStateToProps, null)(ProductDescription1);
