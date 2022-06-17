@@ -9,6 +9,7 @@ import { connect } from "react-redux";
 import PageLoading from "../constants/PageLoader/PageLoading";
 import * as UserActions from "../Natureraise/store/actions/User/UserActions";
 import { toast } from "react-toastify";
+import { getCartList } from "../Natureraise/store/actions/Product/ProductActions";
 
 class SignIn extends Component {
   constructor(props) {
@@ -56,13 +57,21 @@ class SignIn extends Component {
   handleSubmit = async (e) => {
     e.preventDefault();
     const { username, password, client_ip } = this.state;
+
+    const localCart = this.props.cart_items.map((item) => ({
+      item_id: item.id,
+      quantity: item.cart_list,
+    }));
+
     await this.props.dispatch(
-      UserActions.SignInAction(username, password, client_ip)
+      UserActions.SignInAction(username, password, client_ip, localCart)
     );
   };
 
   navigate_function = () => {
-    this.props.history.push("/");
+    const { state } = this.props.location;
+    console.log(state);
+    this.props.history.replace("/", {});
   };
 
   render() {
@@ -177,6 +186,7 @@ const mapStateToProps = (state) => {
   return {
     message: state.UserActions.message,
     error_msg: state.UserActions.error_msg,
+    cart_items: state.ProductActions.cart.items,
   };
 };
 // export default Addproducts;
