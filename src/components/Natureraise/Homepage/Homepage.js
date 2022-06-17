@@ -63,40 +63,41 @@ class HomePage extends Component {
       infinite: false,
       speed: 500,
       slidesToShow: 5,
-      slidesToScroll: 4,
-      initialSlide: 0,
+      slidesToScroll: 1,
       responsive: [
         {
           breakpoint: 1200,
           settings: {
-            slidesToShow: 4,
-            slidesToScroll: 3,
-            infinite: true,
+            slidesToShow: 3,
+            slidesToScroll: 1,
+            // infinite: true,
             dots: false,
           },
         },
         {
           breakpoint: 1450,
           settings: {
-            slidesToShow: 4,
-            slidesToScroll: 3,
-            infinite: true,
+            slidesToShow: 5,
+            slidesToScroll: 1,
+            // infinite: true,
             dots: false,
+            centerPadding: "30px",
           },
         },
         {
-          breakpoint: 600,
+          breakpoint: 768,
           settings: {
-            slidesToShow: 1,
-            slidesToScroll: 2,
-            initialSlide: 2,
+            slidesToShow: 2,
+            slidesToScroll: 1,
+            // infinite: true,
           },
         },
         {
-          breakpoint: 480,
+          breakpoint: 576,
           settings: {
             slidesToShow: 1,
             slidesToScroll: 1,
+            // infinite: true,
           },
         },
       ],
@@ -106,33 +107,45 @@ class HomePage extends Component {
       infinite: false,
       speed: 500,
       slidesToShow: 4,
-      slidesToScroll: 4,
-      initialSlide: 0,
+      slidesToScroll: 1,
+
       responsive: [
         {
           breakpoint: 1200,
           settings: {
-            slidesToShow: 4,
-            slidesToScroll: 3,
-            infinite: true,
+            slidesToShow: 2,
+            slidesToScroll: 1,
+            // infinite: true,
             dots: false,
           },
         },
         {
           breakpoint: 1450,
           settings: {
-            slidesToShow: 3,
-            slidesToScroll: 3,
-            infinite: true,
+            slidesToShow: 4,
+            slidesToScroll: 1,
+
+            // infinite: true,
             dots: false,
           },
         },
+
+        {
+          breakpoint: 768,
+          settings: {
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            // infinite: true,
+            dots: false,
+          },
+        },
+
         {
           breakpoint: 600,
           settings: {
-            slidesToShow: 1,
-            slidesToScroll: 2,
-            initialSlide: 2,
+            slidesToShow: 2,
+            slidesToScroll: 1,
+            // infinite: true,
           },
         },
         {
@@ -140,6 +153,7 @@ class HomePage extends Component {
           settings: {
             slidesToShow: 1,
             slidesToScroll: 1,
+            // infinite: true,
           },
         },
       ],
@@ -157,7 +171,8 @@ class HomePage extends Component {
                 <Carousel.Item key={idx}>
                   <img
                     className="d-block w-100 banner-image-size"
-                    src="https://cdn.shopify.com/s/files/1/2980/5140/articles/Main_Banner_Design_1800x_a5ed6c61-aa26-4e7d-87d7-8eb95d63f1fd_2x.jpg?v=1610512794"
+                    src={image}
+                    // src="https://cdn.shopify.com/s/files/1/2980/5140/articles/Main_Banner_Design_1800x_a5ed6c61-aa26-4e7d-87d7-8eb95d63f1fd_2x.jpg?v=1610512794"
                     alt="natureraise"
                   />
                 </Carousel.Item>
@@ -197,7 +212,9 @@ class HomePage extends Component {
                       (x) => {
                         return (
                           <ProductCard
+                            className={`mr-2`}
                             key={x.id}
+                            id={x.id}
                             percentage={x.percentage}
                             navigate_function={() => {
                               this.navigate_function(x);
@@ -318,7 +335,9 @@ class HomePage extends Component {
                       (x) => {
                         return (
                           <ProductCard
+                            className={`mr-2`}
                             key={x.id}
+                            id={x.id}
                             percentage={x.percentage}
                             navigate_function={() => {
                               this.navigate_function(x);
@@ -371,14 +390,16 @@ class HomePage extends Component {
                   />
                 </div>
               </Col>
-              <Col md={6} xs={12} xl={10}>
+              <Col md={9} xs={12} xl={10}>
                 <div className="product-card-mobile">
                   <Slider {...settings}>
                     {(this.props.product_list_data.slice(0, 12) || []).map(
                       (x, index) => {
                         return (
                           <ProductCard
+                            className={`mr-2`}
                             key={index}
+                            id={x.id}
                             percentage={x.percentage}
                             navigate_function={() => {
                               this.navigate_function(x);
