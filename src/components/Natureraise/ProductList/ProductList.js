@@ -16,6 +16,7 @@ import {
 import { connect } from "react-redux";
 import * as ProductActions from "../store/actions/Product/ProductActions";
 import { Redirect } from "react-router-dom";
+import * as qs from "query-string";
 
 import ProductCard from "../Common/Components/ProductCard/ProductCard";
 import PageLoading from "../../constants/PageLoader/PageLoading";
@@ -36,9 +37,32 @@ class ProductList extends Component {
       // categories_id: localStorage.getItem("categories_id"),
       categories_id: this.props.match.params.id,
       isLoading: true,
+
+      // resetting
+      discountSelect: Array(PRODUCT_DISCOUNT.length).fill(false),
+      ratingSelect: Array(CUSTOMER_RATING.length).fill(false),
+      filtersSelect: Array(SLIDER_IMAGE.length).fill(false),
+
+      //filters
+      slider_range: 1000,
+      sort: 1,
+      discount: [],
+      ratings: [],
+      filters: [],
     };
   }
+
+  setInitaltQueryParams = () => {
+    const qParams = qs.parse(this.props.location.search);
+    console.log(qParams);
+    if (!qParams) {
+      this.addQueryParam();
+      return;
+    }
+  };
   componentDidMount() {
+    console.log(this.state.discountSelect);
+
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     setTimeout(() => {
       this.props.dispatch({ type: "IS_LOADING", is_loading: false });
@@ -62,7 +86,17 @@ class ProductList extends Component {
   }
   getSnapshotBeforeUpdate(prevProps, prevState) {
     if (prevState.categories_id !== this.props.match.params.id) {
-      this.setState({ categories_id: this.props.match.params.id });
+      this.setState({
+        categories_id: this.props.match.params.id,
+        slider_range: 1000,
+        sort: 1,
+        discount: [],
+        filters: [],
+        ratings: [],
+        discountSelect: Array(PRODUCT_DISCOUNT.length).fill(false),
+        ratingSelect: Array(CUSTOMER_RATING.length).fill(false),
+        filtersSelect: Array(SLIDER_IMAGE.length).fill(false),
+      });
       return true;
     } else {
       return false;
@@ -70,6 +104,7 @@ class ProductList extends Component {
   }
   componentDidUpdate(prevProps, prevState, snapshot) {
     const { page_number, data_limit, item_name, categories_id } = this.state;
+    console.log(this.state.discountSelect);
 
     if (snapshot) {
       this.props.dispatch(
@@ -81,6 +116,9 @@ class ProductList extends Component {
         )
       );
     }
+
+    console.log("Discount ", this.state.discount);
+    console.log(qs.parse(this.props.location.search));
   }
 
   onRating_function = () => {
@@ -90,6 +128,8 @@ class ProductList extends Component {
   property_data_fun = (event) => {
     const event_value = event.target.value.toString();
     this.setState({ categories_value: event_value });
+    this.setState({ sort: event_value });
+    setTimeout(this.addQueryParam, 500);
   };
   wishlistfun = () => {
     this.setState({ wishcolor: "red" });
@@ -111,8 +151,100 @@ class ProductList extends Component {
     this.props.dispatch(ProductActions.addtocart(cart_id));
   };
 
+  // Filters
+
+  changeRangeValue = (e) => {
+    console.log(e.target.value);
+    this.setState({ slider_range: e.target.value });
+    setTimeout(() => this.addQueryParam(), 500);
+  };
+
+  discountHandleChange = (evt, eIdx) => {
+    const isChecked = evt.target.checked;
+    const value = evt.target.value;
+    console.log(isChecked, value);
+    if (isChecked) {
+      this.setState((prevState) => ({
+        discount: [...prevState.discount, value],
+        discountSelect: prevState.discountSelect.map((discount, idx) =>
+          idx === eIdx ? true : discount
+        ),
+      }));
+    } else {
+      this.setState((prevState) => ({
+        discount: prevState.discount.filter((item) => item !== value),
+        discountSelect: prevState.discountSelect.map((discount, idx) =>
+          idx === eIdx ? false : discount
+        ),
+      }));
+    }
+
+    setTimeout(() => this.addQueryParam(), 500);
+  };
+
+  ratingHandleChange = (evt, eIdx) => {
+    const isChecked = evt.target.checked;
+    const value = evt.target.value;
+    console.log(isChecked, value);
+    if (isChecked) {
+      this.setState((prevState) => ({
+        ratings: [...prevState.ratings, value],
+        ratingSelect: prevState.ratingSelect.map((_, idx) =>
+          idx === eIdx ? true : _
+        ),
+      }));
+    } else {
+      this.setState((prevState) => ({
+        ratings: prevState.ratings.filter((item) => item !== value),
+        ratingSelect: prevState.ratingSelect.map((_, idx) =>
+          idx === eIdx ? false : _
+        ),
+      }));
+    }
+
+    setTimeout(() => this.addQueryParam(), 500);
+  };
+
+  filtersHandleChange = (evt, eIdx) => {
+    const isChecked = evt.target.checked;
+    const value = evt.target.value;
+    console.log(isChecked, value);
+    if (isChecked) {
+      this.setState((prevState) => ({
+        filters: [...prevState.filters, value],
+        filtersSelect: prevState.filtersSelect.map((_, idx) =>
+          idx === eIdx ? true : _
+        ),
+      }));
+    } else {
+      this.setState((prevState) => ({
+        filters: prevState.filters.filter((item) => item !== value),
+        filtersSelect: prevState.filtersSelect.map((_, idx) =>
+          idx === eIdx ? false : _
+        ),
+      }));
+    }
+
+    setTimeout(() => this.addQueryParam(), 500);
+  };
+
+  addQueryParam = () => {
+    console.log(this.state.slider_range);
+    const query = qs.stringify({
+      range: this.state.slider_range,
+      discount: this.state.discount,
+      ratings: this.state.ratings,
+      filters: this.state.filters,
+      sort: this.state.sort,
+    });
+    this.props.history.push({
+      path: `Products/${this.productId}`,
+      search: "?" + query,
+    });
+  };
+
   render() {
-    const { rating, sort_by_value, rating_status } = this.state;
+    const { rating, sort, rating_status } = this.state;
     return (
       <section className="product_list_container" id="product_list_container">
         <PageLoading isLoadingComplete={this.props.is_loading} />
@@ -137,7 +269,7 @@ class ProductList extends Component {
                       />
                     </Form.Group>
                     <div className="search_icon_wrap">
-                      <i class="fa fa-search" aria-hidden="true"></i>
+                      <i className="fa fa-search" aria-hidden="true"></i>
                     </div>
                   </div>
                   <div className=" common_divison_padding">
@@ -146,12 +278,18 @@ class ProductList extends Component {
                     </div>
                     <Form>
                       <Form.Group controlId="formBasicRange">
-                        <Form.Control type="range" />
+                        <Form.Control
+                          type="range"
+                          min={1000}
+                          max={100000}
+                          value={this.state.slider_range}
+                          onChange={this.changeRangeValue}
+                        />
                       </Form.Group>
                     </Form>
                     <div>
                       <h6 className="product_price_values">
-                        Price: ₹ 50 — ₹ 120
+                        Price: ₹ 1000 — ₹ 100000
                       </h6>
                     </div>
                   </div>
@@ -168,6 +306,10 @@ class ProductList extends Component {
                               label={data.name}
                               value={data.name}
                               id={data.name}
+                              checked={this.state.filtersSelect[index]}
+                              onChange={(e) =>
+                                this.filtersHandleChange(e, index)
+                              }
                             />
                           </Form.Group>
                         );
@@ -206,6 +348,10 @@ class ProductList extends Component {
                                     label={data.name}
                                     value={data.name}
                                     id={data.name}
+                                    checked={this.state.ratingSelect[index]}
+                                    onChange={(e) =>
+                                      this.ratingHandleChange(e, index)
+                                    }
                                   />
                                 </Form.Group>
                               );
@@ -230,7 +376,11 @@ class ProductList extends Component {
                                     type="checkbox"
                                     label={data.name}
                                     value={data.name}
+                                    checked={this.state.discountSelect[index]}
                                     id={data.name}
+                                    onChange={(e) =>
+                                      this.discountHandleChange(e, index)
+                                    }
                                   />
                                 </Form.Group>
                               );
@@ -287,7 +437,7 @@ class ProductList extends Component {
                   <div>
                     <Form.Control
                       as="select"
-                      value={sort_by_value}
+                      value={sort}
                       onChange={this.property_data_fun}
                     >
                       {SORT_LIST.map((item) => (
@@ -306,6 +456,7 @@ class ProductList extends Component {
                       return (
                         <Col md={4} xl={4} className="mb-2" key={x.id}>
                           <ProductCard
+                            id={x.id}
                             percentage={x.percentage}
                             navigate_function={() => {
                               this.navigate_function(x);
@@ -314,6 +465,7 @@ class ProductList extends Component {
                             special_price={x.special_price}
                             selling_price={x.selling_price}
                             retail_price={x.retail_price}
+                            image={x.image_address}
                           />
                         </Col>
                       );
