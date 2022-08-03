@@ -7,22 +7,23 @@ const getRequestToken = () => {
   var now = moment(new Date()).format("MMM DD YYYY");
   var sha1 = require("sha1");
   sha1 = sha1(now + "vimkes");
-  return sha1; 
+  return sha1;
 };
 //  const BaseUrl = 'https://www.demo1.azacus.co.in/';
- //const BaseUrl = 'https://www.demo1.azacus.co.in/';
+//const BaseUrl = 'https://www.demo1.azacus.co.in/';
 //const BaseUrl = 'http://162.220.165.182:3035/';
 //  const BaseUrl = 'http://162.220.165.182:3020/Buskes/';
 // const BaseUrl = 'http://192.168.43.14:8080/';
 
 // const BaseUrl = 'https://www.asz.azacus.co.in/';
 // const BaseUrl = "http://192.168.0.7:8080/";
- 
-//  const BaseUrl = 'https://www.app.natureraise.in/';
-  const BaseUrl = 'https://democrm.vimkes.com/';
 
+//  const BaseUrl = 'https://www.app.natureraise.in/';
+const BaseUrl = "https://democrm.vimkes.com/";
 
 //const BaseUrl = 'https://www.api.dhiyaonlineshop.com/';
+
+// Razorpay key : rzp_test_iZt5e6oaqwbtfP
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
@@ -49,11 +50,8 @@ const client = new ApolloClient({
 //     });
 // }
 
-
-
 const datamatch = (id, arr) => {
-// 
-
+  //
 
   for (let i = 0; i < arr.length; i++) {
     if (id === arr[i]["id"]) {
@@ -637,5 +635,4 @@ export default {
   doctor_id,
   chat_token_id,
   room_id,
-
 };

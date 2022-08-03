@@ -20,7 +20,7 @@ const NatureraiseAbout = (props) => {
                   target={"_blank"}
                   rel="noopener noreferrer"
                 >
-                  <i class={social_data.icon_name} aria-hidden="true"></i>
+                  <i className={social_data.icon_name} aria-hidden="true"></i>
                 </a>
               </li>
             );

@@ -21,7 +21,6 @@ class SignUp extends Component {
       password: "",
       client_ip: "",
       isLoadingComplete: true,
-    
     };
   }
   async componentDidMount() {
@@ -81,7 +80,6 @@ class SignUp extends Component {
         client_ip
       )
     );
-
   };
 
   navigate_function = () => {
@@ -100,20 +98,16 @@ class SignUp extends Component {
             <Container>
               <div className="SignUp_Section">
                 <ul className="Inner_nav">
-                  <Link to="/">
-                    <li>
-                      <a>
-                        <i className="fa fa-sign-in"></i> Home
-                      </a>
-                    </li>
-                  </Link>
-                  <Link to="/SignIn">
-                    <li>
-                      <a>
-                        <i class="fa fa-user-circle-o"></i> SignIn
-                      </a>
-                    </li>
-                  </Link>
+                  <li>
+                    <Link to="/">
+                      <i className="fa fa-sign-in"></i> Home
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/SignIn">
+                      <i className="fa fa-user-circle-o"></i> SignIn
+                    </Link>
+                  </li>
                 </ul>
               </div>
             </Container>
