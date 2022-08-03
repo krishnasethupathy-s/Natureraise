@@ -22,7 +22,7 @@ const rootReducer = redux.combineReducers({
 const persistConfig = {
   key: "root",
   storage,
-  blacklist: ["ProductActions", "UserActions"],
+  blacklist: ["UserActions"],
 };
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
