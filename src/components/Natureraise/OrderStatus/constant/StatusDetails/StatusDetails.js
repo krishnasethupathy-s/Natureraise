@@ -3,7 +3,7 @@ import "./StatusDetails.css";
 import { Row, Col } from "react-bootstrap";
 import Stepper from "react-stepper-horizontal";
 
-const StatusDetails = ({ item }) => {
+const StatusDetails = ({ item, status, openReviewModal }) => {
   return (
     <Row>
       <Col md={4}>
@@ -11,7 +11,8 @@ const StatusDetails = ({ item }) => {
           <img
             alt="-demo"
             style={{ width: "100px" }}
-            src="https://www.solarclue.com/image/cache/catalog/Products/Solar%20Water%20Heater/V-Guard/v-guard-solar-water-heater-fpc-systems-nw-500x500-600x600-222x222.png"
+            src={item.image_address}
+            // src="https://www.solarclue.com/image/cache/catalog/Products/Solar%20Water%20Heater/V-Guard/v-guard-solar-water-heater-fpc-systems-nw-500x500-600x600-222x222.png"
           />
 
           <div className="order_track_content">
@@ -47,30 +48,34 @@ const StatusDetails = ({ item }) => {
           <div>
             <Stepper
               steps={[
-                { title: "Ordered" },
+                {
+                  title:
+                    status?.status === "Cancelled" ? "Cancelled" : "Ordered",
+                },
                 { title: "Placed" },
+                { title: "Packed" },
                 { title: "Shipped" },
                 { title: "Delivered" },
               ]}
-              activeStep={1}
+              activeStep={status?.stepper}
             />
           </div>
           <div className="order_status_text">
-            <p>Your Item has been Delivered</p>
+            <p>{status?.status_details}</p>
           </div>
         </div>
       </Col>
 
       <Col md={3}>
         <div className="order_delivery_wrap">
-          <h1 className="order_title">Delivered on Sun, May 23</h1>
-          <p className="order_sub">
+          <h1 className="order_title">{status?.delivery_time}</h1>
+          <p className="order_sub" onClick={() => openReviewModal(item.id)}>
             <span>
               <i className="fa fa-star-o" aria-hidden="true"></i>{" "}
             </span>
             RATE AND REVIEW PRODUCT
           </p>
-          <p className="order_sub">
+          {/* <p className="order_sub">
             <span>
               <i className="fa fa-refresh" aria-hidden="true"></i>{" "}
             </span>
@@ -81,7 +86,7 @@ const StatusDetails = ({ item }) => {
               <i className="fa fa-question-circle-o" aria-hidden="true"></i>{" "}
             </span>
             RATE AND REVIEW PRODUCT
-          </p>
+          </p> */}
         </div>
       </Col>
     </Row>

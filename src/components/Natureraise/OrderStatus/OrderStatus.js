@@ -17,11 +17,15 @@ import {
   getOrderedProductList,
   getOrderStatusList,
 } from "../store/actions/Order/OrderActions";
+import ReviewModal from "./review-modal";
 
 class OrderStatus extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      reviewModal: false,
+      reviewProductId: "",
+    };
   }
 
   id = this.props.match.params.id;
@@ -36,6 +40,14 @@ class OrderStatus extends Component {
     this.props.dispatch(getOrderedProductList(this.id));
     this.props.dispatch(getOrderStatusList(this.id));
   }
+
+  reviewModalHandleOpen = () => this.setState({ reviewModal: true });
+  reviewModalHandleClose = () => this.setState({ reviewModal: false });
+
+  setReviewProductId = (id) => {
+    this.setState({ reviewProductId: id });
+    this.reviewModalHandleOpen();
+  };
 
   render() {
     return (
@@ -56,7 +68,7 @@ class OrderStatus extends Component {
                   <Row>
                     <Col md={12} xl={12}>
                       <CardWrap className="order_status_container">
-                        {this.props.detail.detail && (
+                        {this.props?.detail?.detail && (
                           <AddressDetails detail={this.props.detail.detail} />
                         )}
                       </CardWrap>
@@ -65,8 +77,13 @@ class OrderStatus extends Component {
                   <Row className="mt-2">
                     <Col md={12}>
                       <CardWrap className="order_status_container">
-                        {this.props.detail.items.map((item) => (
-                          <StatusDetails item={item} key={item.id} />
+                        {this.props?.detail?.items?.map((item) => (
+                          <StatusDetails
+                            key={item.id}
+                            item={item}
+                            status={this.props.detail?.status}
+                            openReviewModal={this.setReviewProductId}
+                          />
                         ))}
                       </CardWrap>
                     </Col>
@@ -76,6 +93,11 @@ class OrderStatus extends Component {
             </Row>
           </Container>
         </div>
+        <ReviewModal
+          show={this.state.reviewModal}
+          handleClose={this.reviewModalHandleClose}
+          id={this.state.reviewProductId}
+        />
         <Footer />
       </section>
     );
@@ -84,6 +106,7 @@ class OrderStatus extends Component {
 const mapStateToProps = (state) => {
   return {
     detail: state.OrderReducer.orderDetail,
+    is_loading: state.ProductActions.is_loading,
   };
 };
 

@@ -75,9 +75,15 @@ const AddressDetails = ({ detail }) => {
         </div>
       </Col>
       <Col md={2} className="order_download_wrap">
-        <div className="order_download_button">
-          <p>Download</p>
-        </div>
+        <a
+          href={detail.invoice_file_path}
+          className="order_download_button"
+          target="_blank"
+          rel="noopener noreferrer"
+          download
+        >
+          Download
+        </a>
       </Col>
     </Row>
   );
