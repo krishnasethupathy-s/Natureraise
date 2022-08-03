@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 import { Link, NavLink, Route, Switch, Redirect } from "react-router-dom";
+import Avatar from "react-avatar";
 
 import "./MyAccount.css";
 import Footer from "../Natureraise/Footer/Footer";
@@ -54,8 +55,8 @@ class MyAccount extends Component {
       this.props.dispatch({ type: "IS_LOADING", is_loading: false });
     }, 1000);
 
-    this.props.dispatch(getOrderList());
-    this.props.dispatch(getOrderCurrentList());
+    // this.props.dispatch(getOrderList());
+    // this.props.dispatch(getOrderCurrentList());
   }
 
   componentDidUpdate = async () => {
@@ -114,7 +115,7 @@ class MyAccount extends Component {
                 <Col md={3}>
                   <div className="mb-2 My_Account_Basic_Details">
                     <div className="My_Account_Profile_Image">
-                      <img
+                      {/* <img
                         // src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
                         alt={
                           this.props.user.first_name +
@@ -126,8 +127,13 @@ class MyAccount extends Component {
                           this.state.profile_pic
                         }
                       />
+                    */}
+                      <Avatar
+                        name={`${this.props.user.first_name} ${this.props.user.last_name}`}
+                        size="80"
+                        round={true}
+                      />
                     </div>
-
                     <div>
                       <h6 className="Padding_left">Hello</h6>
                       {localStorage.getItem("Authorization") === null ? (
