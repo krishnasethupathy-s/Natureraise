@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 
-import "./Homepage.css";
+import { Link } from "react-router-dom";
 import { Carousel, Container, Row, Col } from "react-bootstrap";
+
 import HeaderNavbar from "../HeaderNavbar/HeaderNavbar";
 import images from "../../constants/images";
 import Footer from "../Footer/Footer";
@@ -17,6 +18,7 @@ import DeliveryProcess from "../Common/Components/DeliveryProcess/DeliveryProces
 import SecondOfferSection from "../Common/Components/SecondOfferSection/SecondOfferSection";
 import PageLoading from "../../constants/PageLoader/PageLoading";
 
+import "./Homepage.css";
 class HomePage extends Component {
   constructor(props) {
     super(props);
@@ -31,6 +33,7 @@ class HomePage extends Component {
   componentDidMount() {
     window.scrollTo(0, 0);
     this.props.dispatch(Banner.fetchBanners());
+    this.props.dispatch(ProductActions.getHomePageProductList());
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     setTimeout(() => {
       this.props.dispatch({ type: "IS_LOADING", is_loading: false });
@@ -64,6 +67,7 @@ class HomePage extends Component {
       speed: 500,
       slidesToShow: 5,
       slidesToScroll: 1,
+
       responsive: [
         {
           breakpoint: 1200,
@@ -208,25 +212,23 @@ class HomePage extends Component {
               <Col md={9} xs={12} xl={10}>
                 <div className="product-card-mobile">
                   <Slider {...settings}>
-                    {(this.props.product_list_data.slice(0, 12) || []).map(
-                      (x) => {
-                        return (
-                          <ProductCard
-                            className={`mr-2`}
-                            key={x.id}
-                            id={x.id}
-                            percentage={x.percentage}
-                            navigate_function={() => {
-                              this.navigate_function(x);
-                            }}
-                            item_name={x.item_name}
-                            special_price={x.special_price}
-                            selling_price={x.selling_price}
-                            retail_price={x.retail_price}
-                          />
-                        );
-                      }
-                    )}
+                    {this.props.homeProducts?.newComings.map((x) => {
+                      return (
+                        <ProductCard
+                          className={`mr-2`}
+                          key={x.id}
+                          id={x.id}
+                          percentage={x.percentage}
+                          navigate_function={() => {
+                            this.navigate_function(x);
+                          }}
+                          item_name={x.item_name}
+                          special_price={x.special_price}
+                          selling_price={x.selling_price}
+                          retail_price={x.retail_price}
+                        />
+                      );
+                    })}
                   </Slider>
                 </div>
               </Col>
@@ -331,25 +333,23 @@ class HomePage extends Component {
               <Col md={6} xs={12} xl={8}>
                 <div className="product-card-mobile">
                   <Slider {...featuresilder}>
-                    {(this.props.product_list_data.slice(0, 12) || []).map(
-                      (x) => {
-                        return (
-                          <ProductCard
-                            className={`mr-2`}
-                            key={x.id}
-                            id={x.id}
-                            percentage={x.percentage}
-                            navigate_function={() => {
-                              this.navigate_function(x);
-                            }}
-                            item_name={x.item_name}
-                            special_price={x.special_price}
-                            selling_price={x.selling_price}
-                            retail_price={x.retail_price}
-                          />
-                        );
-                      }
-                    )}
+                    {(this.props.homeProducts?.topOffers || []).map((x) => {
+                      return (
+                        <ProductCard
+                          className={`mr-2`}
+                          key={x.id}
+                          id={x.id}
+                          percentage={x.percentage}
+                          navigate_function={() => {
+                            this.navigate_function(x);
+                          }}
+                          item_name={x.item_name}
+                          special_price={x.special_price}
+                          selling_price={x.selling_price}
+                          retail_price={x.retail_price}
+                        />
+                      );
+                    })}
                   </Slider>
                 </div>
               </Col>
@@ -370,31 +370,34 @@ class HomePage extends Component {
           <SecondOfferSection offersdata={AccountData.DELIVERY_PROCESS} />
         </section>
 
-        <section className="product-list-wrapper" id="product-list-wrapper">
-          <Container>
-            <Row>
-              <Col md={12}>
-                <div className="our-collection-heading-wrap">
-                  <h6>Recent View</h6>
-                  <h6>View all</h6>
-                </div>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={3} xs={12} xl={2}>
-                <div className="brand-slider-offer">
-                  <img
-                    src="https://www.solarclue.com/image/catalog/Sub-Banner/square-banner/Solar-Inverter.png"
-                    alt="natureraise"
-                    className="img-fluid"
-                  />
-                </div>
-              </Col>
-              <Col md={9} xs={12} xl={10}>
-                <div className="product-card-mobile">
-                  <Slider {...settings}>
-                    {(this.props.product_list_data.slice(0, 12) || []).map(
-                      (x, index) => {
+        {!!this.props.recentView.length && (
+          <section className="product-list-wrapper" id="product-list-wrapper">
+            <Container>
+              <Row>
+                <Col md={12}>
+                  <div className="our-collection-heading-wrap">
+                    <h6>Recent View</h6>
+                    <Link to="/products" className="h6">
+                      View all
+                    </Link>
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={3} xs={12} xl={2}>
+                  <div className="brand-slider-offer">
+                    <img
+                      src="https://www.solarclue.com/image/catalog/Sub-Banner/square-banner/Solar-Inverter.png"
+                      alt="natureraise"
+                      className="img-fluid"
+                    />
+                  </div>
+                </Col>
+                <Col md={9} xs={12} xl={10}>
+                  <div className="product-card-mobile">
+                    <Slider {...settings}>
+                      {this.props.recentView.map((x, index) => {
+                        console.log(x);
                         return (
                           <ProductCard
                             className={`mr-2`}
@@ -410,14 +413,14 @@ class HomePage extends Component {
                             retail_price={x.retail_price}
                           />
                         );
-                      }
-                    )}
-                  </Slider>
-                </div>
-              </Col>
-            </Row>
-          </Container>
-        </section>
+                      })}
+                    </Slider>
+                  </div>
+                </Col>
+              </Row>
+            </Container>
+          </section>
+        )}
 
         <Footer />
       </div>
@@ -430,6 +433,8 @@ const mapStateToProps = (state) => {
     banner_list: state.Banner.banner_list,
     is_loading: state.ProductActions.is_loading,
     product_list_data: state.ProductActions.product_list || [],
+    homeProducts: state.ProductActions.homeProducts,
+    recentView: state.ProductActions.recentView || [],
   };
 };
 
