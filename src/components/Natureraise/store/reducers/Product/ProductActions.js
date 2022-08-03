@@ -21,6 +21,10 @@ import {
   REMOVE_TO_CART_ITEM,
   COUPON_VALIDATION,
   IS_LOADING,
+  GET_FILTERS,
+  GET_HOME_PAGE_PRODUCTS,
+  GET_REVIEWS,
+  ADD_RECENT_VIEW,
 } from "../../actions/Product/ProductActions";
 
 const initialState = {
@@ -28,6 +32,7 @@ const initialState = {
   error_message: "",
   product_categories_list: [],
   product_list: [],
+  hasMore: true,
   product_master_list: [],
   product_data: {},
   product_images_full_list: [],
@@ -47,8 +52,15 @@ const initialState = {
     mrp_amount: 0,
     coupon_validation_amount: 0,
   },
-};
 
+  filters: [],
+  homeProducts: {
+    topOffers: [],
+    newComings: [],
+  },
+  reviews: [],
+  recentView: [],
+};
 export default (state = initialState, action) => {
   console.log(action);
   switch (action.type) {
@@ -82,12 +94,110 @@ export default (state = initialState, action) => {
         product_master_list: action.product_master_list,
       };
     }
-    case GETITEMLISTBYSUBCATEGORY: {
+
+    case GET_FILTERS: {
       return {
         ...state,
-        product_list: action.get_item_list,
+        filters: action.data,
       };
     }
+
+    case "RESET_FILTERS": {
+      return {
+        ...state,
+        filters: [],
+      };
+    }
+
+    case GET_HOME_PAGE_PRODUCTS: {
+      const { data } = action;
+
+      const topOffers = data.filter(
+        (item) => item.item_category_name === "Top Offers"
+      );
+
+      const newComings = data.filter(
+        (item) => item.item_category_name === "New Comings"
+      );
+
+      return {
+        ...state,
+        homeProducts: {
+          topOffers,
+          newComings,
+        },
+      };
+    }
+
+    case ADD_RECENT_VIEW: {
+      const { data } = action;
+      const alreadyExist = state.recentView.some(
+        (item) => item.id === data[0].id
+      );
+
+      if (alreadyExist) return state;
+
+      return {
+        ...state,
+        recentView: [...data, ...state.recentView],
+      };
+    }
+
+    case GETITEMLISTBYSUBCATEGORY: {
+      if (action.reset) {
+        return {
+          ...state,
+          hasMore: true,
+          product_list: action.get_item_list,
+        };
+      }
+
+      if (action.get_item_list.length === 0) {
+        return {
+          ...state,
+          hasMore: false,
+        };
+      }
+
+      return {
+        ...state,
+
+        product_list: [...state.product_list, ...action.get_item_list],
+      };
+    }
+
+    case GET_REVIEWS: {
+      if (action.reset) {
+        return {
+          ...state,
+          hasMore: true,
+          reviews: action.data,
+        };
+      }
+
+      if (action.data.length === 0) {
+        return {
+          ...state,
+          hasMore: false,
+        };
+      }
+
+      return {
+        ...state,
+
+        reviews: [...state.reviews, ...action.data],
+      };
+    }
+
+    case "RESETITEMLISTBYSUBCATEGORY": {
+      console.log("HI");
+      return {
+        ...state,
+        hasMore: true,
+        product_list: [],
+      };
+    }
+
     case PRODUCT_DETAILS: {
       let product_unique_id = action.product_id;
 
@@ -121,12 +231,15 @@ export default (state = initialState, action) => {
         // console.log(product_data_1)
         // var str1 = product_data_1["productImage"];
         var str1 = state.product_master_list[0]["productImage"];
+        console.log(str1);
         if (str1.length > 0) {
           var str2 = str1[0].product_images;
           var temp = str2.split(",");
           for (var i = 0; i < temp.length; i++) {
             imagesArray.push(temp[i]);
           }
+        } else {
+          imagesArray.push(state.product_master_list[0].image_address);
         }
       }
       return {
@@ -144,6 +257,7 @@ export default (state = initialState, action) => {
           (item) => item.id === product_unique_id
         );
         // product_descriptions_list = product_data_1["productDescription"];
+
         product_descriptions_list =
           state.product_master_list[0]["productDescription"];
       }
@@ -395,10 +509,13 @@ export default (state = initialState, action) => {
         };
       }
 
-      const item = state.product_master_list.find(
+      let item = state.product_master_list.find(
         (product) => product.id === productId
       );
-
+      if (!item) {
+        item = state.product_list.find((product) => product.id === productId);
+      }
+      console.log(item);
       item.cart_list = +item.cart_list + 1;
       item.total_amount =
         item.special_price === "0.00"

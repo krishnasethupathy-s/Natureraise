@@ -1,11 +1,23 @@
 import React, { Component, Fragment } from "react";
-import "./ProductList.css";
-import { Container, Row, Col, Card, Form, Accordion } from "react-bootstrap";
+
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Form,
+  InputGroup,
+  Accordion,
+  Spinner,
+} from "react-bootstrap";
 import HeaderNavbar from "../HeaderNavbar/HeaderNavbar";
 import images from "../../constants/images";
 import Footer from "../Footer/Footer";
 import SectionHeader from "../../constants/SectionHeader/SectionHeader";
 import StarRatingComponent from "react-star-rating-component";
+import InfiniteScroll from "react-infinite-scroll-component";
+import ReactSlider from "react-slider";
+
 import {
   SLIDER_IMAGE,
   PRODUTS_DATA,
@@ -20,101 +32,191 @@ import * as qs from "query-string";
 
 import ProductCard from "../Common/Components/ProductCard/ProductCard";
 import PageLoading from "../../constants/PageLoader/PageLoading";
+import Filters from "./Filters";
+
+import "./ProductList.css";
+import FilterAccordion from "./filter-accordion";
+
+const LOCAL_FILTERS = [
+  {
+    filter_heading: "Discount1",
+    filter_value: ["10", "30", "50", "80", "90"],
+    id: "1",
+  },
+  {
+    filter_heading: "Rating",
+    filter_value: ["1", "2", "3", "4", "5"],
+    id: "2",
+  },
+];
 
 class ProductList extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       product_slider: images.product_image,
       rating: 1,
       categories_value: "",
       sort_by_value: "",
       wishcolor: "green",
-      rating_status: true,
-      page_number: "",
-      data_limit: "",
+      rating_status: false,
+      hasMore: true,
+      page_number: 1,
+      data_limit: "4",
       item_name: "",
       // categories_id: localStorage.getItem("categories_id"),
-      categories_id: this.props.match.params.id,
+      categories_id: this.props.match.params.id || "",
       isLoading: true,
 
       // resetting
       discountSelect: Array(PRODUCT_DISCOUNT.length).fill(false),
       ratingSelect: Array(CUSTOMER_RATING.length).fill(false),
-      filtersSelect: Array(SLIDER_IMAGE.length).fill(false),
 
       //filters
-      slider_range: 1000,
+      slider_range: this.rangeToNumbers ?? [100, 50000],
+      slider_min: 100,
+      slider_max: 50000,
       sort: 1,
-      discount: [],
-      ratings: [],
-      filters: [],
+
+      filters: {},
+      selectedValues: {},
     };
+    this.Authorization = localStorage.getItem("Authorization");
   }
 
-  setInitaltQueryParams = () => {
-    const qParams = qs.parse(this.props.location.search);
-    console.log(qParams);
-    if (!qParams) {
-      this.addQueryParam();
-      return;
-    }
-  };
   componentDidMount() {
-    console.log(this.state.discountSelect);
-
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
-    setTimeout(() => {
-      this.props.dispatch({ type: "IS_LOADING", is_loading: false });
-    }, 1000);
+
+    if (this.props.location.search) {
+      const query = qs.parse(this.props.location.search);
+      const qFilters = Object.keys(query)
+        .filter((key) => key !== "sort" && key !== "range" && key !== "search")
+        .reduce((obj, key) => {
+          obj[key] = Array.isArray(query[key]) ? query[key] : [query[key]];
+          return obj;
+        }, {});
+      console.log("sort", query);
+      const rangeToNumbers = query?.range?.map((range) => +range);
+      this.setState({
+        sort: isNaN(+query?.sort) ? 1 : +query?.sort,
+        slider_range: rangeToNumbers,
+        item_name: query?.search ?? "",
+        filters: qFilters,
+        selectedValues: qFilters,
+      });
+    }
+
     window.scrollTo(0, 0);
-    const { page_number, data_limit, item_name } = this.state;
+    const { page_number, data_limit, item_name, sort, slider_range, filters } =
+      this.state;
     const productdata_id = this.props.match.params.id;
+
     this.props.dispatch(
-      ProductActions.getItemListBySubCategory(
-        productdata_id,
-        page_number,
+      ProductActions.getFilterBySubCategory(productdata_id ?? "")
+    );
+
+    this.props.dispatch({ type: "RESETITEMLISTBYSUBCATEGORY" });
+    this.props.dispatch(
+      ProductActions.getItemSearch(
+        productdata_id ? productdata_id : "",
+        "" + page_number,
         data_limit,
-        item_name
+        item_name,
+        filters, //filter_values
+        slider_range, // price_values
+        "" + sort // sort_by
       )
     );
-    // this.props.dispatch(
-    //   ProductActions.getProductImages(
-    //     productdata_id,
-    //   )
-    // );
   }
   getSnapshotBeforeUpdate(prevProps, prevState) {
     if (prevState.categories_id !== this.props.match.params.id) {
       this.setState({
+        page_number: 1,
         categories_id: this.props.match.params.id,
-        slider_range: 1000,
+        slider_range: [100, 50000],
         sort: 1,
         discount: [],
-        filters: [],
+        filters: {},
         ratings: [],
-        discountSelect: Array(PRODUCT_DISCOUNT.length).fill(false),
-        ratingSelect: Array(CUSTOMER_RATING.length).fill(false),
-        filtersSelect: Array(SLIDER_IMAGE.length).fill(false),
+        selectedValues: {},
       });
+
       return true;
     } else {
       return false;
     }
   }
   componentDidUpdate(prevProps, prevState, snapshot) {
-    const { page_number, data_limit, item_name, categories_id } = this.state;
-    console.log(this.state.discountSelect);
+    const {
+      page_number,
+      data_limit,
+      item_name,
+      categories_id,
+      sort,
+      slider_range,
+      discount,
+      ratings,
+      filters,
+    } = this.state;
 
     if (snapshot) {
+      this.props.dispatch({ type: "IS_LOADING", is_loading: true });
+      this.props.dispatch(ProductActions.empty_message());
       this.props.dispatch(
-        ProductActions.getItemListBySubCategory(
-          categories_id,
-          page_number,
-          data_limit,
-          item_name
+        ProductActions.getFilterBySubCategory(
+          categories_id ? categories_id : ""
         )
       );
+
+      this.props.dispatch(
+        ProductActions.getItemSearch(
+          categories_id ? categories_id : "",
+          "" + page_number,
+          data_limit,
+          item_name,
+          "",
+          slider_range,
+          "" + sort,
+          true
+        )
+      );
+    }
+
+    if (
+      prevState.filters !== filters ||
+      prevState.sort !== sort ||
+      prevState.slider_range !== slider_range
+    ) {
+      this.addQueryParam();
+    }
+
+    if (this.props.location.search !== prevProps.location.search) {
+      console.log(this.props.location, prevProps.location);
+      this.props.dispatch(ProductActions.empty_message());
+      const query = qs.parse(this.props.location.search);
+      this.props.dispatch({ type: "IS_LOADING", is_loading: true });
+      this.props.dispatch(
+        ProductActions.getItemSearch(
+          categories_id ? categories_id : "",
+          "1",
+          data_limit,
+          query?.search || item_name,
+          filters,
+          slider_range,
+          "" + sort,
+          true
+        )
+      );
+      this.setState({ page_number: 1, item_name: query?.search });
+    }
+
+    if (this.props.success_message === "CART_SUCCESS") {
+      this.props.dispatch(
+        ProductActions.getProductquantity(this.productId, this.unique_id)
+      );
+      this.props.dispatch(ProductActions.empty_message());
+      this.props.dispatch({ type: "IS_LOADING", is_loading: false });
     }
 
     console.log("Discount ", this.state.discount);
@@ -126,11 +228,13 @@ class ProductList extends Component {
   };
 
   property_data_fun = (event) => {
-    const event_value = event.target.value.toString();
+    const event_value = event.target.value;
+
+    console.log(event_value);
     this.setState({ categories_value: event_value });
-    this.setState({ sort: event_value });
-    setTimeout(this.addQueryParam, 500);
+    this.setState({ sort: +event_value });
   };
+
   wishlistfun = () => {
     this.setState({ wishcolor: "red" });
   };
@@ -139,112 +243,98 @@ class ProductList extends Component {
     this.props.history.push(`/ProductDescription/${item.id}`);
   };
 
-  add_to_card = (id) => {
+  add_to_cart = (id) => {
+    this.props.dispatch(ProductActions.getProductquantity(id, id));
+
     if (this.props.product_quantity === 0) {
       this.addtocart_function(id);
     }
-    this.props.history.push("/CheckOut");
   };
 
   addtocart_function = (id) => {
-    let cart_id = id;
-    this.props.dispatch(ProductActions.addtocart(cart_id));
+    if (this.Authorization !== null) {
+      this.props.dispatch(ProductActions.addtocartdb(id, "plus"));
+      this.props.dispatch(ProductActions.getCartList());
+      this.props.dispatch({ type: "IS_LOADING", is_loading: true });
+    } else {
+      this.props.dispatch(ProductActions.addToCartLocal(id));
+    }
   };
 
   // Filters
 
-  changeRangeValue = (e) => {
-    console.log(e.target.value);
-    this.setState({ slider_range: e.target.value });
-    setTimeout(() => this.addQueryParam(), 500);
-  };
-
-  discountHandleChange = (evt, eIdx) => {
-    const isChecked = evt.target.checked;
-    const value = evt.target.value;
-    console.log(isChecked, value);
-    if (isChecked) {
-      this.setState((prevState) => ({
-        discount: [...prevState.discount, value],
-        discountSelect: prevState.discountSelect.map((discount, idx) =>
-          idx === eIdx ? true : discount
-        ),
-      }));
-    } else {
-      this.setState((prevState) => ({
-        discount: prevState.discount.filter((item) => item !== value),
-        discountSelect: prevState.discountSelect.map((discount, idx) =>
-          idx === eIdx ? false : discount
-        ),
-      }));
-    }
-
-    setTimeout(() => this.addQueryParam(), 500);
-  };
-
-  ratingHandleChange = (evt, eIdx) => {
-    const isChecked = evt.target.checked;
-    const value = evt.target.value;
-    console.log(isChecked, value);
-    if (isChecked) {
-      this.setState((prevState) => ({
-        ratings: [...prevState.ratings, value],
-        ratingSelect: prevState.ratingSelect.map((_, idx) =>
-          idx === eIdx ? true : _
-        ),
-      }));
-    } else {
-      this.setState((prevState) => ({
-        ratings: prevState.ratings.filter((item) => item !== value),
-        ratingSelect: prevState.ratingSelect.map((_, idx) =>
-          idx === eIdx ? false : _
-        ),
-      }));
-    }
-
-    setTimeout(() => this.addQueryParam(), 500);
-  };
-
-  filtersHandleChange = (evt, eIdx) => {
-    const isChecked = evt.target.checked;
-    const value = evt.target.value;
-    console.log(isChecked, value);
-    if (isChecked) {
-      this.setState((prevState) => ({
-        filters: [...prevState.filters, value],
-        filtersSelect: prevState.filtersSelect.map((_, idx) =>
-          idx === eIdx ? true : _
-        ),
-      }));
-    } else {
-      this.setState((prevState) => ({
-        filters: prevState.filters.filter((item) => item !== value),
-        filtersSelect: prevState.filtersSelect.map((_, idx) =>
-          idx === eIdx ? false : _
-        ),
-      }));
-    }
-
-    setTimeout(() => this.addQueryParam(), 500);
+  changeRangeValue = (values, idx) => {
+    const convertToNumber = values.map(Number);
+    this.setState({ slider_range: convertToNumber });
   };
 
   addQueryParam = () => {
+    console.log(this.state.sort);
     console.log(this.state.slider_range);
+    console.log("filters", this.state.filters);
+
     const query = qs.stringify({
       range: this.state.slider_range,
-      discount: this.state.discount,
-      ratings: this.state.ratings,
-      filters: this.state.filters,
       sort: this.state.sort,
+      search: this.state.item_name,
+      ...this.state.filters,
     });
-    this.props.history.push({
-      path: `Products/${this.productId}`,
-      search: "?" + query,
+    console.log(query);
+
+    if (this.state.categories_id) {
+      this.props.history.push({
+        pathname: `/Products/${this.state.categories_id}`,
+        search: "?" + query,
+      });
+    } else {
+      this.props.history.push({
+        pathname: `/products`,
+        search: "?" + query,
+      });
+    }
+  };
+
+  handleFilters = (filter) => {
+    this.setState((prev) => ({
+      filters: { ...prev.filters, ...filter },
+    }));
+  };
+
+  fetchData = () => {
+    this.props.dispatch(
+      ProductActions.getItemSearch(
+        this.state.categories_id ? this.state.categories_id : "",
+        this.state.page_number + 1 + "",
+        this.state.data_limit,
+        this.state.item_name,
+        this.state.filters,
+        this.state.slider_range,
+        "" + this.state.sort,
+        false
+      )
+    );
+    this.setState((prev) => ({ page_number: prev.page_number + 1 }));
+  };
+
+  searchHandleChange = (e) => {
+    this.setState({
+      item_name: e.target.value,
     });
+  };
+
+  handleSearch = (e) => {
+    e.preventDefault();
+    this.addQueryParam();
+  };
+
+  resetSelectedValues = (filterName) => {
+    const { [filterName]: _, ...obj } = this.state.selectedValues;
+    this.setState({ selectedValues: obj });
   };
 
   render() {
     const { rating, sort, rating_status } = this.state;
+
     return (
       <section className="product_list_container" id="product_list_container">
         <PageLoading isLoadingComplete={this.props.is_loading} />
@@ -258,25 +348,62 @@ class ProductList extends Component {
         <div className="product_list_wrap section_padding_top_bottom">
           <Container>
             <Row>
-              <Col md={3} xl={3}>
+              <Col xs={{ order: 1 }} md={{ span: 3, order: 1 }} xl={3}>
                 <div className="product_list_card sticky-top">
                   <div className="product_search_wrap">
-                    <Form.Group controlId="formBasicEmail">
-                      <Form.Control
-                        className="product_search_input"
-                        type="text"
-                        placeholder="Search Here..."
-                      />
-                    </Form.Group>
-                    <div className="search_icon_wrap">
-                      <i className="fa fa-search" aria-hidden="true"></i>
-                    </div>
+                    <Form onSubmit={this.handleSearch}>
+                      <InputGroup>
+                        <Form.Control
+                          className="product_search_input"
+                          type="text"
+                          placeholder="Search Here..."
+                          value={this.state.item_name}
+                          onChange={this.searchHandleChange}
+                        />
+
+                        <InputGroup.Append>
+                          <button type="submit" className="search_icon_wrap1">
+                            <i className="fa fa-search" aria-hidden="true"></i>
+                          </button>
+                        </InputGroup.Append>
+                      </InputGroup>
+                    </Form>
                   </div>
                   <div className=" common_divison_padding">
                     <div className="product_title_parent">
                       <h3 className="product_titles">Price Range </h3>
                     </div>
-                    <Form>
+                    <ReactSlider
+                      className="horizontal-slider"
+                      thumbClassName="example-thumb"
+                      trackClassName="example-track"
+                      min={this.state.slider_min}
+                      max={this.state.slider_max}
+                      defaultValue={[
+                        this.state.slider_min,
+                        this.state.slider_max,
+                      ]}
+                      value={this.state.slider_range}
+                      ariaLabel={["Lower thumb", "Upper thumb"]}
+                      ariaValuetext={(state) => `Thumb value ${state.valueNow}`}
+                      pearling
+                      onAfterChange={this.changeRangeValue}
+                      renderThumb={(props, state) => (
+                        <div {...props}>
+                          {+state.valueNow < 1000
+                            ? +state.valueNow
+                            : Math.floor(+state.valueNow / 1000) + "K"}
+                        </div>
+                      )}
+                    />
+                    <div>
+                      <h6 className="product_price_values">
+                        Price: ₹ {this.state.slider_range[0]} — ₹{" "}
+                        {this.state.slider_range[1]}
+                      </h6>
+                    </div>
+
+                    {/* <Form>
                       <Form.Group controlId="formBasicRange">
                         <Form.Control
                           type="range"
@@ -286,115 +413,99 @@ class ProductList extends Component {
                           onChange={this.changeRangeValue}
                         />
                       </Form.Group>
-                    </Form>
-                    <div>
-                      <h6 className="product_price_values">
-                        Price: ₹ 1000 — ₹ 100000
-                      </h6>
-                    </div>
+                    </Form> */}
                   </div>
                   <div className="product_categories common_divison_padding">
-                    <div className="product_title_parent">
-                      <h3 className="product_titles">Filters </h3>
-                    </div>
-                    <div className="product_unorder_list ">
-                      {SLIDER_IMAGE.map((data, index) => {
-                        return (
-                          <Form.Group id="formGridCheckbox" key={data.id}>
-                            <Form.Check
-                              type="checkbox"
-                              label={data.name}
-                              value={data.name}
-                              id={data.name}
-                              checked={this.state.filtersSelect[index]}
-                              onChange={(e) =>
-                                this.filtersHandleChange(e, index)
-                              }
-                            />
-                          </Form.Group>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  <div className="product_collapse">
-                    <Accordion>
-                      <Card>
-                        <Accordion.Toggle
-                          onClick={this.onRating_function}
-                          as={Card.Header}
-                          eventKey="0"
-                        >
-                          CUSTOMER RATINGS
-                          <i
-                            onClick={this.onRating_function}
-                            style={{
-                              color: rating_status === true ? "red" : "#ef6831",
-                            }}
-                            className={
-                              rating_status === true
-                                ? "fa fa-caret-down"
-                                : "fa fa-caret-up"
+                    {this.props.filters.map((data, index) =>
+                      index === 0 ? (
+                        <React.Fragment key={data.id}>
+                          <div className="product_title_parent">
+                            <h3 className="product_titles">
+                              {data.filter_heading}{" "}
+                            </h3>
+                          </div>
+                          <Filters
+                            values={JSON.parse(data?.filter_value)}
+                            filterName={data.filter_heading.toLowerCase()}
+                            handlerFilters={this.handleFilters}
+                            persistSelected={
+                              this.state.selectedValues[
+                                data.filter_heading.toLowerCase()
+                              ]
                             }
-                            aria-hidden="true"
-                          ></i>
-                        </Accordion.Toggle>
-                        <Accordion.Collapse eventKey="0">
-                          <Card.Body>
-                            {CUSTOMER_RATING.map((data, index) => {
-                              return (
-                                <Form.Group id="formGridCheckbox" key={data.id}>
-                                  <Form.Check
-                                    type="checkbox"
-                                    label={data.name}
-                                    value={data.name}
-                                    id={data.name}
-                                    checked={this.state.ratingSelect[index]}
-                                    onChange={(e) =>
-                                      this.ratingHandleChange(e, index)
-                                    }
-                                  />
-                                </Form.Group>
-                              );
-                            })}
-                          </Card.Body>
-                        </Accordion.Collapse>
-                      </Card>
-                      <Card>
-                        <Accordion.Toggle as={Card.Header} eventKey="1">
-                          DISCOUNT
-                          <i
-                            className="fa fa-caret-down"
-                            aria-hidden="true"
-                          ></i>
-                        </Accordion.Toggle>
-                        <Accordion.Collapse eventKey="1">
-                          <Card.Body>
-                            {PRODUCT_DISCOUNT.map((data, index) => {
-                              return (
-                                <Form.Group id="formGridCheckbox" key={data.id}>
-                                  <Form.Check
-                                    type="checkbox"
-                                    label={data.name}
-                                    value={data.name}
-                                    checked={this.state.discountSelect[index]}
-                                    id={data.name}
-                                    onChange={(e) =>
-                                      this.discountHandleChange(e, index)
-                                    }
-                                  />
-                                </Form.Group>
-                              );
-                            })}
-                          </Card.Body>
-                        </Accordion.Collapse>
-                      </Card>
-                    </Accordion>
+                            resetPersistValues={this.resetSelectedValues}
+                          />
+                        </React.Fragment>
+                      ) : (
+                        <FilterAccordion
+                          title={data.filter_heading}
+                          eventKey={index}
+                          key={data.id}
+                        >
+                          <Filters
+                            values={JSON.parse(data?.filter_value)}
+                            filterName={data.filter_heading.toLowerCase()}
+                            handlerFilters={this.handleFilters}
+                            persistSelected={
+                              this.state.selectedValues[
+                                data.filter_heading.toLowerCase()
+                              ]
+                            }
+                            resetPersistValues={this.resetSelectedValues}
+                          />
+                        </FilterAccordion>
+                      )
+                    )}
                   </div>
-                  <div className="common_divison_padding">
-                    <div className="product_title_parent">
-                      <h3 className="product_titles">Bestsellers </h3>
+                  {!!!this.props.filters.length && (
+                    <div className="product_categories common_divison_padding">
+                      {LOCAL_FILTERS.map((data, index) =>
+                        index === 0 ? (
+                          <React.Fragment key={data.id}>
+                            <div className="product_title_parent">
+                              <h3 className="product_titles">
+                                {data.filter_heading}{" "}
+                              </h3>
+                            </div>
+                            <Filters
+                              values={data?.filter_value}
+                              filterName={data.filter_heading.toLowerCase()}
+                              handlerFilters={this.handleFilters}
+                              persistSelected={
+                                this.state.selectedValues[
+                                  data.filter_heading.toLowerCase()
+                                ]
+                              }
+                              resetPersistValues={this.resetSelectedValues}
+                            />
+                          </React.Fragment>
+                        ) : (
+                          <FilterAccordion
+                            title={data.filter_heading}
+                            eventKey={index}
+                            key={data.id}
+                          >
+                            <Filters
+                              values={data?.filter_value}
+                              filterName={data.filter_heading.toLowerCase()}
+                              handlerFilters={this.handleFilters}
+                              persistSelected={
+                                this.state.selectedValues[
+                                  data.filter_heading.toLowerCase()
+                                ]
+                              }
+                              resetPersistValues={this.resetSelectedValues}
+                            />
+                          </FilterAccordion>
+                        )
+                      )}
                     </div>
-                    {(SLIDER_IMAGE || []).map((x, index) => {
+                  )}
+                  <div className="common_divison_padding">
+                    {/* <div className="product_title_parent">
+                      <h3 className="product_titles">Bestsellers </h3>
+                    </div> */}
+                    {/* {(SLIDER_IMAGE || []).map((x, index) => {
                       return (
                         <Row key={x.id}>
                           <Col md={4} xs={4}>
@@ -425,53 +536,100 @@ class ProductList extends Component {
                           </Col>
                         </Row>
                       );
-                    })}
+                    })} */}
                   </div>
                 </div>
               </Col>
-              <Col md={9} xl={9}>
-                <div className="product_showing_wrap ">
-                  <div className="product_showing_list">
-                    <h6>Showing 1–9 of 12 results</h6>
-                  </div>
-                  <div>
-                    <Form.Control
-                      as="select"
-                      value={sort}
-                      onChange={this.property_data_fun}
-                    >
-                      {SORT_LIST.map((item) => (
-                        <Fragment key={item.id}>
-                          <option key={item.id} value={item.id}>
-                            {item.name}
-                          </option>
-                        </Fragment>
-                      ))}
-                    </Form.Control>
-                  </div>
-                </div>
-                <div className="common_divison_padding">
-                  <Row>
-                    {(this.props.product_list_data || []).map((x, index) => {
-                      return (
-                        <Col md={4} xl={4} className="mb-2" key={x.id}>
-                          <ProductCard
-                            id={x.id}
-                            percentage={x.percentage}
-                            navigate_function={() => {
-                              this.navigate_function(x);
-                            }}
-                            item_name={x.item_name}
-                            special_price={x.special_price}
-                            selling_price={x.selling_price}
-                            retail_price={x.retail_price}
-                            image={x.image_address}
-                          />
-                        </Col>
-                      );
-                    })}
-                  </Row>
-                </div>
+              <Col sm={{ order: 1 }} md={9} xl={9}>
+                {!!this.props.error_message && (
+                  <p style={{ textAlign: "center" }}>
+                    <b>{this.props.error_message}</b>
+                  </p>
+                )}
+                {!!!this.props.error_message && (
+                  <>
+                    {" "}
+                    <div className="product_showing_wrap ">
+                      <div className="product_showing_list">
+                        <h6>Showing 1–9 of 12 results</h6>
+                      </div>
+                      <div>
+                        <Form.Control
+                          as="select"
+                          value={sort}
+                          onChange={this.property_data_fun}
+                        >
+                          {SORT_LIST.map((item) => (
+                            <Fragment key={item.id}>
+                              <option key={item.id} value={item.id}>
+                                {item.name}
+                              </option>
+                            </Fragment>
+                          ))}
+                        </Form.Control>
+                      </div>
+                    </div>
+                    {!!!this.props.product_list_data.length &&
+                    !this.props.is_loading ? (
+                      <p style={{ textAlign: "center" }}>
+                        <b>New products coming soon!...</b>
+                      </p>
+                    ) : (
+                      <div className="common_divison_padding ">
+                        <InfiniteScroll
+                          dataLength={this.props?.product_list_data?.length} //This is important field to render the next data
+                          next={this.fetchData}
+                          hasMore={this.props.hasMore}
+                          style={{ overflow: "hidden" }}
+                          scrollThreshold={0.5}
+                          loader={
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                zIndex: 3,
+                              }}
+                            >
+                              <Spinner
+                                animation="grow"
+                                variant="dark"
+                                size="lg"
+                              >
+                                <span className="sr-only">Loading...</span>
+                              </Spinner>
+                            </div>
+                          }
+                          endMessage={
+                            <p style={{ textAlign: "center" }}>
+                              <b>Yay! You have seen it all</b>
+                            </p>
+                          }
+                        >
+                          <Row>
+                            {this.props?.product_list_data.map((x, index) => (
+                              <Col md={4} xl={4} className="mb-2" key={x.id}>
+                                <ProductCard
+                                  id={x?.id}
+                                  percentage={x?.percentage}
+                                  navigate_function={() => {
+                                    this.navigate_function(x);
+                                  }}
+                                  item_name={x?.item_name}
+                                  special_price={x?.special_price}
+                                  selling_price={x?.selling_price}
+                                  retail_price={x.retail_price}
+                                  image={x?.image_address}
+                                  addToCart={() => this.add_to_cart(x?.id)}
+                                />
+                              </Col>
+                            ))}
+                          </Row>
+                        </InfiniteScroll>
+                      </div>
+                    )}
+                  </>
+                )}
               </Col>
             </Row>
           </Container>
@@ -483,9 +641,13 @@ class ProductList extends Component {
 }
 const mapStateToProps = (state) => {
   return {
-    product_list_data: state.ProductActions.product_list || [],
+    product_list_data: state.ProductActions.product_list,
     product_quantity: state.ProductActions.product_quantity,
     is_loading: state.ProductActions.is_loading,
+    success_message: state.ProductActions.success_message,
+    error_message: state.ProductActions.error_message,
+    hasMore: state.ProductActions.hasMore,
+    filters: state.ProductActions.filters,
   };
 };
 
