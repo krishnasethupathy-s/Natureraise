@@ -18,6 +18,8 @@ import { gql } from "@apollo/client";
 import PageLoading from "../../constants/PageLoader/PageLoading";
 import EmptyCart from "./EmptyCart";
 
+import { refreshAuthToken } from "../store/actions/User/UserActions";
+
 class CheckOut extends Component {
   constructor(props) {
     super(props);
@@ -53,6 +55,9 @@ class CheckOut extends Component {
     window.scrollTo(0, 0);
     const Authorization = localStorage.getItem("Authorization");
     this.props.dispatch(ProductActions.getCartList());
+    if (Authorization) {
+      this.props.dispatch({ type: "IS_LOADING", is_loading: true });
+    }
 
     this.props.dispatch(AddCustomerAddress.empty_message());
     this.get_CustomerAddress_List();
@@ -95,6 +100,7 @@ class CheckOut extends Component {
       this.props.dispatch(
         ProductActions.addtocartdb(id, "plus", "CART_ITEM_UPDATED")
       );
+      this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     } else {
       this.props.dispatch(ProductActions.addToCartIncrementLocal(id));
     }
@@ -107,6 +113,7 @@ class CheckOut extends Component {
       this.props.dispatch(
         ProductActions.addtocartdb(id, "minus", "CART_ITEM_UPDATED")
       );
+      this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     } else {
       this.props.dispatch(ProductActions.addToCartDecrementLocal(id));
     }
@@ -126,10 +133,12 @@ class CheckOut extends Component {
 
   handle_to_delete_record = () => {
     let remove_id = this.state.cart_remove_product_id;
+    console.log(remove_id);
     if (this.Authorization) {
       this.props.dispatch(
-        ProductActions.addtocartdb(remove_id, "empty", "CART_ITEM_UPDATED")
+        ProductActions.addtocartdb(remove_id, "", "CART_ITEM_UPDATED")
       );
+      this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     } else {
       this.props.dispatch(ProductActions.remove_cart_item(remove_id));
     }
@@ -147,6 +156,7 @@ class CheckOut extends Component {
     this.props.dispatch(
       ProductActions.validateCouponCode(order_amount, coupon_code_value)
     );
+    this.props.dispatch({ type: "IS_LOADING", is_loading: true });
   };
 
   componentDidUpdate = () => {
@@ -171,17 +181,26 @@ class CheckOut extends Component {
     } else if (this.props.message === "Successfully Applied") {
       toast.success(this.props.message);
       this.props.dispatch(AddCustomerAddress.empty_message());
+      this.props.dispatch({ type: "IS_LOADING", is_loading: false });
     } else if (this.props.message === "Not Valid") {
       toast.error(this.props.error_msg);
       this.props.dispatch(AddCustomerAddress.empty_message());
+      this.props.dispatch({ type: "IS_LOADING", is_loading: false });
     } else if (this.props.message === "Minimum") {
       toast.error(this.props.error_msg);
       this.props.dispatch(AddCustomerAddress.empty_message());
+      this.props.dispatch({ type: "IS_LOADING", is_loading: false });
     }
 
     if (this.props.cart_message === "CART_ITEM_UPDATED") {
       this.props.dispatch(ProductActions.getCartList());
       this.props.dispatch(ProductActions.empty_message());
+      this.props.dispatch({ type: "IS_LOADING", is_loading: false });
+    }
+
+    if (this.props.cart_message === "CART_SUCCESS") {
+      this.props.dispatch(ProductActions.empty_message());
+      this.props.dispatch({ type: "IS_LOADING", is_loading: false });
     }
   };
 
@@ -350,6 +369,12 @@ class CheckOut extends Component {
   createOrder = (e) => {
     this.setState({ is_loading: true });
     e.preventDefault();
+
+    // Refreshing AuthToken
+    // it's allow more time to compelete payment
+    // preventing token expiry during payment
+    this.props.dispatch(refreshAuthToken());
+
     const Authorization = localStorage.getItem("Authorization");
     console.log(this.state);
     const { type, payment_type, delivery_address_id, coupon_code_value } =
@@ -393,6 +418,8 @@ class CheckOut extends Component {
           if (payment_type === "1") {
             //Cash Type clicked
             Config.order_id = responseJson.id;
+            this.props.dispatch(ProductActions.resetCart());
+            this.props.dispatch(ProductActions.getCartList());
             this.props.history.push(`OrderDetails/${responseJson.id}`);
           } else {
             Config.order_id = responseJson.id;
@@ -554,6 +581,8 @@ class CheckOut extends Component {
         console.log(responseJson);
         if (responseJson.message === "SUCCESS") {
           Config.cart_count = "";
+          this.props.dispatch(ProductActions.resetCart());
+          this.props.dispatch(ProductActions.getCartList());
           this.props.history.push("OrderDetails/" + responseJson.id);
         } else {
           //alert(responseJson.message)
@@ -571,7 +600,9 @@ class CheckOut extends Component {
     return (
       <div>
         <HeaderNavbar />
-        <PageLoading isLoadingComplete={this.state.is_loading} />
+        <PageLoading
+          isLoadingComplete={this.props.is_loading || this.state.is_loading}
+        />
 
         <MyVerticallyCenteredModal
           title="Remove Item ?"
@@ -582,10 +613,14 @@ class CheckOut extends Component {
           handle_delete_record={this.handle_to_delete_record}
           handleClose={this.handle_hide_model}
         />
-        {this.props.cart.items.length === 0 && <EmptyCart />}
+        {!this.props.is_loading &&
+          !this.state.is_loading &&
+          this.props.cart.items.length === 0 && <EmptyCart />}
         <div
           className="check_out_section section_padding_top_bottom"
-          style={{ display: this.props.cart.items.length === 0 && "none" }}
+          style={{
+            display: this.props.cart.items.length === 0 && "none",
+          }}
         >
           <Container>
             <Row>
