@@ -1,10 +1,15 @@
-import React, { Component } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 
 import "./OrderDetailsCard.css";
 import { Col, Row } from "react-bootstrap";
 
-const OrderDetailsCard = (props) => {
+const OrderDetailsCard = ({ products, ...props }) => {
+  let heading =
+    products?.length >= 2
+      ? `${products[0]?.item_name} & More...`
+      : `${products[0]?.item_name}...`;
+
   return (
     <div className="order_card_wrap">
       <Link to={`/orderDetails/${props.order_id}`}>
@@ -12,14 +17,15 @@ const OrderDetailsCard = (props) => {
           <Col md={6}>
             <div className="order_card_img">
               <img
-                src="https://www.solarclue.com/image/cache/catalog/Products/Solar%20Water%20Heater/V-Guard/v-guard-solar-water-heater-fpc-systems-nw-500x500-600x600-222x222.png"
+                // src="https://www.solarclue.com/image/cache/catalog/Products/Solar%20Water%20Heater/V-Guard/v-guard-solar-water-heater-fpc-systems-nw-500x500-600x600-222x222.png"
+                src={products[0]?.image_address}
                 className="img-fluid"
-                alt="Best Ecommerce natureraise"
+                alt={heading}
               />
               <div className="order_card_title">
-                <h6 className="order_card_heading">{props.heading}</h6>
-                <h6 className="order_card_sub">{props.color}</h6>
-                <h6 className="order_card_sub">{props.subtitle}</h6>
+                <h6 className="order_card_heading">{heading}</h6>
+                {/* <h6 className="order_card_sub">color: {products[0].item_color}, </h6> */}
+                <h6 className="order_card_sub">{products[0]?.brand_name}</h6>
               </div>
             </div>
           </Col>
