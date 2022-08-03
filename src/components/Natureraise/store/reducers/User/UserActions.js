@@ -10,6 +10,7 @@ const initialState = {
   message: "",
   error_msg: "",
   isAuthenticated: Boolean(localStorage.getItem("Authorization")) || false,
+  provider: localStorage.getItem("provider") || "",
   user: {
     email_id: localStorage.getItem("email_id") || "",
     first_name: localStorage.getItem("first_name") || "",
@@ -37,9 +38,10 @@ export default (state = initialState, action) => {
     }
 
     case SET_USER: {
-      const { data } = action;
+      const { data, provider } = action;
       return {
         ...state,
+        provider,
         isAuthenticated: true,
         user: data,
       };
@@ -63,6 +65,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isAuthenticated: false,
+        provider: "",
         user: {
           email_id: "",
           first_name: "",

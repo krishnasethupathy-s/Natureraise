@@ -17,10 +17,11 @@ export const empty_message = () => {
   };
 };
 
-export const set_user = (user) => (dispath) => {
+export const set_user = (user, provider) => (dispath) => {
   dispath({
     type: SET_USER,
     data: user,
+    provider,
   });
 };
 export const logout_user = () => (dispath) => {
@@ -144,14 +145,14 @@ export const SignInAction =
 
           const date = new Date();
           const currentTimePulsNine = new Date(
-            date.getTime() + 11 * 60000
+            date.getTime() + 10 * 60000
           ).toISOString();
           const data = responseText.data.SignInAction;
           data.expiryTime = currentTimePulsNine;
 
           localStorage.setItem("expiryTime", data.expiryTime);
 
-          dispatch(set_user(responseText.data.SignInAction));
+          dispatch(set_user(responseText.data.SignInAction, ""));
           console.log(localCart);
           dispatch(syncLocalCart(localCart));
         } else {
@@ -240,7 +241,7 @@ export const refreshAuthToken = () => async (dispatch) => {
 
       const date = new Date();
       const currentTimePulsNine = new Date(
-        date.getTime() + 8 * 60000
+        date.getTime() + 7 * 60000
       ).toISOString();
       const expiryTime = currentTimePulsNine;
 
@@ -261,3 +262,124 @@ export const refreshAuthToken = () => async (dispatch) => {
       dispatch(logout_user());
     });
 };
+
+export const LoginWithSocialID =
+  (
+    social_id_type,
+    social_id,
+    first_name,
+    last_name,
+    email_id,
+    image_address,
+    client_ip,
+    localCart
+  ) =>
+  (dispatch) => {
+    const request_token = Config.getRequestToken();
+    const mutation = `mutation LoginWithSocialID(
+      $social_id_type: String, 
+      $social_id: String, 
+      $first_name: String, 
+      $last_name: String, 
+      $email_id: String, 
+      $image_address: String, 
+      $client_ip: String, 
+      $request_token: String
+      ) {
+      LoginWithSocialID(
+        social_id_type: $social_id_type, 
+        social_id: $social_id, 
+        first_name:$first_name, 
+        last_name:$last_name, 
+        email_id:$email_id, 
+        image_address: $image_address, 
+        client_ip:$client_ip, 
+        request_token:$request_token
+      ){
+        message,
+        first_name,
+        last_name,
+        token,
+        image_address,
+        mobile_number1,
+        email_id
+    }
+}`;
+
+    fetch(Config.BaseUrl + "graphql", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        query: mutation,
+        variables: {
+          social_id_type,
+          social_id,
+          first_name,
+          last_name,
+          email_id,
+          image_address,
+          client_ip,
+          request_token,
+        },
+      }),
+    })
+      .then((response) => response.json())
+      .then((responseText) => {
+        console.log(responseText);
+        if (responseText.data.LoginWithSocialID["message"] === "SUCCESS") {
+          dispatch({
+            type: "SUCCESS_MESSAGE",
+            success_title: responseText.data.LoginWithSocialID["message"],
+          });
+          localStorage.setItem(
+            "first_name",
+            responseText.data.LoginWithSocialID["first_name"]
+          );
+          localStorage.setItem(
+            "last_name",
+            responseText.data.LoginWithSocialID["last_name"]
+          );
+          localStorage.setItem(
+            "mobile_number1",
+            responseText.data.LoginWithSocialID["mobile_number1"]
+          );
+          localStorage.setItem(
+            "email_id",
+            responseText.data.LoginWithSocialID["email_id"]
+          );
+          localStorage.setItem(
+            "Authorization",
+            responseText.data.LoginWithSocialID["token"]
+          );
+          localStorage.setItem(
+            "image_address",
+            responseText.data.LoginWithSocialID["image_address"]
+          );
+
+          const date = new Date();
+          const currentTimePulsNine = new Date(
+            date.getTime() + 10 * 60000
+          ).toISOString();
+          const data = responseText.data.LoginWithSocialID;
+          data.expiryTime = currentTimePulsNine;
+
+          localStorage.setItem("expiryTime", data.expiryTime);
+
+          dispatch(set_user(responseText.data.LoginWithSocialID, ""));
+          console.log(localCart);
+          dispatch(syncLocalCart(localCart));
+        } else {
+          dispatch({
+            type: "ERROR_MESSAGE",
+            error_title: "Invalid Crediental",
+          });
+        }
+      })
+      .catch((error) => {
+        dispatch({ type: "ERROR_MESSAGE", error_title: "error" });
+      });
+    return Promise.resolve();
+  };
