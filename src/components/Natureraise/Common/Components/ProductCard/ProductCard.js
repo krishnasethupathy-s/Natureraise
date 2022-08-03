@@ -7,7 +7,7 @@ const ProductCard = (props) => {
     <div className={"product-card-wrap " + props.className}>
       <div className="product-card-percentage">
         <h6 className="product-card-perentage-title">
-          {props.percentage}% off
+          {props?.percentage}% off
         </h6>
         <span className="prodcut-card-arrow"></span>
       </div>
@@ -15,23 +15,18 @@ const ProductCard = (props) => {
         <i
           className="fa fa-heart"
           aria-hidden="true"
-          style={{ color: props.wishcolor }}
+          style={{ color: props?.wishcolor }}
         ></i>
       </div>
-      <Link to={`/ProductDescription/${props.id}`}>
-        <div
-          className="hover_first_images"
-          // onClick={() => {
-          //   props.navigate_function(props.x);
-          // }}
-        >
+      <Link to={`/ProductDescription/${props?.id}`}>
+        <div className=" img-hover-zoom">
           <img
-            src={props.image}
-            className="img-fluid"
+            src={props?.image}
+            className="img-thumbnail border-0"
             alt="Best Ecommerce natureraise"
           />
         </div>
-        <div
+        {/* <div
           className="hover_second_image"
           // onClick={() => {
           //   props.navigate_function(props.x);
@@ -43,7 +38,7 @@ const ProductCard = (props) => {
             className="img-fluid"
             alt="Best Ecommerce natureraise"
           />
-        </div>
+        </div> */}
         <div
           className="product-card-description"
           // onClick={() => {
@@ -51,25 +46,27 @@ const ProductCard = (props) => {
           // }}
         >
           <div className="product-card-title">
-            <h6>{props.item_name.slice(0, 55) + "..."} </h6>
+            <h6>{props.item_name?.slice(0, 55) + "..."} </h6>
           </div>
 
           {props.retail_price === props.selling_price ? (
             <div className="product-card-amount-wrapper">
               <h6 className="product-card-hightlight-red">
-                {props.special_price}
+                {props?.special_price === "0.00"
+                  ? props?.selling_price
+                  : props?.special_price}
               </h6>
               <h6 className="product-card-hightlight-green">
-                ₹ {props.retail_price}{" "}
+                ₹ {props?.retail_price}{" "}
               </h6>
             </div>
           ) : (
             <div className="product-card-amount-wrapper">
               <h6 className="product-card-hightlight-redr">
-                {props.special_price}
+                {props?.special_price}
               </h6>
               <h6 className="product-card-hightlight-green">
-                ₹ {props.selling_price}{" "}
+                ₹ {props?.selling_price}{" "}
               </h6>
             </div>
           )}
@@ -77,7 +74,9 @@ const ProductCard = (props) => {
       </Link>
 
       <div>
-        <p className="product-card-addcart">Add to Cart</p>
+        <p className=" product-card-addcart" onClick={props?.addToCart}>
+          Add to Cart
+        </p>
       </div>
     </div>
   );
