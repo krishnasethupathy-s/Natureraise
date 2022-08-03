@@ -11,13 +11,19 @@ import {
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import $ from "jquery";
+import qs from "query-string";
+import Avatar from "react-avatar";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import images from "../../constants/images";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
+import { googleLogout } from "@react-oauth/google";
+import { FacebookLoginClient } from "@greatsumini/react-facebook-login";
+
+import images from "../../constants/images";
 import * as ProductActions from "../store/actions/Product/ProductActions";
 import { logout_user } from "../store/actions/User/UserActions";
+
+import "react-toastify/dist/ReactToastify.css";
 
 class HeaderNavbar extends Component {
   constructor(props) {
@@ -26,6 +32,7 @@ class HeaderNavbar extends Component {
       profile_pic: localStorage.getItem("image_address"),
       first_name: localStorage.getItem("first_name"),
       last_name: localStorage.getItem("last_name"),
+      search: "",
     };
   }
 
@@ -44,6 +51,13 @@ class HeaderNavbar extends Component {
   }
 
   Logout_Function = () => {
+    if (this.provider === "google") {
+      googleLogout();
+    }
+    if (this.provider === "facebook") {
+      FacebookLoginClient.logout();
+    }
+
     this.props.dispatch(ProductActions.resetCart());
     this.props.dispatch(logout_user());
     localStorage.clear();
@@ -59,6 +73,23 @@ class HeaderNavbar extends Component {
     this.props.history.push("/Checkout");
   };
 
+  handleSearchChange = (e) => {
+    this.setState({
+      search: e.target.value,
+    });
+  };
+
+  handleSearch = (e) => {
+    e.preventDefault();
+    const query = qs.stringify({
+      search: this.state.search,
+    });
+    this.props.history.push({
+      pathname: `/products`,
+      search: "?" + query,
+    });
+  };
+
   render() {
     return (
       <>
@@ -72,13 +103,24 @@ class HeaderNavbar extends Component {
               </Col>
               <Col md={6}>
                 <div>
-                  <Form.Group controlId="formBasicSearch">
-                    <Form.Label></Form.Label>
-                    <Form.Control type="text" placeholder="Search" />
-                    <div className="search_inner_nav_icon">
-                      <i className="fa fa-search" aria-hidden="true"></i>
-                    </div>
-                  </Form.Group>
+                  <Form onSubmit={this.handleSearch}>
+                    <Form.Group controlId="formBasicSearch">
+                      <Form.Control
+                        type="text"
+                        placeholder="Search"
+                        value={this.state.search}
+                        onChange={this.handleSearchChange}
+                      />
+                      <div className="input-group-append">
+                        <button
+                          className="search_inner_nav_icon "
+                          type="submit"
+                        >
+                          <i className="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </Form.Group>
+                  </Form>
                 </div>
               </Col>
               <Col md={4}>
@@ -127,7 +169,7 @@ class HeaderNavbar extends Component {
                     ) : (
                       <>
                         <Col md={2} xs={3}>
-                          <div>
+                          {/* <div>
                             <img
                               src={
                                 this.props.user.image_address ||
@@ -137,7 +179,12 @@ class HeaderNavbar extends Component {
                               className="Navbar_ProfileImage"
                               alt="profile_logo"
                             />
-                          </div>
+                          </div> */}
+                          <Avatar
+                            name={`${this.props.user.first_name} ${this.props.user.last_name}`}
+                            size="40"
+                            round={true}
+                          />
                         </Col>
                         <Col md={6} xs={6}>
                           <div>
@@ -188,9 +235,11 @@ class HeaderNavbar extends Component {
                       {item.itemSubCategory.map((x, index) => {
                         return (
                           <NavDropdown.Item
-                            onClick={() => {
-                              this.product_navigate(x.id);
-                            }}
+                            as={Link}
+                            // onClick={() => {
+                            //   this.product_navigate(x.id);
+                            // }}
+                            to={`/Products/${x.id}?range=100&range=50000&search=&sort=1`}
                             key={x.id}
                           >
                             {x.item_sub_category_name}
@@ -216,7 +265,8 @@ const mapStateToProps = (state) => {
     cart_product_list: state.ProductActions.cart_product_list || [],
     cart_items: state.ProductActions.cart.items || [],
     user: state.UserActions.user,
+    provider: state.UserActions.provider,
   };
 };
 
-export default withRouter(connect(mapStateToProps, null)(HeaderNavbar));
+export default connect(mapStateToProps, null)(withRouter(HeaderNavbar));

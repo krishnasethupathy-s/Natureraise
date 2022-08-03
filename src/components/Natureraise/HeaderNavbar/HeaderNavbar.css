@@ -1,255 +1,210 @@
-
 .Header_Inner_Background .navbar {
-
-    height: 50px;
-    z-index: 100;
-   }
-   .bg-light {
-     background-color: #171a42 !important;
-   }
-   .Header_Inner_Background .navbar-light .navbar-nav .nav-link {
-     color: white !important;
-     font-size: 14px;
-   }
-   
-   .Header_Inner_Background .nav-link {
-     color:white !important;
-     font-size: 14px;
-     /* font-weight: 600; */
-   }
-   .Header_Inner_Background
-   {
-    background-color: #171a42 !important;
-   }
-   .Header_Inner_Background .navbar-light .navbar-toggler {
-   background-color: white !important;
-   margin-right: 10px;
-   }
-   
-   .btn-outline-success {
-     color: #ffffff !important;
-     border-color: #28a745;
-   }
-
-
-
-   @media(max-width:776px)
-   {
-    .Header_Inner_Background .navbar
-    {
-      height: 70px;
-    }
-   }
-   
-   /* TopNavbar */
-   
-   .darkHeader{
-       
-     position: fixed;
-     top:0;
-     width: 100%;   
-     left: 0;
-     background-color: #f8f8f8;
-     z-index: 9999999;
-   }  
-
-   .dropdown:hover .dropdown-menu {
-    display: block;
+  height: 50px;
+  z-index: 100;
 }
-   /* End TopNavbar */
-   
-   /* Brand Image */
-   
+.bg-light {
+  background-color: #171a42 !important;
+}
+.Header_Inner_Background .navbar-light .navbar-nav .nav-link {
+  color: white !important;
+  font-size: 14px;
+}
 
-   .navbar-brand img
-   {
-     width: 100px;
-   }
-   .search_inner_navbar .row
-   {
-     align-items: center;
-     justify-content: flex-end;
-   }
+.Header_Inner_Background .nav-link {
+  color: white !important;
+  font-size: 14px;
+  /* font-weight: 600; */
+}
+.Header_Inner_Background {
+  background-color: #171a42 !important;
+}
+.Header_Inner_Background .navbar-light .navbar-toggler {
+  background-color: white !important;
+  margin-right: 10px;
+}
 
-   .search_inner_navbar .form-control
-   {
-     position: relative;
-     height: 44px;
-     border-radius: 20px;
-   }
-   .search_inner_nav_icon
-   {
-    background-color: #171a42;
-    display: inline-block;
-    color: white;
-    padding: 10px;
-    position: absolute;
-    top: 23px;
-    right: 16px;
-    width: 40px;
-    text-align: center;
-    border-radius: 50%;
-   }
-   .search_shopping_wrap
-   {
-    border: 1px solid #e4e4e4 !important;
-    border-radius: 50%;
-    width: 45px;
-    padding: 10px;
-    text-align: center;
-    position: relative;
-   }
-   .search_shopping_wrap .search_cart_badge
-   {
-   
-    top: -12px;
-    right: -8px;
-    background-color: green;
-    color: white;
-    padding: 1px;
-    border-radius: 20px;
-    width: 24px;
-    font-size: 11px;
-    position: absolute;
-   }
-  .search_shopping_wrap .fa{
-    color: #171a42;
+.btn-outline-success {
+  color: #ffffff !important;
+  border-color: #28a745;
+}
+
+@media (max-width: 776px) {
+  .Header_Inner_Background .navbar {
+    height: 70px;
   }
-    .navbar-brand h6 {
-     color: white !important
-   }
-   .header_register_link span{
-     color: #171a42;
-   }
-   .header_register_link span:hover{
-    cursor: pointer;
-    color: #ef6831;
+}
+
+/* TopNavbar */
+
+.darkHeader {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  left: 0;
+  background-color: #f8f8f8;
+  z-index: 9999999;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+/* End TopNavbar */
+
+/* Brand Image */
+
+.navbar-brand img {
+  width: 100px;
+}
+.search_inner_navbar .row {
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.search_inner_navbar .form-control {
+  position: relative;
+  height: 44px;
+  border-radius: 20px;
+}
+.search_inner_nav_icon {
+  background-color: #171a42;
+  display: inline-block;
+  color: white;
+  padding: 8px;
+  position: absolute;
+  top: 1px;
+  right: 15px;
+  width: 40px;
+  text-align: center;
+  border-radius: 50%;
+}
+.search_shopping_wrap {
+  border: 1px solid #e4e4e4 !important;
+  border-radius: 50%;
+  width: 45px;
+  padding: 10px;
+  text-align: center;
+  position: relative;
+}
+.search_shopping_wrap .search_cart_badge {
+  top: -12px;
+  right: -8px;
+  background-color: green;
+  color: white;
+  padding: 1px;
+  border-radius: 20px;
+  width: 24px;
+  font-size: 11px;
+  position: absolute;
+}
+.search_shopping_wrap .fa {
+  color: #171a42;
+}
+.navbar-brand h6 {
+  color: white !important;
+}
+.header_register_link span {
+  color: #171a42;
+}
+.header_register_link span:hover {
+  cursor: pointer;
+  color: #ef6831;
+}
+/* Brand Image */
+
+/* Nav-Item */
+.dropdown-item {
+  font-size: 14px;
+}
+.dropdown-item.active,
+.dropdown-item:active {
+  color: #fff;
+  text-decoration: none;
+  background-color: #ef6831;
+}
+.dropdown-item a {
+  color: black !important;
+}
+.Profile_Nav_DropDown .dropdown-menu {
+  right: 0px !important;
+  left: unset !important;
+  padding-right: 0px !important;
+}
+.dropdown-menu {
+  padding-right: 0px !important;
+}
+.navbar-collapse {
+  background-color: #171a42;
+}
+
+.swipe_right_button {
+  padding: 0.6em;
+  border: 1px #fc4250 solid;
+  background: linear-gradient(to right, #fc4250, #fc4250);
+  background-repeat: no-repeat;
+  background-size: 0 100%;
+  transition: background-size 1s 0s;
+  border-radius: 7px;
+  color: black;
+  font-weight: bold;
+  text-align: center;
+}
+
+.swipe_right_button:hover {
+  background-size: 100% 100%;
+  color: white;
+}
+
+.user_icon_color {
+  color: #376541 !important;
+}
+.Navbar_ProfileImage {
+  width: 50px;
+}
+
+/* End Button Container */
+
+/* media  query*/
+@media (max-width: 776px) {
+  .search_shopping_mobile {
+    padding: 10px 0px;
   }
-   /* Brand Image */
-   
-   /* Nav-Item */
-   .dropdown-item
-   {
-     font-size: 14px;
-   }
-   .dropdown-item.active, .dropdown-item:active
-   {
-     color: #fff;
-     text-decoration: none;
-     background-color: #ef6831;
-   }
-   .dropdown-item a
-   {
-     color: black !important;
-   }
-   .Profile_Nav_DropDown .dropdown-menu
-   {
-     right: 0px !important;
-     left: unset !important;
-     padding-right: 0px !important;
-   }
-   .dropdown-menu
-   
-   {
-     padding-right: 0px !important;
-   }
-   .navbar-collapse
-   {
-     background-color: #171a42;
-   }
-   
+}
 
-   .swipe_right_button {
-     padding: .60em;
-     border: 1px #fc4250 solid;
-     background: linear-gradient(to right, #fc4250, #fc4250);
-     background-repeat: no-repeat;
-     background-size: 0 100%;
-     transition: background-size 1s 0s;
-     border-radius: 7px;
-     color: black;
-     font-weight: bold;
-     text-align: center;
-     
-   }
-   
-   .swipe_right_button:hover {
-     background-size: 100% 100%;
-     color: white;
-   }
-   
-   .user_icon_color
-   {
-     color:#376541 !important
-   }
-   .Navbar_ProfileImage
-   {
-     width: 50px;
-   }
-  
+/* end media query */
 
+/* Inner Nav Media query */
+@media only screen and (min-width: 360px) and (max-width: 640px) {
+  .navbar-nav {
+    text-align: center;
+  }
+  .navbar-brand img {
+    margin-left: 10px;
+  }
+  .form-inline {
+    justify-content: center;
+  }
+  .dropdown-item {
+    text-align: center;
+  }
+  .navbar-brand img {
+    width: 60px;
+  }
+}
 
- 
- 
-  
+@media only screen and (min-width: 320px) and (max-width: 568px) {
+  .navbar-nav {
+    text-align: center;
+  }
 
-   /* End Button Container */
+  .form-inline {
+    justify-content: center;
+  }
+  .dropdown-item {
+    text-align: center;
+  }
+  .navbar-brand img {
+    width: 60px;
+  }
+}
 
-   /* media  query*/
- @media(max-width:776px)
- {
-   .search_shopping_mobile
-   {
-     padding: 10px 0px;
-   }
- }
-
-
-
-   /* end media query */
-   
-   
-     /* Inner Nav Media query */
-     @media only screen and (min-width: 360px) and (max-width: 640px) {
-       .navbar-nav
-       {
-         text-align: center;
-       
-       }
-       .navbar-brand img{
-       margin-left: 10px;
-       }
-       .form-inline {
-         justify-content: center;
-         }
-         .dropdown-item
-         {
-           text-align: center;
-         }
-         .navbar-brand img
-         {
-           width: 60px;
-         }
-     }
-   
-     @media only screen and (min-width: 320px) and (max-width:568px) {
-       .navbar-nav
-   {
-     text-align: center;
-   
-   }
-   
-   .form-inline {
-   justify-content: center;
-   }
-   .dropdown-item
-   {
-     text-align: center;
-   }
-   .navbar-brand img
-   {
-     width: 60px;
-   }
-     }
-   
-     /* End Nav Media Query */
+/* End Nav Media Query */
