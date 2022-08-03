@@ -1,5 +1,7 @@
 import Config from "../../../../../Config";
 import { gql } from "@apollo/client";
+import { resetCart } from "../Product/ProductActions";
+import { logout_user } from "../User/UserActions";
 
 export const GET_CUSTOMER_ADDRESS_LIST = "GET_CUSTOMER_ADDRESS_LIST";
 
