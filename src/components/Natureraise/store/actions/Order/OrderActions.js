@@ -10,7 +10,83 @@ export const GET_ORDER_DETAIL_PRODUCTS = "GET_ORDER_DETAIL_PRODUCT";
 export const GET_ORDER_DETAIL_STATUS = "GET_ORDER_DETAIL_STATUS";
 export const RESERT_ORDER_DETAIL = "RESERT_ORDER_DETAIL";
 
+export const getOrderListPageWise = (page_number, data_limit) => (dispatch) => {
+  console.log("Hey");
+  const order_type = "IO";
+  const Authorization = localStorage.getItem("Authorization");
+
+  const query = gql`
+    query getOrderListPageWise(
+      $Authorization: String
+      $order_type: String
+      $page_number: String
+      $data_limit: String
+    ) {
+      getOrderListPageWise(
+        Authorization: $Authorization
+        order_type: $order_type
+        page_number: $page_number
+        data_limit: $data_limit
+      ) {
+        order_id
+        order_type
+        order_date
+        order_status
+
+        order_amount
+        delivery_charges
+        net_amount
+        invoice_id
+        id
+        product_list {
+          id
+          item_id
+          item_type
+          item_category_id
+          item_category_name
+          item_sub_category_id
+          item_sub_category_name
+          image_address
+          brand_id
+          brand_name
+          item_name
+          hsn
+        }
+        orderStatus {
+          current_status
+          status_date
+          status_details
+          delivery_time
+        }
+      }
+    }
+  `;
+
+  Config.client
+    .query({
+      query: query,
+      fetchPolicy: "no-cache",
+      variables: { Authorization, order_type, page_number, data_limit },
+    })
+    .then((result) => {
+      // this.setState({ isLoadingComplete: false });
+      console.log(result);
+      const data = result.data.getOrderListPageWise;
+      dispatch({
+        type: "GET_ORDER_LIST",
+        data,
+      });
+      dispatch({ type: "IS_LOADING", is_loading: false });
+    })
+    .catch((error) => {
+      //alert(error);
+      console.log(error);
+      dispatch({ type: "IS_LOADING", is_loading: false });
+    });
+};
+
 export const getOrderList = () => (dispatch) => {
+  console.log("Hey");
   const order_type = "IO";
   const Authorization = localStorage.getItem("Authorization");
   const month_id = "06";
@@ -37,6 +113,26 @@ export const getOrderList = () => (dispatch) => {
         net_amount
         invoice_id
         id
+        product_list {
+          id
+          item_id
+          item_type
+          item_category_id
+          item_category_name
+          item_sub_category_id
+          item_sub_category_name
+          brand_id
+          brand_name
+          item_name
+          hsn
+        }
+
+        orderStatus {
+          current_status
+          status_date
+          status_details
+          delivery_time
+        }
       }
     }
   `;
@@ -53,10 +149,45 @@ export const getOrderList = () => (dispatch) => {
     })
     .catch((error) => {
       //alert(error);
+      console.log(error);
     });
 };
 
+export const getOrderList1 = () => async (dispatch) => {
+  try {
+    const Authorization = localStorage.getItem("Authorization");
+    const company_id = "1";
+    const branch_id = "1";
+    const order_type = "IO";
+    const role = "Admin";
+    const d1 = Config.d1;
+    const d2 = Config.d2;
+    const form_Data1 = JSON.stringify({
+      Authorization,
+      company_id,
+      branch_id,
+      role,
+      d1,
+      d2,
+      order_type,
+    });
+    let response = await fetch(Config.BaseUrl + "OrderList/", {
+      method: "POST",
+      headers: {
+        //"Access-Control-Allow-Origin": '*',
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      },
+      body: form_Data1,
+    });
+    const responseJsonData = await response.json();
+    console.log(responseJsonData);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 export const getOrderCurrentList = () => (dispatch) => {
+  console.log("Hey1");
   const order_type = "IO";
   const Authorization = localStorage.getItem("Authorization");
 
@@ -114,6 +245,7 @@ export const getOrderDetail = (order_id) => (dispatch) => {
         net_amount
         coupon_amount
         invoice_id
+        invoice_file_path
         payment_type
         payment_status
         entry_date
@@ -236,6 +368,7 @@ export const getOrderStatusList = (order_id) => (dispatch) => {
         current_status
         status_date
         status_details
+        delivery_time
       }
     }
   `;
@@ -248,6 +381,12 @@ export const getOrderStatusList = (order_id) => (dispatch) => {
     })
     .then((result) => {
       console.log(result);
+      const data = result.data.getOrderStatusList;
+
+      dispatch({
+        type: GET_ORDER_DETAIL_STATUS,
+        data,
+      });
     })
     .catch((error) => {
       //alert(error);
