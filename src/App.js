@@ -60,7 +60,7 @@ function App() {
   console.log(user);
 
   // logout in 9 min
-  // TODO: Refresh api ready? - change to refresh token
+
   React.useEffect(() => {
     console.log("im running");
 
@@ -78,25 +78,19 @@ function App() {
       return;
     }
 
-    const expTime = new Date(expTimeLocal).getTime();
-    const currentTime = Date.now();
-    console.log(expTime, currentTime);
-    if (expTime < currentTime) {
-      localStorage.clear();
-      dispatch(resetCart());
-      dispatch(logout_user());
-      history.push("/");
-      return;
-    }
-
-    const remainingTime = expTime - currentTime;
-    console.log("remaingin Time", remainingTime);
-
     timer = setIntervalAsync(() => {
       console.log("REfresh Token");
-      dispatch(refreshAuthToken());
-      clearIntervalAsync(timer);
-    }, remainingTime);
+
+      const expTime = new Date(expTimeLocal).getTime();
+      const currentTime = Date.now();
+      console.log(expTime, currentTime);
+      const remainingTime = expTime - currentTime;
+      console.log("remaingin Time", remainingTime);
+      if (expTime < currentTime) {
+        dispatch(refreshAuthToken());
+        clearIntervalAsync(timer);
+      }
+    }, 2000);
 
     return () => {
       clearIntervalAsync(timer);
@@ -178,12 +172,21 @@ function App() {
         name="ProductDescription Page"
         render={(props) => <ProductDescription1 {...props} />}
       />
+
       <Route
         exact
         path="/Products/:id"
         name="ProductList Page"
         render={(props) => <ProductList {...props} />}
       />
+
+      <Route
+        exact
+        path="/products"
+        name="ProductList Search Page"
+        render={(props) => <ProductList {...props} />}
+      />
+
       <Route
         exact
         path="/Service"
@@ -226,3 +229,47 @@ function App() {
 }
 
 export default App;
+
+/*
+React.useEffect(() => {
+    console.log("im running");
+
+    console.log(isAuthenticated);
+
+    if (!isAuthenticated) {
+      console.log(timer);
+      if (timer) clearIntervalAsync(timer);
+      return;
+    }
+
+    const expTimeLocal = localStorage.getItem("expiryTime") ?? expiryTime;
+    console.log(expTimeLocal);
+    if (!expTimeLocal) {
+      return;
+    }
+
+    const expTime = new Date(expTimeLocal).getTime();
+    const currentTime = Date.now();
+    console.log(expTime, currentTime);
+    if (expTime < currentTime) {
+      localStorage.clear();
+      dispatch(resetCart());
+      dispatch(logout_user());
+      history.push("/");
+      return;
+    }
+
+    const remainingTime = expTime - currentTime;
+    console.log("remaingin Time", remainingTime);
+
+    timer = setIntervalAsync(() => {
+      console.log("REfresh Token");
+      dispatch(refreshAuthToken());
+      clearIntervalAsync(timer);
+    }, remainingTime);
+
+    return () => {
+      clearIntervalAsync(timer);
+    };
+  }, [dispatch, isAuthenticated, expiryTime, history]);
+*/
