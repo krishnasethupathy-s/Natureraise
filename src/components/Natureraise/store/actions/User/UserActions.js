@@ -142,7 +142,7 @@ export const SignInAction =
             "image_address",
             responseText.data.SignInAction["image_address"]
           );
-
+          localStorage.setItem("provider", "");
           const date = new Date();
           const currentTimePulsNine = new Date(
             date.getTime() + 10 * 60000
@@ -359,6 +359,8 @@ export const LoginWithSocialID =
             responseText.data.LoginWithSocialID["image_address"]
           );
 
+          localStorage.setItem("provider", social_id_type);
+
           const date = new Date();
           const currentTimePulsNine = new Date(
             date.getTime() + 10 * 60000
@@ -368,7 +370,9 @@ export const LoginWithSocialID =
 
           localStorage.setItem("expiryTime", data.expiryTime);
 
-          dispatch(set_user(responseText.data.LoginWithSocialID, ""));
+          dispatch(
+            set_user(responseText.data.LoginWithSocialID, social_id_type)
+          );
           console.log(localCart);
           dispatch(syncLocalCart(localCart));
         } else {

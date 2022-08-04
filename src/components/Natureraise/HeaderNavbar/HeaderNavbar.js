@@ -51,10 +51,11 @@ class HeaderNavbar extends Component {
   }
 
   Logout_Function = () => {
-    if (this.provider === "google") {
+    if (this.props.provider === "google") {
+      console.log("google logout");
       googleLogout();
     }
-    if (this.provider === "facebook") {
+    if (this.props.provider === "facebook") {
       FacebookLoginClient.logout();
     }
 
