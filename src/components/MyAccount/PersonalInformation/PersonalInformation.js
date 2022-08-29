@@ -10,7 +10,6 @@ import { connect } from "react-redux";
 import images from "../../constants/images";
 import PageLoading from "../../constants/PageLoader/PageLoading";
 
-
 class PersonalInformation extends Component {
   constructor(props) {
     super(props);
@@ -41,19 +40,16 @@ class PersonalInformation extends Component {
     this.setState({ [name]: value });
   };
 
-
-  componentDidUpdate = async() => {
-
-    if(this.props.message=== "CUSTOMER_PROFILE_UPDATE")
-    {
-      let success = await this.props.dispatch(AddCustomerAddress.empty_message());
+  componentDidUpdate = async () => {
+    if (this.props.message === "CUSTOMER_PROFILE_UPDATE") {
+      let success = await this.props.dispatch(
+        AddCustomerAddress.empty_message()
+      );
       if (success) {
-       
         toast.success("Profile Update");
         this.componentDidMount();
       }
     }
-   
   };
 
   handleSubmit = async (e) => {
@@ -61,7 +57,7 @@ class PersonalInformation extends Component {
     const { first_name, last_name, mobile_number1, email_id } = this.state;
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
 
-   let customerUpdate= await this.props.dispatch(
+    let customerUpdate = await this.props.dispatch(
       CustomerAddress.CustomerUpdation(
         first_name,
         last_name,
@@ -69,18 +65,14 @@ class PersonalInformation extends Component {
         email_id
       )
     );
-    if(customerUpdate)
-    {
+    if (customerUpdate) {
       this.setState({ isLoadingComplete: false });
-
     }
   };
 
   render() {
     return (
       <div className="personal-information-wrapper">
-
-
         <Container>
           <Row>
             <Col md={12} className="Personal_Information_Heading">
@@ -156,7 +148,6 @@ class PersonalInformation extends Component {
                   </Col>
                 </Row>
 
-            
                 <Row>
                   <img
                     src={images.Account_Bottom}
@@ -177,7 +168,6 @@ const mapStateToProps = (state) => {
     message: state.AddCustomerAddress.message,
     error_msg: state.AddCustomerAddress.error_msg,
     is_loading: state.ProductActions.is_loading,
-
   };
 };
 

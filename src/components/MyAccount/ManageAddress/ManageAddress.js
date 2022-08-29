@@ -37,10 +37,6 @@ class ManageAddress extends Component {
     localStorage.setItem("property_id", "");
     this.get_CustomerAddress_List();
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
-
-    setTimeout(() => {
-      this.props.dispatch({ type: "IS_LOADING", is_loading: false });
-    }, 1000);
   }
   get_CustomerAddress_List = () => {
     this.props.dispatch(AddCustomerAddress.getCustomerAddressList());
@@ -439,7 +435,11 @@ class ManageAddress extends Component {
                   </Col>
                 </Row>
               ))}
-              <img src={images.Account_Bottom} className="img-fluid w-100" />
+              <img
+                src={images.Account_Bottom}
+                className="img-fluid w-100"
+                alt="RealEsate"
+              />
             </Col>
           </Row>
         </Container>
