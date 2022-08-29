@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./CheckOut.css";
-import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import { Container, Row, Col, Button, Form, Card } from "react-bootstrap";
 import HeaderNavbar from "../HeaderNavbar/HeaderNavbar";
 import images from "../../constants/images";
 import Footer from "../Footer/Footer";
@@ -47,6 +47,7 @@ class CheckOut extends Component {
 
       delivery_address_id: "",
       payment_type: "1",
+      availabilityError: [],
     };
     this.Authorization = localStorage.getItem("Authorization");
   }
@@ -150,8 +151,15 @@ class CheckOut extends Component {
     this.setState({ coupon_code_value: e.target.value });
   };
 
-  validate_coupon_function = () => {
+  validate_coupon_function = (e) => {
+    e.preventDefault();
     const { coupon_code_value } = this.state;
+
+    if (!coupon_code_value) {
+      toast.error("Please enter coupon code");
+      return;
+    }
+
     const { order_amount } = this.props.cart;
     this.props.dispatch(
       ProductActions.validateCouponCode(order_amount, coupon_code_value)
@@ -264,11 +272,75 @@ class CheckOut extends Component {
   };
 
   delivery_address_function = (id) => {
+    this.setState({ availabilityError: [] });
+
     if (this.state.delivery_address_id === id) {
       this.setState({ delivery_address_id: "" });
-    } else {
-      this.setState({ delivery_address_id: id });
+      return;
     }
+
+    this.setState({ delivery_address_id: id });
+
+    const [address] = this.props.address_data.filter(
+      (address) => address.id === id
+    );
+
+    this.props.dispatch({ type: "IS_LOADING", is_loading: true });
+    const { pincode } = address;
+    const master_id = this.props.cart.items.map((item) => item.id).join(",");
+    const Authorization = Config.getRequestToken();
+    const query = gql`
+      query checkItemAvailability(
+        $Authorization: String
+        $master_id: String
+        $pincode: String
+      ) {
+        checkItemAvailability(
+          Authorization: $Authorization
+          master_id: $master_id
+          pincode: $pincode
+        ) {
+          item_name
+          id
+          availability
+        }
+      }
+    `;
+    Config.client
+      .query({
+        query: query,
+        fetchPolicy: "no-cache",
+        variables: { Authorization, master_id, pincode },
+      })
+      .then((result) => {
+        console.log(result);
+        const data = result.data.checkItemAvailability;
+
+        const isAvailable = data.every((item) => item.availability === "true");
+
+        if (isAvailable) this.setState({ delivery_address_id: id });
+
+        if (!isAvailable) {
+          this.setState({ delivery_address_id: "" });
+          const errMsg = data
+            .filter((item) => item.availability === "false")
+            .map(
+              (item) =>
+                `${item.item_name} is not available for this pincode (${pincode}) , Please choose another adderss or remove item to continue`
+            );
+          this.setState({ availabilityError: errMsg });
+          window.scroll(0, 0);
+        }
+        this.props.dispatch({ type: "IS_LOADING", is_loading: false });
+      })
+      .catch((error) => {
+        this.props.dispatch({ type: "IS_LOADING", is_loading: false });
+        this.setState({ delivery_address_id: "" });
+        this.props.dispatch({
+          type: "ERROR_MESSAGE",
+          error_title: "Something went wrong, Please try again",
+        });
+      });
   };
 
   // Get CustomerData
@@ -631,6 +703,18 @@ class CheckOut extends Component {
               </Col>
             </Row>
 
+            {!!this.state.availabilityError.length && (
+              <Row>
+                <Col md={12}>
+                  {this.state.availabilityError.map((error, idx) => (
+                    <div class="alert alert-danger" role="alert" key={idx}>
+                      {error}
+                    </div>
+                  ))}
+                </Col>
+              </Row>
+            )}
+
             <Row>
               <Col md={8}>
                 <div id="stepper1" className="bs-stepper">
@@ -712,60 +796,69 @@ class CheckOut extends Component {
                                         ) : (
                                           <div className="product_amount_wrapper">
                                             <h6 className="product_amount_color">
-                                              {item.special_price}
+                                              {item.special_price === "0.00"
+                                                ? item.selling_price
+                                                : item.special_price}
                                             </h6>
                                             <h6 className="product_amount_color1">
                                               ₹ {item.retail_price}{" "}
                                             </h6>
-                                            <h6 className="product_amount_color1">
-                                              ₹ {item.selling_price}{" "}
-                                            </h6>
+                                            {!!!item.special_price ===
+                                              "0.00" && (
+                                              <h6 className="product_amount_color1">
+                                                ₹ {item.selling_price}{" "}
+                                              </h6>
+                                            )}
                                             <h6 className="product_percentage">
                                               {item.percentage}% off
                                             </h6>
                                           </div>
                                         )}
                                         <Row>
-                                          <Col
-                                            md={6}
-                                            xs={8}
-                                            className="checkout_title_wrapper"
-                                          >
-                                            <div className="product_size_wrapper">
-                                              <div className="product_size_wrapper_inner">
-                                                <h5 className="product_size_title">
-                                                  size
-                                                </h5>
+                                          {!!item.item_size && (
+                                            <Col
+                                              md={6}
+                                              xs={8}
+                                              className="checkout_title_wrapper"
+                                            >
+                                              <div className="product_size_wrapper">
+                                                <div className="product_size_wrapper_inner">
+                                                  <h5 className="product_size_title">
+                                                    size
+                                                  </h5>
 
-                                                <h6 className="active_size">
-                                                  {item.item_size}
-                                                </h6>
+                                                  <h6 className="active_size">
+                                                    {item.item_size}
+                                                  </h6>
+                                                </div>
                                               </div>
-                                            </div>
-                                          </Col>
-                                          <Col
-                                            md={6}
-                                            xs={8}
-                                            className="checkout_title_wrapper"
-                                          >
-                                            <div className="product_color_wrapper">
-                                              <div className="product_color_wrapper_inner">
-                                                <h5 className="product_color_title">
-                                                  Color
-                                                </h5>
+                                            </Col>
+                                          )}
+                                          {!!item.item_color && (
+                                            <Col
+                                              md={6}
+                                              xs={8}
+                                              className="checkout_title_wrapper"
+                                            >
+                                              <div className="product_color_wrapper">
+                                                <div className="product_color_wrapper_inner">
+                                                  <h5 className="product_color_title">
+                                                    Color
+                                                  </h5>
 
-                                                <div
-                                                  className={
-                                                    "product_color_wrapper_box active_color"
-                                                  }
-                                                  style={{
-                                                    backgroundColor:
-                                                      item.item_color,
-                                                  }}
-                                                ></div>
+                                                  <div
+                                                    className={
+                                                      "product_color_wrapper_box active_color"
+                                                    }
+                                                    style={{
+                                                      backgroundColor:
+                                                        item.item_color,
+                                                    }}
+                                                  ></div>
+                                                </div>
                                               </div>
-                                            </div>
-                                          </Col>
+                                            </Col>
+                                          )}
                                         </Row>
                                       </div>
                                     </Col>
@@ -850,12 +943,14 @@ class CheckOut extends Component {
                         </div>
 
                         <div className="Checkout_address_wrapper">
-                          <h6>ADD A NEW ADDRESS</h6>
-                          <span onClick={this.handle_address_form}>
+                          {/* <h6>ADD A NEW ADDRESS</h6> */}
+                          <button
+                            type="button"
+                            onClick={this.handle_address_form}
+                          >
                             {" "}
-                            {!address_form ? "Add" : "Hide"}{" "}
+                            {!address_form ? "Add Address" : "Hide"}{" "}
                             <i
-                              onClick={this.handle_address_form}
                               className={
                                 !address_form
                                   ? "fa fa-plus-circle"
@@ -863,7 +958,7 @@ class CheckOut extends Component {
                               }
                               aria-hidden="true"
                             ></i>
-                          </span>
+                          </button>
                         </div>
                         {address_form && (
                           <Row>
@@ -1022,7 +1117,84 @@ class CheckOut extends Component {
                             </Col>
                           </Row>
                         )}
-                        {this.state.address_form === false &&
+
+                        <Row className="mt-2">
+                          {this.state.address_form === false &&
+                            this.props.address_data.map((data, index) => (
+                              <Col md={6} key={data.id}>
+                                <Form.Label>
+                                  <Form.Check
+                                    className="sr-only"
+                                    type="checkbox"
+                                    checked={
+                                      this.state.delivery_address_id === data.id
+                                    }
+                                    onChange={() => {
+                                      this.delivery_address_function(data.id);
+                                    }}
+                                  />
+                                  <Card
+                                    className={`${
+                                      this.state.delivery_address_id === data.id
+                                        ? "address-card-active"
+                                        : ""
+                                    }`}
+                                  >
+                                    <Card.Body className="Checkout_address_card">
+                                      <div className="Checkout_address_type">
+                                        <h6>
+                                          {" "}
+                                          {data.type === "0"
+                                            ? "Home"
+                                            : "Office"}
+                                        </h6>
+                                      </div>
+                                      <Row>
+                                        <Col md={12}>
+                                          <div className="checkout_addreslist">
+                                            <h6>{data.contact_name}</h6>
+                                            <h6>{data.mobile_number}</h6>
+                                          </div>
+                                          <div className="checkout_addreslist1">
+                                            <h6>
+                                              {" "}
+                                              {data.address_line1}{" "}
+                                              {data.address_line2} {data.city}{" "}
+                                              {data.state} {data.landmark}{" "}
+                                              {data.pincode}{" "}
+                                            </h6>
+                                          </div>
+                                        </Col>
+                                      </Row>
+                                      <div
+                                        className="Checkout_address_type"
+                                        // onClick={() =>
+                                        //   this.handletoAddressEdit(data.id)
+                                        // }
+                                      >
+                                        <button
+                                          type="button"
+                                          onClick={() =>
+                                            this.handletoAddressEdit(data.id)
+                                          }
+                                        >
+                                          <span>
+                                            <i
+                                              className="fa fa-edit"
+                                              aria-hidden="true"
+                                            ></i>
+                                          </span>{" "}
+                                          Edit
+                                        </button>
+                                      </div>
+                                    </Card.Body>
+                                  </Card>
+                                </Form.Label>
+                              </Col>
+                            ))}
+                        </Row>
+
+                        {/* {this.state.address_form === false &&
                           this.props.address_data.map((data, index) => (
                             <Row
                               className="Checkout_address_card_padding"
@@ -1085,7 +1257,7 @@ class CheckOut extends Component {
                                 </div>
                               </Col>
                             </Row>
-                          ))}
+                          ))} */}
 
                         <div className="Checkout_Button_Container">
                           <div>
@@ -1220,22 +1392,30 @@ class CheckOut extends Component {
                         <h6>Enter Coupon Code</h6>
                         <div>
                           <div className="summary_coupon_button_wrapper">
-                            <Form>
-                              <Form.Group controlId="formBasicEmail">
-                                <Form.Control
-                                  onChange={this.couponcode_handler}
-                                  name="coupon_code_value"
-                                  type="text"
-                                  placeholder="Coupon Code *"
-                                />
-                              </Form.Group>
+                            <Form onSubmit={this.validate_coupon_function}>
+                              <Form.Row>
+                                <Form.Group
+                                  as={Col}
+                                  md={8}
+                                  controlId="formBasicEmail"
+                                >
+                                  <Form.Control
+                                    onChange={this.couponcode_handler}
+                                    name="coupon_code_value"
+                                    type="text"
+                                    placeholder="Coupon Code *"
+                                  />
+                                </Form.Group>
+                                <Col>
+                                  <Button
+                                    type="submit"
+                                    className="summary_coupon_button"
+                                  >
+                                    Apply
+                                  </Button>
+                                </Col>
+                              </Form.Row>
                             </Form>
-
-                            <div className="summary_coupon_button">
-                              <p onClick={this.validate_coupon_function}>
-                                Apply
-                              </p>
-                            </div>
                           </div>
                         </div>
                       </div>
@@ -1282,6 +1462,7 @@ const mapStateToProps = (state) => {
     cart_product_list: state.ProductActions.cart_product_list || [],
     total_amount: state.ProductActions.total_amount,
     product_quantity: state.ProductActions.product_quantity,
+    products: state.ProductActions.product_master_list,
     save_amount: state.ProductActions.save_amount,
     mrp_amount: state.ProductActions.mrp_amount,
     coupon_validation_amount: state.ProductActions.coupon_validation_amount,
