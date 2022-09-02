@@ -28,6 +28,8 @@ export const GET_FILTERS = "GET_FILTERS";
 export const GET_HOME_PAGE_PRODUCTS = "GET_HOME_PAGE_PRODUCTS";
 export const GET_REVIEWS = "GET_REVIEWS";
 export const ADD_RECENT_VIEW = "ADD_RECENT_VIEW";
+export const ADD_STYLE1 = "ADD_STYLE1";
+export const ADD_STYLE2 = "ADD_STYLE2";
 
 export const empty_message = () => {
   return async (dispatch) => {
@@ -65,7 +67,10 @@ export const getCategory1 = () => {
       .catch((error) => {
         console.log(error);
         dispatch({ type: "SUCCESS_MESSAGE", success_title: "catch error" });
-        dispatch({ type: "ERROR_MESSAGE", error_title: error });
+        dispatch({
+          type: "ERROR_MESSAGE",
+          error_title: error.message ?? "something went wrong",
+        });
       });
     return true;
   };
@@ -249,6 +254,8 @@ export const getItemSearch = (
         ) {
           item_name
           item_sub_category_id
+          rack_id
+          brand_id
           rating_point
           description
           item_category_id
@@ -314,7 +321,10 @@ export const getItemSearch = (
         console.log(error);
         dispatch({ type: "IS_LOADING", is_loading: false });
         dispatch({ type: "SUCCESS_MESSAGE", success_title: "catch error" });
-        dispatch({ type: "ERROR_MESSAGE", error_title: error.message });
+        dispatch({
+          type: "ERROR_MESSAGE",
+          error_title: error.message ?? "something went wrong",
+        });
       });
     return true;
   };
@@ -393,7 +403,10 @@ export const getItemListBySubCategory = (
       })
       .catch((error) => {
         dispatch({ type: "SUCCESS_MESSAGE", success_title: "catch error" });
-        dispatch({ type: "ERROR_MESSAGE", error_title: error });
+        dispatch({
+          type: "ERROR_MESSAGE",
+          error_title: error.message ?? "something went wrong",
+        });
         dispatch({ type: "IS_LOADING", is_loading: false });
       });
     return true;
@@ -439,7 +452,10 @@ export const getFilterByCategory = (id) => (dispatch) => {
     })
     .catch((error) => {
       dispatch({ type: "SUCCESS_MESSAGE", success_title: "catch error" });
-      dispatch({ type: "ERROR_MESSAGE", error_title: error });
+      dispatch({
+        type: "ERROR_MESSAGE",
+        error_title: error.message ?? "something went wrong",
+      });
     });
 };
 
@@ -481,6 +497,13 @@ export const getFilterBySubCategory = (id) => (dispatch) => {
       console.log(result);
       const data = result.data.getFilterListBySubCategory;
 
+      if (data.length === 0) {
+        dispatch({
+          type: "LOCAL_FILTERS",
+        });
+        return;
+      }
+
       dispatch({
         type: GET_FILTERS,
         data,
@@ -488,7 +511,10 @@ export const getFilterBySubCategory = (id) => (dispatch) => {
     })
     .catch((error) => {
       dispatch({ type: "SUCCESS_MESSAGE", success_title: "catch error" });
-      dispatch({ type: "ERROR_MESSAGE", error_title: error });
+      dispatch({
+        type: "ERROR_MESSAGE",
+        error_title: error.message ?? "something went wrong",
+      });
     });
 };
 
@@ -512,6 +538,7 @@ export const getItemListByMasterId = (id, pin) => {
           item_sub_category_id
           item_category_name
           rating_point
+          brand_id
           description
           retail_price
           selling_price
@@ -575,7 +602,10 @@ export const getItemListByMasterId = (id, pin) => {
       .catch((error) => {
         dispatch({ type: "IS_LOADING", is_loading: false });
         dispatch({ type: "SUCCESS_MESSAGE", success_title: "catch error" });
-        dispatch({ type: "ERROR_MESSAGE", error_title: error });
+        dispatch({
+          type: "ERROR_MESSAGE",
+          error_title: error.message ?? "something went wrong",
+        });
       });
   };
 };
@@ -678,7 +708,8 @@ export const getProductImages1 = (product_id) => {
           type: "PRODUCT_IMAGES_LIST",
           products_image_list: imagesArray,
         });
-      });
+      })
+      .catch((error) => console.log(error));
     return true;
   };
 };
@@ -795,6 +826,7 @@ export const validateCouponCode = (order_amount, coupon_code_value) => {
 export const addtocartdb = (
   id,
   action_type,
+  pincode,
   message = "Item added to the cart"
 ) => {
   return async function (dispatch) {
@@ -802,8 +834,8 @@ export const addtocartdb = (
     const Authorization = localStorage.getItem("Authorization");
     console.log(id, action_type, Authorization);
     const cart_type = "0";
-    const mutation = `mutation addCartList($Authorization: String, $id: ID, $action_type:String ,$cart_type:String ) {
-      addCartList(Authorization:$Authorization, id:$id, action_type:$action_type,  cart_type:$cart_type  ){
+    const mutation = `mutation addCartList($Authorization: String, $id: ID, $action_type:String ,$cart_type:String, $pincode: String ) {
+      addCartList(Authorization:$Authorization, id:$id, action_type:$action_type,  cart_type:$cart_type , pincode: $pincode ){
         message
       }
   }`;
@@ -817,7 +849,7 @@ export const addtocartdb = (
       body: JSON.stringify({
         query: mutation,
         fetchPolicy: "no-cache",
-        variables: { Authorization, id, action_type, cart_type },
+        variables: { Authorization, id, action_type, cart_type, pincode },
       }),
     })
       .then((response) => response.json())
@@ -847,6 +879,7 @@ export const addtocartdb = (
         localStorage.clear();
         dispatch(resetCart());
         dispatch(logout_user());
+        dispatch({ type: "IS_LOADING", is_loading: false });
       });
 
     dispatch({ type: "IS_LOADING", is_loading: false });
@@ -880,6 +913,7 @@ export const getCartList = () => {
           generic_id
           special_price
           save_price
+          pincode
         }
       }
     `;
@@ -907,6 +941,7 @@ export const getCartList = () => {
           type: "SUCCESS_MESSAGE",
           success_title: "CART_SUCCESS",
         });
+        dispatch({ type: "IS_LOADING", is_loading: false });
       })
       .catch((error) => {
         //alert(error);
@@ -916,10 +951,11 @@ export const getCartList = () => {
   };
 };
 
-export const addToCartLocal = (id) => (dispatch) => {
+export const addToCartLocal = (id, pincode) => (dispatch) => {
   dispatch({
     type: ADD_TO_CART_LOCAL,
     id,
+    pincode,
   });
   dispatch({ type: "IS_LOADING", is_loading: false });
 };
@@ -1107,3 +1143,78 @@ export const getRatingListByProductId =
       });
     return true;
   };
+
+export const getSubCategoryList = (id) => (dispatch) => {
+  const item_category_id = id;
+  const Authorization = Config.getRequestToken();
+  const query = gql`
+    query getSubCategoryList(
+      $Authorization: String
+      $item_category_id: String
+    ) {
+      getSubCategoryList(
+        Authorization: $Authorization
+        item_category_id: $item_category_id
+      ) {
+        item_sub_category_name
+        image_address
+        id
+        description
+      }
+    }
+  `;
+
+  Config.client
+    .query({
+      query: query,
+      fetchPolicy: "no-cache",
+      variables: { Authorization, item_category_id },
+    })
+    .then((result) => {
+      console.log(result);
+      const data = result.data.getSubCategoryList;
+
+      if (id === "2396") dispatch({ type: ADD_STYLE1, data });
+      if (id === "2397") dispatch({ type: ADD_STYLE2, data });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const checkItemAvailability = (ids, pincode) => (dispatch) => {
+  dispatch({ type: "IS_LOADING", is_loading: true });
+  const master_id = ids;
+  const Authorization = Config.getRequestToken();
+  const query = gql`
+    query checkItemAvailability(
+      $Authorization: String
+      $master_id: String
+      $pincode: String
+    ) {
+      checkItemAvailability(
+        Authorization: $Authorization
+        master_id: $master_id
+        pincode: $pincode
+      ) {
+        item_name
+        id
+        availability
+      }
+    }
+  `;
+  Config.client
+    .query({
+      query: query,
+      fetchPolicy: "no-cache",
+      variables: { Authorization, master_id, pincode },
+    })
+    .then((result) => {
+      console.log(result);
+      const data = result.data.checkItemAvailability;
+    })
+    .catch((error) => {
+      dispatch({ type: "IS_LOADING", is_loading: false });
+      console.log(error);
+    });
+};
