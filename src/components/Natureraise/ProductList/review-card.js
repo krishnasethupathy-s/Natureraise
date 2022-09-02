@@ -19,7 +19,7 @@ const ReviewCard = ({ id, username, title, rating, date, description }) => {
         <div className="d-flex align-items-center">
           <Avatar name={username} size="45" round={true} />
           <div className="ml-3 flex-fill pt-1">
-            <Card.Title>{username}</Card.Title>
+            <Card.Title style={{ fontSize: "1rem" }}>{username}</Card.Title>
 
             <Card.Subtitle className="small">on {convertedDate}</Card.Subtitle>
             <div>

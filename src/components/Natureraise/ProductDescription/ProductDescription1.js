@@ -191,6 +191,12 @@ class ProductDescription1 extends Component {
     this.setState({ product_slider: x });
   };
   addtocart_function = (id = null) => {
+    const { pincode } = this.state;
+    if (pincode === "") {
+      toast.error("Please Enter Pincode");
+      return;
+    }
+
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
 
     let cart_id = typeof id === "string" ? id : this.unique_id;
@@ -198,12 +204,12 @@ class ProductDescription1 extends Component {
 
     if (this.Authorization !== null) {
       this.props.dispatch(
-        ProductActions.addtocartdb(cart_id, "plus", "ITEM_ADD_TO_CART")
+        ProductActions.addtocartdb(cart_id, "plus", pincode, "ITEM_ADD_TO_CART")
       );
       this.props.dispatch(ProductActions.getCartList());
       this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     } else {
-      this.props.dispatch(ProductActions.addToCartLocal(cart_id));
+      this.props.dispatch(ProductActions.addToCartLocal(cart_id, pincode));
     }
 
     this.props.dispatch(
@@ -213,9 +219,16 @@ class ProductDescription1 extends Component {
   addtocart_increment = () => {
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     // let increment_id = this.productId;
+    const { pincode } = this.state;
+
     if (this.Authorization) {
       this.props.dispatch(
-        ProductActions.addtocartdb(this.unique_id, "plus", "CART_ITEM_UPDATED")
+        ProductActions.addtocartdb(
+          this.unique_id,
+          "plus",
+          pincode,
+          "CART_ITEM_UPDATED"
+        )
       );
       this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     } else {
@@ -230,10 +243,16 @@ class ProductDescription1 extends Component {
 
   addtocart_decrement = () => {
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
+    const { pincode } = this.state;
     // let decrement_id = this.productId;
     if (this.Authorization) {
       this.props.dispatch(
-        ProductActions.addtocartdb(this.unique_id, "minus", "CART_ITEM_UPDATED")
+        ProductActions.addtocartdb(
+          this.unique_id,
+          "minus",
+          pincode,
+          "CART_ITEM_UPDATED"
+        )
       );
       this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     } else {
@@ -504,11 +523,13 @@ class ProductDescription1 extends Component {
                       />
                     </div>
                     <div>
-                      <h6 className="product_reviews">20 reviews</h6>
+                      <h6 className="product_reviews">
+                        {this.props.product_new_data.brand_id} reviews
+                      </h6>
                     </div>
                   </div>
 
-                  <h6>with 25 Years* Warranty</h6>
+                  {/* <h6>with 25 Years* Warranty</h6> */}
 
                   <div className="product_rank_wrapper">
                     <div className="product_rank">
@@ -523,7 +544,10 @@ class ProductDescription1 extends Component {
                     this.props.product_new_data.selling_price ? (
                       <div className="product_amount">
                         <h6 className="product_special_price">
-                          &#8377; {this.props.product_new_data.selling_price}
+                          &#8377;{" "}
+                          {this.props.product_new_data.special_price === "0.00"
+                            ? this.props.product_new_data.selling_price
+                            : this.props.product_new_data.special_price}
                         </h6>
                         <h6 className="product_retail_price">
                           &#8377; {this.props.product_new_data.retail_price}
@@ -573,27 +597,37 @@ class ProductDescription1 extends Component {
                           </div>
                           <div className="product_info_special_price retail_underline">
                             <h3>selling price: </h3>
-                            <h3 className="product_info_text_strike">
+                            <h3
+                              className={`${
+                                this.props.product_new_data.special_price ===
+                                "0.00"
+                                  ? ""
+                                  : "product_info_text_strike"
+                              } `}
+                            >
                               &#8377;{this.props.product_new_data.selling_price}
                             </h3>
                           </div>
-                          <div className="product_info_special_price special_price_underline ">
-                            <h3 className="product_info_special_title">
-                              {" "}
-                              special price:{" "}
-                            </h3>
-                            <h3>
-                              {this.props.product_new_data.special_price ===
-                              "0.00"
-                                ? this.props.product_new_data.selling_price
-                                : this.props.product_new_data.special_price}
-                            </h3>
-                          </div>
+                          {!!this.props.product_new_data.special_price !==
+                            "0.00" && (
+                            <div className="product_info_special_price special_price_underline ">
+                              <h3 className="product_info_special_title">
+                                {" "}
+                                special price:{" "}
+                              </h3>
+                              <h3>
+                                {this.props.product_new_data.special_price}
+                              </h3>
+                            </div>
+                          )}
                           <div className="product_info_special_price saving_amount ">
                             <h3 className="product_info_special_title">
                               Overall you save &#8377;
                               {this.props.product_new_data.retail_price -
-                                this.props.product_new_data.selling_price}
+                                (this.props.product_new_data.special_price ===
+                                "0.00"
+                                  ? this.props.product_new_data.selling_price
+                                  : this.props.product_new_data.special_price)}
                               ({this.props.product_new_data.percentage} %) on
                               this product{" "}
                             </h3>
