@@ -31,7 +31,7 @@ const OrderDetailsCard = ({ products, ...props }) => {
           </Col>
           <Col md={2} className="order_card_amount_wrap">
             <div className="order_card_amount">
-              <h6 className="order_card_sub">${props.amount}</h6>
+              <h6 className="order_card_sub">₹{props.amount}</h6>
             </div>
           </Col>
           <Col md={4}>
