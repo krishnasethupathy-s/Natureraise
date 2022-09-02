@@ -84,6 +84,10 @@ class HeaderNavbar extends Component {
     e.preventDefault();
     const query = qs.stringify({
       search: this.state.search,
+      discount: [],
+      rating: [],
+      sort: 1,
+      range: [100, 100000],
     });
     this.props.history.push({
       pathname: `/products`,
@@ -240,7 +244,7 @@ class HeaderNavbar extends Component {
                             // onClick={() => {
                             //   this.product_navigate(x.id);
                             // }}
-                            to={`/Products/${x.id}?range=100&range=50000&search=&sort=1`}
+                            to={`/Products/${x.id}?range=100&range=100000&search=&sort=1`}
                             key={x.id}
                           >
                             {x.item_sub_category_name}
