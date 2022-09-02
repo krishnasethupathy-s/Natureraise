@@ -71,6 +71,7 @@ class SignIn extends Component {
     const localCart = this.props.cart_items.map((item) => ({
       item_id: item.id,
       quantity: item.cart_list,
+      pincode: item.pincode,
     }));
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     await this.props.dispatch(
@@ -97,6 +98,11 @@ class SignIn extends Component {
       picture: image_address,
     } = jwtDecode(res.credential);
     const { client_ip } = this.state;
+    const localCart = this.props.cart_items.map((item) => ({
+      item_id: item.id,
+      quantity: item.cart_list,
+      pincode: item.pincode,
+    }));
 
     this.props.dispatch(
       UserActions.LoginWithSocialID(
@@ -106,7 +112,8 @@ class SignIn extends Component {
         last_name,
         email,
         image_address,
-        client_ip
+        client_ip,
+        localCart
       )
     );
   };
@@ -122,6 +129,12 @@ class SignIn extends Component {
     const image_address = picture.data.url;
     const { client_ip } = this.state;
 
+    const localCart = this.props.cart_items.map((item) => ({
+      item_id: item.id,
+      quantity: item.cart_list,
+      pincode: item.pincode,
+    }));
+
     this.props.dispatch(
       UserActions.LoginWithSocialID(
         "facebook",
@@ -130,7 +143,8 @@ class SignIn extends Component {
         last_name,
         email,
         image_address,
-        client_ip
+        client_ip,
+        localCart
       )
     );
   };
@@ -208,34 +222,39 @@ class SignIn extends Component {
                     <div className="ortext ">
                       <h6>Or</h6>
                     </div>
-
-                    <div className="d-flex justify-content-between">
-                      <GoogleLogin
-                        onSuccess={this.responseSuccessGoogle}
-                        onError={() => {
-                          console.log("Somthing went wrong, Please try again");
-                        }}
-                        useOneTap
-                      />
-                      <FacebookLogin
-                        appId="585181773318830"
-                        fields="email, picture, first_name,last_name, id"
-                        onSuccess={(response) => {
-                          console.log("Login Success!", response);
-                        }}
-                        onFail={(error) => {
-                          console.log("Login Failed!", error);
-                        }}
-                        onProfileSuccess={this.responseSuccessFacebook}
-                        style={{
-                          backgroundColor: "#4267b2",
-                          color: "#fff",
-                          fontSize: "14px",
-                          padding: "8px 20px",
-                          border: "none",
-                          borderRadius: "4px",
-                        }}
-                      />
+                    <div>
+                      <Row className="d-flex justify-content-center align-items-center">
+                        <GoogleLogin
+                          onSuccess={this.responseSuccessGoogle}
+                          onError={() => {
+                            console.log(
+                              "Somthing went wrong, Please try again"
+                            );
+                          }}
+                          useOneTap
+                        />
+                      </Row>
+                      <Row className="d-flex justify-content-center align-items-center mt-2">
+                        <FacebookLogin
+                          appId="585181773318830"
+                          fields="email, picture, first_name,last_name, id"
+                          onSuccess={(response) => {
+                            console.log("Login Success!", response);
+                          }}
+                          onFail={(error) => {
+                            console.log("Login Failed!", error);
+                          }}
+                          onProfileSuccess={this.responseSuccessFacebook}
+                          style={{
+                            backgroundColor: "#4267b2",
+                            color: "#fff",
+                            fontSize: "14px",
+                            padding: "10px 18px",
+                            border: "none",
+                            borderRadius: "4px",
+                          }}
+                        />
+                      </Row>
                     </div>
 
                     {/* <div className="sign_in_socialicons">
