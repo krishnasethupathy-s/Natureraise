@@ -1,4 +1,6 @@
 import Config from "../../../../../Config";
+import { resetCart } from "../Product/ProductActions";
+import { logout_user } from "../User/UserActions";
 import { gql } from "@apollo/client";
 
 export const SUCCESS_MESSAGE = "SUCCESS_MESSAGE";
@@ -72,6 +74,13 @@ export const getOrderListPageWise = (page_number, data_limit) => (dispatch) => {
       // this.setState({ isLoadingComplete: false });
       console.log(result);
       const data = result.data.getOrderListPageWise;
+
+      if (data === null) {
+        dispatch(resetCart());
+        dispatch(logout_user());
+        throw new Error("Time Expired");
+      }
+
       dispatch({
         type: "GET_ORDER_LIST",
         data,
@@ -296,6 +305,11 @@ export const getOrderDetail = (order_id) => (dispatch) => {
     .then((result) => {
       console.log(result);
       const data = result.data.getOrderData;
+      if (data === null) {
+        dispatch(resetCart());
+        dispatch(logout_user());
+        throw new Error("Time Expired");
+      }
       dispatch({
         type: GET_ORDER_DETAIL,
         data,
@@ -394,6 +408,36 @@ export const getOrderStatusList = (order_id) => (dispatch) => {
     });
 };
 
+export const cancelOrder = (id) => (dispatch) => {
+  dispatch({ type: "IS_LOADING", is_loading: true });
+  const Authorization = localStorage.getItem("Authorization");
+  const query = gql`
+    query cancelOrder($Authorization: String, $id: ID) {
+      cancelOrder(Authorization: $Authorization, id: $id) {
+        message
+      }
+    }
+  `;
+
+  Config.client
+    .query({
+      query: query,
+      fetchPolicy: "no-cache",
+      variables: { Authorization, id },
+    })
+    .then((result) => {
+      console.log(result);
+      const data = result.data.cancelOrder;
+
+      dispatch(getOrderStatusList(id));
+      dispatch({ type: "IS_LOADING", is_loading: false });
+    })
+    .catch((error) => {
+      //alert(error);
+      console.log(error);
+      dispatch({ type: "IS_LOADING", is_loading: false });
+    });
+};
 /*
 let arr = result.data.getOrderStatusList;
       let arr1 = this.state.status_list;
