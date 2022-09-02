@@ -55,7 +55,7 @@ const AddressDetails = ({ detail }) => {
           </div> */}
         </div>
       </Col>
-      <Col md={3}>
+      <Col md={2}>
         <div className="order_address_wrap">
           <h6 className="order_title">Amount</h6>
           {/* <div className="order_image_wrap">
@@ -74,16 +74,19 @@ const AddressDetails = ({ detail }) => {
           <h6 className="order_title">Total Amount: ₹ {detail.order_amount}</h6>
         </div>
       </Col>
-      <Col md={2} className="order_download_wrap">
-        <a
-          href={detail.invoice_file_path}
-          className="order_download_button"
-          target="_blank"
-          rel="noopener noreferrer"
-          download
-        >
-          Download
-        </a>
+
+      <Col md={3} className="order_download_wrap">
+        {!!detail.invoice_file_path && (
+          <a
+            href={detail.invoice_file_path}
+            className="order_download_button"
+            target="_blank"
+            rel="noopener noreferrer"
+            download
+          >
+            Download invoice
+          </a>
+        )}
       </Col>
     </Row>
   );
