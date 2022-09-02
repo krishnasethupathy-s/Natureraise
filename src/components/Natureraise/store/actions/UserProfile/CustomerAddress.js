@@ -151,10 +151,12 @@ export const getCustomerAddressList = () => (dispatch) => {
         type: "GET_CUSTOMER_ADDRESS_LIST",
         address_data_list: result.data.getCustomerAddressList,
       });
+      dispatch({ type: "IS_LOADING", is_loading: false });
     })
     .catch((error) => {
       dispatch({ type: "SUCCESS_MESSAGE", success_title: "catch error" });
       dispatch({ type: "ERROR_MESSAGE", error_title: error });
+      dispatch({ type: "IS_LOADING", is_loading: false });
     });
 
   return Promise.resolve();
