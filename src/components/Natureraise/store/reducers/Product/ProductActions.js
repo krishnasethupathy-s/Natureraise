@@ -25,6 +25,8 @@ import {
   GET_HOME_PAGE_PRODUCTS,
   GET_REVIEWS,
   ADD_RECENT_VIEW,
+  ADD_STYLE1,
+  ADD_STYLE2,
 } from "../../actions/Product/ProductActions";
 
 const initialState = {
@@ -41,7 +43,7 @@ const initialState = {
   total_amount: 0,
   save_amount: 0,
   mrp_amount: 0,
-  product_quantity: "",
+  product_quantity: 0,
   coupon_validation_amount: 0,
   is_loading: true,
 
@@ -60,6 +62,8 @@ const initialState = {
   },
   reviews: [],
   recentView: [],
+  style1: [],
+  style2: [],
 };
 export default (state = initialState, action) => {
   console.log(action);
@@ -99,6 +103,23 @@ export default (state = initialState, action) => {
       return {
         ...state,
         filters: action.data,
+      };
+    }
+    case "LOCAL_FILTERS": {
+      return {
+        ...state,
+        filters: [
+          {
+            filter_heading: "Discount",
+            filter_value: ["10", "30", "50", "80", "90"],
+            id: "1",
+          },
+          {
+            filter_heading: "Rating",
+            filter_value: ["1", "2", "3", "4", "5"],
+            id: "2",
+          },
+        ],
       };
     }
 
@@ -325,8 +346,9 @@ export default (state = initialState, action) => {
       let exit_product_quanity = state.cart.items.find(
         (item) => item.id === product_quanity_id
       );
+
       if (exit_product_quanity) {
-        let product_quanity_data = exit_product_quanity.cart_list;
+        let product_quanity_data = +exit_product_quanity.cart_list;
         return {
           ...state,
           product_quantity: product_quanity_data,
@@ -337,6 +359,13 @@ export default (state = initialState, action) => {
           product_quantity: 0,
         };
       }
+    }
+
+    case "RESET_PRODUCT_QUANTITY": {
+      return {
+        ...state,
+        product_quantity: 0,
+      };
     }
 
     case ADD_TO_CART_INCREMENT: {
@@ -515,7 +544,7 @@ export default (state = initialState, action) => {
       if (!item) {
         item = state.product_list.find((product) => product.id === productId);
       }
-      console.log(item);
+      item.pincode = action.pincode;
       item.cart_list = +item.cart_list + 1;
       item.total_amount =
         item.special_price === "0.00"
@@ -654,6 +683,17 @@ export default (state = initialState, action) => {
       return {
         ...state,
         cart: initialState.cart,
+      };
+
+    case ADD_STYLE1:
+      return {
+        ...state,
+        style1: action.data,
+      };
+    case ADD_STYLE2:
+      return {
+        ...state,
+        style2: action.data,
       };
   }
 
