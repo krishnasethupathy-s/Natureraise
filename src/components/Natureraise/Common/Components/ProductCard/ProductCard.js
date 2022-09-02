@@ -52,21 +52,28 @@ const ProductCard = (props) => {
           {props.retail_price === props.selling_price ? (
             <div className="product-card-amount-wrapper">
               <h6 className="product-card-hightlight-red">
+                ₹{" "}
                 {props?.special_price === "0.00"
                   ? props?.selling_price
-                  : props?.special_price}
+                  : props?.special_price}{" "}
               </h6>
-              <h6 className="product-card-hightlight-green">
+              {/* <h6 className="product-card-hightlight-green">
                 ₹ {props?.retail_price}{" "}
-              </h6>
+              </h6> */}
             </div>
           ) : (
             <div className="product-card-amount-wrapper">
-              <h6 className="product-card-hightlight-redr">
-                {props?.special_price}
+              <h6 className="product-card-hightlight-red">
+                ₹
+                {props?.special_price === "0.00"
+                  ? props?.selling_price
+                  : props?.special_price}{" "}
               </h6>
               <h6 className="product-card-hightlight-green">
-                ₹ {props?.selling_price}{" "}
+                ₹
+                {props?.special_price === "0.00"
+                  ? props?.retail_price
+                  : props?.selling_price}{" "}
               </h6>
             </div>
           )}
@@ -74,9 +81,12 @@ const ProductCard = (props) => {
       </Link>
 
       <div>
-        <p className=" product-card-addcart" onClick={props?.addToCart}>
+        <button
+          className=" product-card-addcart btn-block"
+          onClick={props?.addToCart}
+        >
           Add to Cart
-        </p>
+        </button>
       </div>
     </div>
   );

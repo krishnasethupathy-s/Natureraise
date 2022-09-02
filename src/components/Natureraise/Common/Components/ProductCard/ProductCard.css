@@ -58,7 +58,7 @@
 .product-card-hightlight-red {
   color: red;
   font-size: 14px;
-  margin-right: 5px;
+  margin-right: 10px;
 }
 .product-card-hightlight-green {
   color: #295832;
@@ -71,6 +71,8 @@
   background-color: #ff851b;
   color: white;
   padding: 6px;
+  outline: none;
+  border: none;
 }
 
 .hover_first_images {
