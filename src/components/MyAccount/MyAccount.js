@@ -1,40 +1,50 @@
 import React, { Component } from "react";
+
+import { Link, NavLink, Route, Switch, Redirect } from "react-router-dom";
+import Avatar from "react-avatar";
+
 import "./MyAccount.css";
-import Footer from '../Natureraise/Footer/Footer';
+import Footer from "../Natureraise/Footer/Footer";
 import HeaderInnerNavbar from "../Natureraise/HeaderNavbar/HeaderNavbar";
 import PersonalInformation from "./PersonalInformation/PersonalInformation";
 import ManageAddress from "./ManageAddress/ManageAddress";
 import GstInformation from "./GstInformation/GstInformation";
-import { Container, Col, Row, Jumbotron, } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Container, Col, Row, Jumbotron } from "react-bootstrap";
 import * as AddCustomerAddress from "../Natureraise/store/actions/UserProfile/CustomerAddress";
 import { toast } from "react-toastify";
 import { connect } from "react-redux";
 import PageLoading from "../constants/PageLoader/PageLoading";
+import OrderDetailsCard from "../Natureraise/Common/Components/OrderDetailsCard/OrderDetailsCard";
+import Orders from "../Natureraise/Orders/Orders";
+
+import {
+  getOrderList,
+  getOrderCurrentList,
+} from "../Natureraise/store/actions/Order/OrderActions";
+
+import { resetCart } from "../Natureraise/store/actions/Product/ProductActions";
+import { logout_user } from "../Natureraise/store/actions/User/UserActions";
 
 class MyAccount extends Component {
   constructor(props) {
     super(props);
     this.state = {
       setOpen: false,
-      profile_information: true,
-      manage_infromation: false,
       first_name: localStorage.getItem("first_name"),
       last_name: localStorage.getItem("last_name"),
+      profile_pic: localStorage.getItem("image_address"),
       client_ip: "",
       isLoadingComplete: true,
       propery_list: [],
-      gst_information: false,
-      order_information: false,
     };
   }
 
   Logout_Function = () => {
     localStorage.clear();
-    this.props.history.push('/')
+    this.props.dispatch(resetCart());
+    this.props.dispatch(logout_user());
+    this.props.history.push("/");
   };
-
-
 
   async componentDidMount() {
     window.scrollTo(0, 0);
@@ -44,12 +54,16 @@ class MyAccount extends Component {
     setTimeout(() => {
       this.props.dispatch({ type: "IS_LOADING", is_loading: false });
     }, 1000);
-  }
 
+    // this.props.dispatch(getOrderList());
+    // this.props.dispatch(getOrderCurrentList());
+  }
 
   componentDidUpdate = async () => {
     if (this.props.message === "CUSTOMER_PROFILE_UPDATE") {
-      let success = await this.props.dispatch(AddCustomerAddress.empty_message());
+      let success = await this.props.dispatch(
+        AddCustomerAddress.empty_message()
+      );
       if (success) {
         toast.success("Profile Update");
         this.componentDidMount();
@@ -66,43 +80,8 @@ class MyAccount extends Component {
     this.setState({ state: "" });
   };
 
-  handleViewBtnClickAccount = () => {
-    this.setState({
-      profile_information: true,
-      manage_infromation: false,
-      gst_information: false,
-      order_information: false,
-    });
-  };
-
-  handleViewBtnClickMange = () => {
-    this.setState({
-      profile_information: false,
-      manage_infromation: true,
-      gst_information: false,
-      order_information: false,
-    });
-  };
-
-  handleViewBtnClickGst = () => {
-    this.setState({
-      profile_information: false,
-      manage_infromation: false,
-      gst_information: true,
-      order_information: false,
-    });
-  };
-
-  handleViewBtnClickOrder = () => {
-    this.setState({
-      profile_information: false,
-      manage_infromation: false,
-      gst_information: false,
-      order_information: true,
-    });
-  };
-
   render() {
+    const { path } = this.props.match;
     return (
       <React.Fragment>
         <PageLoading isLoadingComplete={this.props.is_loading} />
@@ -115,17 +94,15 @@ class MyAccount extends Component {
                 <div className="SignIn_Section">
                   <ul className="Inner_nav">
                     <li>
-                      <a href="#home">
+                      <Link to="/">
                         <i className="fa fa-sign-in"></i> Home
-                    </a>
+                      </Link>
                     </li>
-                    <Link to="/SignIn">
-                      <li>
-                        <a href="#about">
-                          <i className="fa fa-user-circle-o"></i> MyAccount
-                      </a>
-                      </li>
-                    </Link>
+                    <li>
+                      <Link to="/MyAccount/profile">
+                        <i className="fa fa-user-circle-o"></i> MyAccount
+                      </Link>
+                    </li>
                   </ul>
                 </div>
               </Container>
@@ -138,20 +115,32 @@ class MyAccount extends Component {
                 <Col md={3}>
                   <div className="mb-2 My_Account_Basic_Details">
                     <div className="My_Account_Profile_Image">
-                      <img
-                        src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
-                        alt="Amisuzi RealEstate"
+                      {/* <img
+                        // src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+                        alt={
+                          this.props.user.first_name +
+                          " " +
+                          this.props.user.last_name
+                        }
+                        src={
+                          this.props.user.image_address ||
+                          this.state.profile_pic
+                        }
+                      />
+                    */}
+                      <Avatar
+                        name={`${this.props.user.first_name} ${this.props.user.last_name}`}
+                        size="80"
+                        round={true}
                       />
                     </div>
-
                     <div>
                       <h6 className="Padding_left">Hello</h6>
                       {localStorage.getItem("Authorization") === null ? (
                         <h6 className="Padding_left"> </h6>
                       ) : (
                         <h6 className="Padding_left">
-                          {this.state.first_name}{" "}
-                          {this.state.last_name}
+                          {this.state.first_name} {this.state.last_name}
                         </h6>
                       )}
                     </div>
@@ -169,69 +158,74 @@ class MyAccount extends Component {
                       <h6 className="My_Account_Heading_Text">Account</h6>
                     </div>
                   </div>
-                  <div className="mb-1 My_Account_Basic_Details" >
-                    <div className="My_Account_Heading_Section ">
-                      <h6
-                        className={this.state.profile_information ? 'MyAccount_SubHeading active_background' : 'MyAccount_SubHeading'}
-                        onClick={() => this.handleViewBtnClickAccount()}
-                      >
-                        Profile Information
-                    </h6>
-                      <i
-                        className="fa fa-caret-right"
+                  <NavLink
+                    style={{
+                      color: " #666",
+                    }}
+                    activeClassName="active_background"
+                    to={`/MyAccount/profile`}
+                  >
+                    <div className="mb-1 My_Account_Basic_Details">
+                      <div className="My_Account_Heading_Section ">
+                        <h6 className={"MyAccount_SubHeading"}>
+                          Profile Information
+                        </h6>
+                        <i className="fa fa-caret-right" aria-hidden="true"></i>
+                      </div>
+                    </div>
+                  </NavLink>
+                  <NavLink
+                    style={{
+                      color: " #666",
+                    }}
+                    to={`/MyAccount/address`}
+                    activeClassName="active_background"
+                  >
+                    <div className="mb-1 My_Account_Basic_Details">
+                      <div className="My_Account_Heading_Section ">
+                        <h6 className={"MyAccount_SubHeading"}>
+                          Manage Address
+                        </h6>
+                        <i
+                          className="fa fa-caret-right"
+                          aria-hidden="true"
+                          // onClick={() => this.handleViewBtnClickGst()}
+                        ></i>
+                      </div>
+                    </div>
+                  </NavLink>
 
-                        aria-hidden="true"
-                        onClick={() => this.handleViewBtnClickAccount()}
-                      ></i>
+                  <NavLink
+                    style={{
+                      color: " #666",
+                    }}
+                    to={`/MyAccount/gst`}
+                    activeClassName="active_background"
+                  >
+                    <div className="mb-1 My_Account_Basic_Details">
+                      <div className="My_Account_Heading_Section ">
+                        <h6 className={"MyAccount_SubHeading"}>
+                          Gst Information
+                        </h6>
+                        <i className="fa fa-caret-right" aria-hidden="true"></i>
+                      </div>
                     </div>
-                  </div>
-                  <div className="mb-1 My_Account_Basic_Details">
-                    <div className="My_Account_Heading_Section ">
-                      <h6
-                        className={this.state.manage_infromation ? 'MyAccount_SubHeading active_background' : 'MyAccount_SubHeading'}
-                        onClick={() => this.handleViewBtnClickMange()}
-                      >
-                        Manage Address
-                    </h6>
-                      <i
-                        className="fa fa-caret-right"
-                        aria-hidden="true"
-                        onClick={() => this.handleViewBtnClickGst()}
-                      ></i>
-                    </div>
-                  </div>
+                  </NavLink>
 
-                  <div className="mb-1 My_Account_Basic_Details">
-                    <div className="My_Account_Heading_Section ">
-                      <h6
-                        className={this.state.gst_information ? 'MyAccount_SubHeading active_background' : 'MyAccount_SubHeading'}
-                        onClick={() => this.handleViewBtnClickGst()}
-                      >
-                        Gst Information
-                    </h6>
-                      <i
-                        className="fa fa-caret-right"
-                        aria-hidden="true"
-                        onClick={() => this.handleViewBtnClickGst()}
-                      ></i>
+                  <NavLink
+                    style={{
+                      color: " #666",
+                    }}
+                    to={`${path}/orders`}
+                    activeClassName="active_background"
+                  >
+                    <div className="mb-1 My_Account_Basic_Details">
+                      <div className="My_Account_Heading_Section ">
+                        <h6 className={"MyAccount_SubHeading"}>Orders</h6>
+                        <i className="fa fa-caret-right" aria-hidden="true"></i>
+                      </div>
                     </div>
-                  </div>
-
-                  <div className="mb-1 My_Account_Basic_Details">
-                    <div className="My_Account_Heading_Section ">
-                      <h6
-                        className={this.state.order_information ? 'MyAccount_SubHeading active_background' : 'MyAccount_SubHeading'}
-                        onClick={() => this.handleViewBtnClickOrder()}
-                      >
-                        Orders
-                    </h6>
-                      <i
-                        className="fa fa-caret-right"
-                        aria-hidden="true"
-                        onClick={() => this.handleViewBtnClickOrder()}
-                      ></i>
-                    </div>
-                  </div>
+                  </NavLink>
 
                   <div className="My_Account_Basic_Details">
                     <i
@@ -253,12 +247,48 @@ class MyAccount extends Component {
                     </div>
                   </div>
                 </Col>
+                <Switch>
+                  <Redirect from="/MyAccount" to="/MyAccount/profile" exact />
+                  <Route path={`${path}/profile`}>
+                    <Col md={9} className="My_Account_Profile_Details">
+                      <PersonalInformation />
+                    </Col>
+                  </Route>
+                  <Route path={`${path}/address`}>
+                    <Col md={9} className="MyAddress_Details_Section">
+                      <ManageAddress />
+                    </Col>
+                  </Route>
+                  <Route path={`${path}/gst`}>
+                    <Col md={9} className="MyAddress_Details_Section">
+                      <GstInformation />
+                    </Col>
+                  </Route>
+                  <Route path={`${path}/orders`}>
+                    <Col md={9} className="MyAddress_Details_Section">
+                      {/* {this.props.orders.map((item) => (
+                        <OrderDetailsCard
+                          key={item.id}
+                          order_id={item.id}
+                          heading="200 LPD NATURERAISE ECO ETC NON PRESSURISED.."
+                          color="Color, Silver"
+                          subtitle="Seller, E-Troinic"
+                          amount="520"
+                          deliverydate="Delivered on Sun, May 23"
+                          deleiverystatus="your item has been Delivered"
+                        />
+                      ))} */}
+                      <Orders />
+                    </Col>
+                  </Route>
+                </Switch>
+                {/* 
                 {this.state.profile_information === true ? (
                   <Col md={9} className="My_Account_Profile_Details">
                     <PersonalInformation />
                   </Col>
-                ) : null}
-                {this.state.manage_infromation === true ? (
+                ) : null} */}
+                {/* {this.state.manage_infromation === true ? (
                   <Col md={9} className="MyAddress_Details_Section">
                     <ManageAddress />
                   </Col>
@@ -270,9 +300,20 @@ class MyAccount extends Component {
                 ) : null}
                 {this.state.order_information === true ? (
                   <Col md={9} className="MyAddress_Details_Section">
-                    <GstInformation />
+                    {this.props.orders.map((item) => (
+                      <OrderDetailsCard
+                        key={item.id}
+                        order_id={item.id}
+                        heading="200 LPD NATURERAISE ECO ETC NON PRESSURISED.."
+                        color="Color, Silver"
+                        subtitle="Seller, E-Troinic"
+                        amount="520"
+                        deliverydate="Delivered on Sun, May 23"
+                        deleiverystatus="your item has been Delivered"
+                      />
+                    ))}
                   </Col>
-                ) : null}
+                ) : null} */}
               </Row>
             </Container>
           </section>
@@ -288,6 +329,8 @@ const mapStateToProps = (state) => {
     message: state.AddCustomerAddress.message,
     error_msg: state.AddCustomerAddress.error_msg,
     is_loading: state.ProductActions.is_loading,
+    orders: state.OrderReducer.orders || [],
+    user: state.UserActions.user,
   };
 };
 

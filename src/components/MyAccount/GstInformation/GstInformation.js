@@ -2,18 +2,17 @@ import React, { Component } from "react";
 import { Row, Container, Col, Form, Button } from "react-bootstrap";
 import "./GstInformation.css";
 import Config from "../../../Config";
-import 'react-toastify/dist/ReactToastify.css';
-import { toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import images from "../../constants/images";
 import { connect } from "react-redux";
-
 
 class GstInformation extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      first_name: '',
-      last_name: '',
+      pan_number: "",
+      gst_number: "",
       isLoadingComplete: true,
     };
   }
@@ -21,12 +20,15 @@ class GstInformation extends Component {
     window.scrollTo(0, 0);
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
 
+    this.setState({
+      pan_number: localStorage.getItem("pan_number") ?? "",
+      gst_number: localStorage.getItem("gst_number") ?? "",
+    });
+
     setTimeout(() => {
       this.props.dispatch({ type: "IS_LOADING", is_loading: false });
     }, 1000);
   }
-
-
 
   handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,15 +36,21 @@ class GstInformation extends Component {
   };
 
   handleSubmit = (e) => {
-    this.setState({ isLoadingComplete: true });
+    this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     e.preventDefault();
     const Authorization = localStorage.getItem("Authorization");
-    const { first_name, last_name, mobile_number1, email_id } = this.state;
-    const mutation = `mutation CustomerUpdation($email_id:String, $mobile_number1:String, $first_name:String, $last_name:String,  
-                                          $Authorization:String ) {
-                                            CustomerUpdation(email_id:$email_id, mobile_number1:$mobile_number1, first_name:$first_name, last_name:$last_name,
-            Authorization:$Authorization){
-              message
+    const { gst_number, pan_number } = this.state;
+    const mutation = `mutation GstUpdation(
+      $Authorization:String, 
+      $gst_number:String,  
+      $pan_number:String
+      ) {
+          GstUpdation(
+            Authorization:$Authorization, 
+            gst_number:$gst_number, 
+            pan_number:$pan_number,
+        ){
+              message,
           }
       }`;
 
@@ -55,43 +63,30 @@ class GstInformation extends Component {
       body: JSON.stringify({
         query: mutation,
         variables: {
-          email_id,
-          mobile_number1,
-          first_name,
-          last_name,
           Authorization,
+          gst_number,
+          pan_number,
         },
       }),
     })
       .then((response) => response.json())
-
       .then((responseText) => {
-        if (responseText.data.CustomerUpdation["message"] === "SUCCESS") {
+        if (responseText.data.GstUpdation["message"] === "SUCCESS") {
           this.setState({ isLoadingComplete: false });
           toast.success("Successfully Added");
-          localStorage.setItem('first_name',this.state.first_name);
-          localStorage.setItem('last_name',this.state.last_name);
-          localStorage.setItem('mobile_number1',this.state.mobile_number1);
-          localStorage.setItem('email_id',this.state.email_id);
-          setTimeout(() => {
-        
-          window.location.reload();
-          }, 2000);
-         
-          
-         
+
+          this.props.dispatch({ type: "IS_LOADING", is_loading: false });
+
+          localStorage.setItem("pan_number", this.state.pan_number);
+          localStorage.setItem("gst_number", this.state.gst_number);
         } else {
-          // alert(responseText.data.CustomerUpdation["message"]);
-          toast.success(responseText.data.CustomerUpdation["message"]);
-          setTimeout(() => {
-        
-            window.location.reload();
-            }, 2000);
+          toast.success(responseText.data.GstUpdation["message"]);
+          this.props.dispatch({ type: "IS_LOADING", is_loading: false });
         }
       })
       .catch((error) => {
         toast.success(error);
-     
+        this.props.dispatch({ type: "IS_LOADING", is_loading: false });
       });
   };
 
@@ -99,20 +94,19 @@ class GstInformation extends Component {
     return (
       <div className="personal-information-wrapper">
         <Container>
- 
           <Row>
             <Col md={12} className="Personal_Information_Heading">
               <h6>GST Information</h6>
               <Form name="form" onSubmit={this.handleSubmit}>
                 <Row>
                   <Col md={6}>
-                    <Form.Group controlId="formBasicEmail">
+                    <Form.Group controlId="formBasicGst">
                       <Form.Label>Gst Number</Form.Label>
                       <Form.Control
                         type="text"
-                        value={this.state.first_name}
+                        value={this.state.gst_number}
                         placeholder="Gst Number *"
-                        name="first_name"
+                        name="gst_number"
                         onChange={this.handleChange}
                         required
                       />
@@ -120,12 +114,12 @@ class GstInformation extends Component {
                   </Col>
                   <Col md={6}>
                     <Form.Label>Pan Number</Form.Label>
-                    <Form.Group controlId="formBasicEmail">
+                    <Form.Group controlId="formBasicPan">
                       <Form.Control
                         type="text"
-                        value={this.state.last_name}
+                        value={this.state.pan_number}
                         placeholder="Pan Number *"
-                        name="last_name"
+                        name="pan_number"
                         onChange={this.handleChange}
                         required
                       />
@@ -134,27 +128,25 @@ class GstInformation extends Component {
                 </Row>
 
                 <Col md={12} className="Mobile_Button_container">
-                    <div className="Submit_Button_Section">
-                      <Button
-                        type="submit"
-                        variant="outline-primary"
-                        className="MyAccount_Update_Button"
-                      >
-                        Submit
-                      </Button>
-                    </div>
-                  </Col>
-
-               
+                  <div className="Submit_Button_Section">
+                    <Button
+                      type="submit"
+                      variant="outline-primary"
+                      className="MyAccount_Update_Button"
+                    >
+                      Submit
+                    </Button>
+                  </div>
+                </Col>
               </Form>
             </Col>
           </Row>
           <Row>
-          <img
-                    src={images.Account_Bottom}
-                    alt="RealEsate"
-                    className="img-fluid w-100"
-                  />
+            <img
+              src={images.Account_Bottom}
+              alt="RealEsate"
+              className="img-fluid w-100"
+            />
           </Row>
         </Container>
       </div>
@@ -162,12 +154,10 @@ class GstInformation extends Component {
   }
 }
 
-
 const mapStateToProps = (state) => {
   return {
     message: state.AddCustomerAddress.message,
     error_msg: state.AddCustomerAddress.error_msg,
-
   };
 };
 

@@ -16,7 +16,6 @@ import ProductCard from "../Common/Components/ProductCard/ProductCard";
 
 import PageLoading from "../../constants/PageLoader/PageLoading";
 
-
 const COLOR_DATA = [
   {
     id: 1,
@@ -46,78 +45,84 @@ class ProductDescription extends Component {
       product_data: localStorage.getItem("product_fulldata"),
       pincode_label: "Check",
       pincode: "",
-      unique_id:''
+      unique_id: "",
     };
-    this.unique_id = '';
+    this.Authorization = localStorage.getItem("Authorization");
+    this.unique_id = "";
     this.uniqueColors = [];
-      this.props.product_master_list.map(prod => {
-    if (this.uniqueColors.indexOf(prod.item_color) === -1) {
-      this.uniqueColors.push(prod.item_color)
-    }
-    
-});
-this.uniqueSizes = [];
-      this.props.product_master_list.map(prod => {
-    if (this.uniqueSizes.indexOf(prod.item_size) === -1) {
-      this.uniqueSizes.push(prod.item_size)
-    }
-  });
-  this.uniqueSizes = this.uniqueSizes.sort(function(a, b) {
-    return a - b;
-  });
-  this.size = this.uniqueSizes[0]
-  this.size_colors = []
-  
-  this.props.product_master_list.map(prod => {
-    
-    if (prod.item_size == this.size ) {
-      this.size_colors.push(prod.item_color)
-      // this.color = prod.item_color;
-      // return true
-    }
-  });
-  this.color = this.size_colors.length > 0 ? this.size_colors[0]: ''
- 
-  this.props.product_master_list.some(prod => {
-        
-    if (prod.item_size == this.size && prod.item_color == this.color) {       
-      
-      // localStorage.setItem("product_id", prod.id);
-      this.unique_id = prod.id
-      // this.setState({ unique_id: prod.id });
-      return true
-    }
-  });
+    this.props.product_master_list.map((prod) => {
+      if (this.uniqueColors.indexOf(prod.item_color) === -1) {
+        this.uniqueColors.push(prod.item_color);
+      }
+    });
+
+    this.uniqueSizes = [];
+    this.props.product_master_list.map((prod) => {
+      if (this.uniqueSizes.indexOf(prod.item_size) === -1) {
+        this.uniqueSizes.push(prod.item_size);
+      }
+    });
+    this.uniqueSizes = this.uniqueSizes.sort(function (a, b) {
+      return a - b;
+    });
+    this.size = this.uniqueSizes[0];
+    this.size_colors = [];
+
+    this.props.product_master_list.map((prod) => {
+      if (prod.item_size === this.size) {
+        this.size_colors.push(prod.item_color);
+        // this.color = prod.item_color;
+        // return true
+      }
+    });
+    this.color = this.size_colors.length > 0 ? this.size_colors[0] : "";
+
+    this.props.product_master_list.some((prod) => {
+      if (prod.item_size === this.size && prod.item_color === this.color) {
+        // localStorage.setItem("product_id", prod.id);
+        this.unique_id = prod.id;
+        // this.setState({ unique_id: prod.id });
+        return true;
+      }
+    });
   }
+
+  productId = this.props.match.params.id;
+
   componentDidMount = async () => {
     window.scrollTo(0, 0);
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     this.props.dispatch(
-      ProductActions.getItemListByMasterId(localStorage.getItem("product_id"),'')
+      ProductActions.getItemListByMasterId(this.productId, "")
     );
-  }
+    console.log(this.props.product_master_list);
+  };
 
-  componentDidUpdate = async () => {
-    
+  componentDidUpdate = async (prevProps) => {
     if (this.props.success_message === "PRODUCT_MASTER_LIST_SUCCESS") {
       this.props.dispatch({ type: "IS_LOADING", is_loading: false });
       this.props.dispatch(ProductActions.empty_message());
       this.props.dispatch(
-        ProductActions.getProductDetails(localStorage.getItem("product_id"),this.unique_id)
+        ProductActions.getProductDetails(this.productId, this.unique_id)
       );
       this.props.dispatch(
-        ProductActions.getProductImages(localStorage.getItem("product_id"),this.unique_id)
+        ProductActions.getProductImages(this.productId, this.unique_id)
       );
       this.props.dispatch(
-        ProductActions.getProductDescriptionList(
-          localStorage.getItem("product_id"), this.unique_id
-        )
+        ProductActions.getProductDescriptionList(this.productId, this.unique_id)
       );
+      // this.props.dispatch(ProductActions.getProductquantity(this.productId));
       this.props.dispatch(
-        ProductActions.getProductquantity(localStorage.getItem("product_id"))
+        ProductActions.getProductquantity(this.productId, this.unique_id)
       );
+      console.log(this.props.product_quantity);
     }
-  }
+
+    if (this.props.cart_message === "CART_ITEM_UPDATED") {
+      this.props.dispatch(ProductActions.getCartList());
+      this.props.dispatch(ProductActions.empty_message());
+    }
+  };
 
   onStarClick(nextValue, prevValue, name) {
     this.setState({ rating: nextValue });
@@ -128,27 +133,53 @@ this.uniqueSizes = [];
   };
   addtocart_function = () => {
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
-    let cart_id = localStorage.getItem("product_id");
-    this.props.dispatch(ProductActions.addtocart(cart_id));
+    // let cart_id = localStorage.getItem("product_id");
+    let cart_id = this.productId;
+    // this.props.dispatch(
+    //   ProductActions.addtocart(cart_id, this.color, this.size)
+    // );
+    if (this.Authorization !== null) {
+      this.props.dispatch(ProductActions.addtocartdb(this.unique_id, "plus"));
+      this.props.dispatch(ProductActions.getCartList());
+    } else {
+      this.props.dispatch(ProductActions.addToCartLocal(this.unique_id));
+    }
+
     this.props.dispatch(
-      ProductActions.getProductquantity(localStorage.getItem("product_id"))
+      ProductActions.getProductquantity(this.productId, this.unique_id)
     );
   };
   addtocart_increment = () => {
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
-    let increment_id = localStorage.getItem("product_id");
-    this.props.dispatch(ProductActions.addtocart_increment(increment_id));
+    // let increment_id = this.productId;
+    if (this.Authorization) {
+      this.props.dispatch(
+        ProductActions.addtocartdb(this.unique_id, "plus", "CART_ITEM_UPDATED")
+      );
+    } else {
+      this.props.dispatch(
+        ProductActions.addToCartIncrementLocal(this.unique_id)
+      );
+    }
     this.props.dispatch(
-      ProductActions.getProductquantity(localStorage.getItem("product_id"))
+      ProductActions.getProductquantity(this.productId, this.unique_id)
     );
   };
 
   addtocart_decrement = () => {
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
-    let decrement_id = localStorage.getItem("product_id");
-    this.props.dispatch(ProductActions.addtocart_decrement(decrement_id));
+    // let decrement_id = this.productId;
+    if (this.Authorization) {
+      this.props.dispatch(
+        ProductActions.addtocartdb(this.unique_id, "minus", "CART_ITEM_UPDATED")
+      );
+    } else {
+      this.props.dispatch(
+        ProductActions.addToCartDecrementLocal(this.unique_id)
+      );
+    }
     this.props.dispatch(
-      ProductActions.getProductquantity(localStorage.getItem("product_id"))
+      ProductActions.getProductquantity(this.productId, this.unique_id)
     );
   };
   handle_buy_navigate = () => {
@@ -158,102 +189,80 @@ this.uniqueSizes = [];
     this.props.history.push("/CheckOut");
   };
 
-  productChange = (size,color) => {
-    if(size == ''  && color =='')
-      return
-    if (color)
-      this.color = color
-    if(size)
-      this.size = size
-    
-    this.size_colors = []
-  
-  this.props.product_master_list.map(prod => {
-    
-    if (prod.item_size == this.size ) {
-      this.size_colors.push(prod.item_color)
-      // this.color = prod.item_color;
-      // return true
-    }
-  });
-  if(this.size_colors.indexOf(this.color) === -1){
-    this.color = this.size_colors.length > 0 ? this.size_colors[0]: ''
-  }
-  
+  productChange = (size, color) => {
+    if (size === "" && color === "") return;
+    if (color) this.color = color;
+    if (size) this.size = size;
 
-    this.props.product_master_list.some(prod => {
-        
-        if (prod.item_size == this.size && prod.item_color == this.color) {       
-          
-          // localStorage.setItem("product_id", prod.id);
-          this.unique_id = prod.id
-          // this.setState({ unique_id: prod.id });
-          return true
-        }
-      });
+    this.size_colors = [];
+
+    this.props.product_master_list.map((prod) => {
+      if (prod.item_size === this.size) {
+        this.size_colors.push(prod.item_color);
+        // this.color = prod.item_color;
+        // return true
+      }
+    });
+    if (this.size_colors.indexOf(this.color) === -1) {
+      this.color = this.size_colors.length > 0 ? this.size_colors[0] : "";
+    }
+
+    this.props.product_master_list.some((prod) => {
+      if (prod.item_size === this.size && prod.item_color === this.color) {
+        // localStorage.setItem("product_id", prod.id);
+        this.unique_id = prod.id;
+        // this.setState({ unique_id: prod.id });
+        return true;
+      }
+    });
     // localStorage.setItem("product_id", '');
-    console.log('this.unique_id');
-    console.log(this.unique_id)
+    console.log("this.unique_id");
+    console.log(this.unique_id);
     this.props.dispatch(
-      ProductActions.getProductDetails(localStorage.getItem("product_id"),this.unique_id)
+      ProductActions.getProductDetails(this.productId, this.unique_id)
     );
     this.props.dispatch(
-      ProductActions.getProductImages(localStorage.getItem("product_id"),this.unique_id)
+      ProductActions.getProductImages(this.productId, this.unique_id)
     );
     this.props.dispatch(
-      ProductActions.getProductDescriptionList(
-        localStorage.getItem("product_id"),this.unique_id
-      )
+      ProductActions.getProductDescriptionList(this.productId, this.unique_id)
     );
     this.props.dispatch(
-      ProductActions.getProductquantity(localStorage.getItem("product_id")),this.unique_id
+      ProductActions.getProductquantity(this.productId, this.unique_id)
     );
     // this.componentDidMount();
   };
 
-
-  pinhandleChange = (event) =>{    this.setState({pincode: event.target.value});  }
+  pinhandleChange = (event) => {
+    this.setState({ pincode: event.target.value });
+  };
   // pincode_changeHandle
 
   pincode_changeHandle = () => {
-    this.setState({ pincode_label: "Check" })
-  }
+    this.setState({ pincode_label: "Check" });
+  };
   pincode_change = () => {
     // this.setState({ pincode: "Check" })
-    if(this.state.pincode == "")
-      return 
-    if(this.state.pincode_label == 'Check'){
-      
-
+    if (this.state.pincode === "") return;
+    if (this.state.pincode_label === "Check") {
       this.props.dispatch({ type: "IS_LOADING", is_loading: true });
-    this.props.dispatch(
-      ProductActions.getItemListByMasterId(localStorage.getItem("product_id"),this.state.pincode)
-    );
-    
-      this.setState({ pincode_label: "Change" })
-      this.state.pincode_label ='Change'
+      this.props.dispatch(
+        ProductActions.getItemListByMasterId(this.productId, this.state.pincode)
+      );
 
-    }      
-    else{
-      this.setState({pincode_label: "Check"})
-      this.setState({pincode: ""})
+      this.setState({ pincode_label: "Change" });
+      // this.state.pincode_label = "Change";
+    } else {
+      this.setState({ pincode_label: "Check" });
+      this.setState({ pincode: "" });
     }
-      
-    
-    
-    
-  }
+  };
 
   // pincode_changeHandle
 
-
-
-
-
-
   render() {
     let { product_slider, rating } = this.state;
-    
+
     if (product_slider === "") {
       product_slider =
         this.props.products_image_list.length === 0
@@ -327,7 +336,10 @@ this.uniqueSizes = [];
                           {(this.props.products_image_list || []).map(
                             (x, index) => {
                               return (
-                                <div className="product_slider product_slider_margin">
+                                <div
+                                  className="product_slider product_slider_margin"
+                                  key={index}
+                                >
                                   <div
                                     className="product_card"
                                     onClick={() => {
@@ -379,7 +391,7 @@ this.uniqueSizes = [];
 
                   <div className="product_price">
                     {this.props.product_new_data.retail_price ===
-                      this.props.product_new_data.selling_price ? (
+                    this.props.product_new_data.selling_price ? (
                       <div className="product_amount">
                         <h6 className="product_special_price">
                           &#8377; {this.props.product_new_data.selling_price}
@@ -459,11 +471,15 @@ this.uniqueSizes = [];
                       <h5 className="product_size_title">size</h5>
                       {this.uniqueSizes.map((item, index) => {
                         return (
-                          <h6 
-                          className={(this.size == item ? 'active_size':'')}
-                          onClick={() => {
-                            this.productChange(item,'')                                                        
-                          }}>{item}</h6>
+                          <h6
+                            className={this.size === item ? "active_size" : ""}
+                            onClick={() => {
+                              this.productChange(item, "");
+                            }}
+                            key={index}
+                          >
+                            {item}
+                          </h6>
                         );
                       })}
                     </div>
@@ -475,10 +491,18 @@ this.uniqueSizes = [];
                         return (
                           <div
                             onClick={() => {
-                              this.size_colors.indexOf(item) === -1 ? this.productChange('','') : this.productChange('',item)                            
+                              this.size_colors.indexOf(item) === -1
+                                ? this.productChange("", "")
+                                : this.productChange("", item);
                             }}
-                            className={"product_color_wrapper_box " + (this.color == item ? 'active_color':'')+(this.size_colors.indexOf(item) === -1 ? 'disable_color':'')}                            
-                            key={index}                          
+                            className={
+                              "product_color_wrapper_box " +
+                              (this.color === item ? "active_color" : "") +
+                              (this.size_colors.indexOf(item) === -1
+                                ? "disable_color"
+                                : "")
+                            }
+                            key={index}
                             style={{ backgroundColor: item }}
                           ></div>
                         );
@@ -490,25 +514,43 @@ this.uniqueSizes = [];
                     <div className="product_delivery_inner">
                       <h5 className="product_delivery_title">Delivery</h5>
                       <div className="product_delivery_input_wrapper">
-                        <Form.Control className="product_pincode_input" type="text" placeholder="Pincode" value={ this.state.pincode } onChange={this.pinhandleChange}/>
+                        <Form.Control
+                          className="product_pincode_input"
+                          type="text"
+                          placeholder="Pincode"
+                          value={this.state.pincode}
+                          onChange={this.pinhandleChange}
+                        />
                         <div className="product_delivery_map">
-                          <i className="fa fa-map-marker" aria-hidden="true"></i>
+                          <i
+                            className="fa fa-map-marker"
+                            aria-hidden="true"
+                          ></i>
                         </div>
-                        <div className="product_delivery_button" >
-                          <h5 onClick={this.pincode_change}>{this.state.pincode_label}</h5>
+                        <div className="product_delivery_button">
+                          <h5 onClick={this.pincode_change}>
+                            {this.state.pincode_label}
+                          </h5>
                         </div>
-                        {this.props.product_new_data.availability == "false" ? (
-                          
-                          
-                          this.state.pincode != "" && this.state.pincode_label != "Check"?(
-                          <h10 className="red_color"> Not available</h10>
-                        ):(<></>)
-                      ):(
-                        this.state.pincode != "" && this.state.pincode_label != "Check"?(
-                        <><h10 className="green_color"> Product available for this pincode</h10></>
-                      ):(<></>)
-                        )
-                      }
+                        {this.props.product_new_data.availability ===
+                        "false" ? (
+                          this.state.pincode !== "" &&
+                          this.state.pincode_label !== "Check" ? (
+                            <span className="red_color"> Not available</span>
+                          ) : (
+                            <></>
+                          )
+                        ) : this.state.pincode !== "" &&
+                          this.state.pincode_label !== "Check" ? (
+                          <>
+                            <span className="green_color">
+                              {" "}
+                              Product available for this pincode
+                            </span>
+                          </>
+                        ) : (
+                          <></>
+                        )}
                       </div>
                       {/* <div className="product_check_label">
                         <div className="product_check_pincode_label">Check</div>
@@ -538,7 +580,13 @@ this.uniqueSizes = [];
                 <div className="product_quan_wrap">
                   {this.props.product_quantity === 0 ? (
                     <div
-                      className={"product_button "+ (this.props.product_new_data.availability != 'true' && this.state.pincode_label  == 'Change'  ? 'is-disabled' : '')}
+                      className={
+                        "product_button " +
+                        (this.props.product_new_data.availability !== "true" &&
+                        this.state.pincode_label === "Change"
+                          ? "is-disabled"
+                          : "")
+                      }
                       onClick={this.addtocart_function}
                     >
                       <p>Add To Cart</p>
@@ -560,8 +608,14 @@ this.uniqueSizes = [];
                     </div>
                   )}
 
-                  <div                    
-                    className={"product_button "+ (this.props.product_new_data.availability != 'true' && this.state.pincode_label  == 'Change'  ? 'is-disabled' : '')}
+                  <div
+                    className={
+                      "product_button " +
+                      (this.props.product_new_data.availability !== "true" &&
+                      this.state.pincode_label === "Change"
+                        ? "is-disabled"
+                        : "")
+                    }
                     onClick={this.handle_buy_navigate}
                   >
                     <p>Buy Now</p>
@@ -573,14 +627,18 @@ this.uniqueSizes = [];
                       <span className="product_total_title">Total </span>:{" "}
                       <span className="product_total_quantity">
                         {this.props.product_quantity} &#215;{" "}
-                        {this.props.product_new_data.special_price}
+                        {this.props.product_new_data.special_price === "0.00"
+                          ? this.props.product_new_data.selling_price * 1
+                          : this.props.product_new_data.special_price * 1}
                       </span>{" "}
                       ={" "}
                       <span className="product_total_amount">
                         {this.props.product_quantity *
                           1 *
-                          this.props.product_new_data.special_price *
-                          1}{" "}
+                          (this.props.product_new_data.special_price === "0.00"
+                            ? this.props.product_new_data.selling_price * 1
+                            : this.props.product_new_data.special_price *
+                              1)}{" "}
                       </span>
                     </p>
                   </div>
@@ -629,7 +687,7 @@ this.uniqueSizes = [];
                     </ul>
                   </div>
                 </div> */}
-  <br></br>
+                <br></br>
                 <div>
                   <div className="product_seller">
                     <p className="product_sell_heading">
@@ -679,9 +737,10 @@ this.uniqueSizes = [];
                       <Tab
                         eventKey={data.description_title}
                         title={data.description_title}
+                        key={y}
                       >
                         <div className="product_tab_container">
-                          <p>{parse(data.description_details)}</p>
+                          {parse(data.description_details)}
                         </div>
                       </Tab>
                     );
@@ -753,10 +812,11 @@ this.uniqueSizes = [];
                     (x, index) => {
                       return (
                         <ProductCard
+                          id={x.id}
                           key={index}
                           percentage={x.percentage}
                           navigate_function={() => {
-                            this.navigate_function(x);
+                            this.props.history.push(x.id);
                           }}
                           item_name={x.item_name}
                           special_price={x.special_price}
@@ -781,8 +841,7 @@ const mapStateToProps = (state) => {
     product_new_data: state.ProductActions.product_data || [],
     product_list_data: state.ProductActions.product_list || [],
     product_master_list: state.ProductActions.product_master_list || [],
-    products_image_list:
-      state.ProductActions.products_image_list || [],
+    products_image_list: state.ProductActions.products_image_list || [],
     product_descriptions_list:
       state.ProductActions.product_descriptions_list || [],
     cart_product_list: state.ProductActions.cart_product_list || [],

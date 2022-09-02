@@ -37,10 +37,6 @@ class ManageAddress extends Component {
     localStorage.setItem("property_id", "");
     this.get_CustomerAddress_List();
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
-
-    setTimeout(() => {
-      this.props.dispatch({ type: "IS_LOADING", is_loading: false });
-    }, 1000);
   }
   get_CustomerAddress_List = () => {
     this.props.dispatch(AddCustomerAddress.getCustomerAddressList());
@@ -83,27 +79,23 @@ class ManageAddress extends Component {
 
   componentDidUpdate = async () => {
     if (this.props.message === "ADD_SUCCESS_MESSAGE") {
-      {
-        let success = await this.props.dispatch(
-          AddCustomerAddress.empty_message()
-        );
-        if (success) {
-          this.get_CustomerAddress_List();
-          toast.success("Address Added");
-          this.setState((prevState) => ({ setOpen: !prevState.setOpen }));
-          this.props.dispatch({ type: "IS_LOADING", is_loading: false });
-        }
+      let success = await this.props.dispatch(
+        AddCustomerAddress.empty_message()
+      );
+      if (success) {
+        this.get_CustomerAddress_List();
+        toast.success("Address Added");
+        this.setState((prevState) => ({ setOpen: !prevState.setOpen }));
+        this.props.dispatch({ type: "IS_LOADING", is_loading: false });
       }
     } else if (this.props.message === "DELETE_SUCCESS_MESSAGE") {
-      {
-        let success = await this.props.dispatch(
-          AddCustomerAddress.empty_message()
-        );
-        if (success) {
-          this.get_CustomerAddress_List();
-          toast.success("Successfully Deleted");
-          this.props.dispatch({ type: "IS_LOADING", is_loading: false });
-        }
+      let success = await this.props.dispatch(
+        AddCustomerAddress.empty_message()
+      );
+      if (success) {
+        this.get_CustomerAddress_List();
+        toast.success("Successfully Deleted");
+        this.props.dispatch({ type: "IS_LOADING", is_loading: false });
       }
     } else if (this.props.message === "ADD_ERROR_MESSAGE") {
       // toast.success("Some Network Issue");
@@ -130,6 +122,18 @@ class ManageAddress extends Component {
       landmark,
       type,
     } = this.state;
+    console.log(
+      address_id,
+      contact_name,
+      mobile_number,
+      address_line1,
+      address_line2,
+      city,
+      state,
+      pincode,
+      landmark,
+      type
+    );
     await this.props.dispatch(
       AddCustomerAddress.addCustomerAddress(
         address_id,
@@ -239,7 +243,7 @@ class ManageAddress extends Component {
                       <Form onSubmit={this.AddCustomerAddressSubmit}>
                         <Row>
                           <Col md={6}>
-                            <Form.Group controlId="formGridEmail">
+                            <Form.Group controlId="formGridName">
                               <Form.Label>Contact Name</Form.Label>
                               <Form.Control
                                 type="text"
@@ -252,7 +256,7 @@ class ManageAddress extends Component {
                             </Form.Group>
                           </Col>
                           <Col md={6}>
-                            <Form.Group controlId="formGridPassword">
+                            <Form.Group controlId="formGridPhone">
                               <Form.Label>Mobile Number</Form.Label>
                               <Form.Control
                                 type="text"
@@ -335,7 +339,7 @@ class ManageAddress extends Component {
                             </Form.Group>
                           </Col>
                           <Col md={6}>
-                            <Form.Group controlId="formGridZip">
+                            <Form.Group controlId="formGridLandmark">
                               <Form.Label>Landmark</Form.Label>
                               <Form.Control
                                 type="text"
@@ -357,7 +361,7 @@ class ManageAddress extends Component {
                                     name="formHorizontalRadios"
                                     id="formHorizontalRadios1"
                                     checked={this.state.type === "0"}
-                                    onClick={this.Radio_Onchange}
+                                    onChange={this.Radio_Onchange}
                                   />
                                   <Form.Check
                                     type="radio"
@@ -365,7 +369,7 @@ class ManageAddress extends Component {
                                     name="formHorizontalRadios"
                                     id="formHorizontalRadios2"
                                     checked={this.state.type === "1"}
-                                    onClick={this.Radio_Onchange}
+                                    onChange={this.Radio_Onchange}
                                   />
                                 </Col>
                               </Form.Group>
@@ -431,7 +435,11 @@ class ManageAddress extends Component {
                   </Col>
                 </Row>
               ))}
-              <img src={images.Account_Bottom} className="img-fluid w-100" />
+              <img
+                src={images.Account_Bottom}
+                className="img-fluid w-100"
+                alt="RealEsate"
+              />
             </Col>
           </Row>
         </Container>
