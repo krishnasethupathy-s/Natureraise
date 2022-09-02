@@ -1,15 +1,134 @@
 import React, { Component } from "react";
+import { Container, Col, Row, Form, Button } from "react-bootstrap";
+import { gql } from "@apollo/client";
+import { connect } from "react-redux";
+
 import "./Contact.css";
 import HeaderNavbar from "../HeaderNavbar/HeaderNavbar";
 
 import Footer from "../Footer/Footer";
-import { Container, Col, Row, Form, Button } from "react-bootstrap";
 import images from "../../constants/images";
+import PageLoading from "../../constants/PageLoader/PageLoading";
 
-export default class Contact extends Component {
+import Config from "../../../Config";
+
+class Contact extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      contact_person: "",
+      mobile_no: "",
+      email_id: "",
+      location: "",
+      enquiry_for: "",
+      message: "",
+    };
+  }
+
+  componentDidMount() {
+    window.scroll(0, 0);
+  }
+
+  handleChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
+
+  handleContactSubmit = (e) => {
+    e.preventDefault();
+    this.props.dispatch({ type: "IS_LOADING", is_loading: true });
+
+    const {
+      contact_person,
+      mobile_no,
+      email_id,
+      location,
+      enquiry_for,
+      message,
+    } = this.state;
+    const company_name = "";
+    const query = gql`
+      query addWebEnquiry(
+        $company_name: String
+        $contact_person: String
+        $mobile_no: String
+        $email_id: String
+        $location: String
+        $enquiry_for: String
+        $message: String
+      ) {
+        addWebEnquiry(
+          company_name: $company_name
+          contact_person: $contact_person
+          mobile_no: $mobile_no
+          email_id: $email_id
+          location: $location
+          enquiry_for: $enquiry_for
+          message: $message
+        ) {
+          message
+        }
+      }
+    `;
+
+    Config.client
+      .query({
+        query: query,
+        fetchPolicy: "no-cache",
+        variables: {
+          company_name,
+          contact_person,
+          mobile_no,
+          email_id,
+          location,
+          enquiry_for,
+          message,
+        },
+      })
+      .then((result) => {
+        console.log(result.data.getCategory);
+        this.props.dispatch({
+          type: "SUCCESS_MESSAGE",
+          success_title: "Request sent successfully",
+        });
+
+        this.setState({
+          contact_person: "",
+          mobile_no: "",
+          email_id: "",
+          location: "",
+          enquiry_for: "",
+          message: "",
+        });
+        this.props.dispatch({ type: "IS_LOADING", is_loading: false });
+      })
+      .catch((error) => {
+        console.log(error);
+        this.props.dispatch({
+          type: "SUCCESS_MESSAGE",
+          success_title: "catch error",
+        });
+        this.props.dispatch({
+          type: "ERROR_MESSAGE",
+          error_title: error.message ?? "something went wrong",
+        });
+        this.props.dispatch({ type: "IS_LOADING", is_loading: false });
+      });
+  };
+
   render() {
+    const {
+      contact_person,
+      mobile_no,
+      email_id,
+      location,
+      enquiry_for,
+      message,
+    } = this.state;
     return (
       <div>
+        <PageLoading isLoadingComplete={this.props.is_loading} />
+
         <HeaderNavbar />
         <div className="contact_banner">
           <div className="contact_overlay"></div>
@@ -116,11 +235,17 @@ export default class Contact extends Component {
               </Col>
               <Col md={9}>
                 <div className="contact_enquiry_card">
-                  <Form>
+                  <Form onSubmit={this.handleContactSubmit}>
                     <Row>
                       <Col md={6}>
                         <Form.Group controlId="formBasicEmail">
-                          <Form.Control type="name" placeholder="Your Name *" />
+                          <Form.Control
+                            type="name"
+                            placeholder="Your Name *"
+                            value={contact_person}
+                            name="contact_person"
+                            onChange={this.handleChange}
+                          />
                         </Form.Group>
                       </Col>
                       <Col md={6}>
@@ -128,6 +253,9 @@ export default class Contact extends Component {
                           <Form.Control
                             type="email"
                             placeholder="Your Email *"
+                            value={email_id}
+                            name="email_id"
+                            onChange={this.handleChange}
                           />
                         </Form.Group>
                       </Col>
@@ -136,6 +264,9 @@ export default class Contact extends Component {
                           <Form.Control
                             type="text"
                             placeholder="Your Mobile *"
+                            value={mobile_no}
+                            name="mobile_no"
+                            onChange={this.handleChange}
                           />
                         </Form.Group>
                       </Col>
@@ -144,6 +275,9 @@ export default class Contact extends Component {
                           <Form.Control
                             type="text"
                             placeholder="Your Enquiry for *"
+                            value={enquiry_for}
+                            name="enquiry_for"
+                            onChange={this.handleChange}
                           />
                         </Form.Group>
                       </Col>
@@ -154,6 +288,9 @@ export default class Contact extends Component {
                             as="textarea"
                             rows={3}
                             placeholder="Your Comment *"
+                            value={message}
+                            name="message"
+                            onChange={this.handleChange}
                           />
                         </Form.Group>
                       </Col>
@@ -193,3 +330,11 @@ export default class Contact extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  is_loading: state.ProductActions.is_loading,
+  success_message: state.ProductActions.success_message,
+  error_message: state.ProductActions.error_message,
+});
+
+export default connect(mapStateToProps, null)(Contact);

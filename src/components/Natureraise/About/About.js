@@ -6,6 +6,10 @@ import images from "../../constants/images";
 import Footer from "../Footer/Footer";
 
 export default class About extends Component {
+  componentDidMount() {
+    window.scroll(0, 0);
+  }
+
   render() {
     return (
       <div>
