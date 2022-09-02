@@ -15,7 +15,7 @@ const Filters = ({
     Array(values.length).fill(false)
   );
 
-  const [filterValues, setFilterValues] = useState(persistSelected || []);
+  const [filterValues, setFilterValues] = useState(persistSelected ?? []);
 
   useEffect(() => {
     console.log(persistSelected);
@@ -31,12 +31,12 @@ const Filters = ({
         prev.map((_, idx) => (idx === valueIdx ? true : _))
       );
     });
-    // handlerFilters({ [filterName]: persistSelected });
+    handlerFilters({ [filterName]: persistSelected });
     resetPersistValues(filterName);
   }, [persistSelected]);
 
   useEffect(() => {
-    if (!persistSelected) handlerFilters({ [filterName]: filterValues });
+    !persistSelected && handlerFilters({ [filterName]: filterValues });
   }, [filterSelect]);
 
   const filterHandleChange = (e, eIdx) => {
@@ -65,7 +65,7 @@ const Filters = ({
           <Form.Group id="formGridCheckbox" key={index}>
             <Form.Check
               type="checkbox"
-              label={`${startAlias ?? ""} ${data} ${startAlias ?? ""}`}
+              label={`${startAlias ?? ""} ${data} ${endAlias ?? ""}`}
               value={data}
               id={index}
               checked={filterSelect[index]}
