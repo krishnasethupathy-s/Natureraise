@@ -95,7 +95,7 @@ export const SignInAction =
     const request_token = Config.getRequestToken();
     const mutation = `mutation SignInAction($username:String, $password:String, $client_ip:String, $request_token:String) {
             SignInAction(username:$username, password:$password, client_ip:$client_ip, request_token:$request_token){
-          message,first_name,last_name,token,image_address,mobile_number1,email_id
+          message,first_name,last_name,token,image_address,mobile_number1,email_id,gst_number,pan_number
       }
   }`;
 
@@ -142,6 +142,16 @@ export const SignInAction =
             "image_address",
             responseText.data.SignInAction["image_address"]
           );
+
+          localStorage.setItem(
+            "gst_number",
+            responseText.data.SignInAction["gst_number"]
+          );
+          localStorage.setItem(
+            "pan_number",
+            responseText.data.SignInAction["pan_number"]
+          );
+
           localStorage.setItem("provider", "");
           const date = new Date();
           const currentTimePulsNine = new Date(
@@ -302,7 +312,9 @@ export const LoginWithSocialID =
         token,
         image_address,
         mobile_number1,
-        email_id
+        email_id,
+        gst_number,
+        pan_number
     }
 }`;
 
@@ -357,6 +369,15 @@ export const LoginWithSocialID =
           localStorage.setItem(
             "image_address",
             responseText.data.LoginWithSocialID["image_address"]
+          );
+
+          localStorage.setItem(
+            "gst_number",
+            responseText.data.LoginWithSocialID["gst_number"]
+          );
+          localStorage.setItem(
+            "pan_number",
+            responseText.data.LoginWithSocialID["pan_number"]
           );
 
           localStorage.setItem("provider", social_id_type);
