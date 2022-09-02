@@ -2,6 +2,7 @@ import React, { Component } from "react";
 
 import { Link } from "react-router-dom";
 import { Carousel, Container, Row, Col } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 import HeaderNavbar from "../HeaderNavbar/HeaderNavbar";
 import images from "../../constants/images";
@@ -28,16 +29,29 @@ class HomePage extends Component {
       rating: 1,
       isLoading: true,
     };
+    this.Authorization = localStorage.getItem("Authorization");
   }
 
   componentDidMount() {
     window.scrollTo(0, 0);
     this.props.dispatch(Banner.fetchBanners());
+
+    this.props.dispatch(ProductActions.getSubCategoryList("2396"));
+    this.props.dispatch(ProductActions.getSubCategoryList("2397"));
     this.props.dispatch(ProductActions.getHomePageProductList());
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     setTimeout(() => {
       this.props.dispatch({ type: "IS_LOADING", is_loading: false });
     }, 1000);
+  }
+
+  componentDidUpdate() {
+    if (this.props.success_message === "ITEM_ADD_TO_CART") {
+      toast.success("Item added to the cart");
+
+      this.props.dispatch(ProductActions.empty_message());
+      this.props.dispatch({ type: "IS_LOADING", is_loading: false });
+    }
   }
 
   // navigate product list page
@@ -47,16 +61,33 @@ class HomePage extends Component {
   };
 
   // add to cart Function
-  add_to_card = (id) => {
-    if (this.props.product_quantity === 0) {
-      this.addtocart_function(id);
-    }
-    this.props.history.push("/CheckOut");
+  add_to_cart = (id) => {
+    console.log("hi");
+    this.props.dispatch(ProductActions.getProductquantity(id, id));
+    console.log(this.props.product_quantity);
+
+    this.addtocart_function(id);
   };
 
   addtocart_function = (id) => {
-    let cart_id = id;
-    this.props.dispatch(ProductActions.addtocart(cart_id));
+    console.log("hi1");
+    if (this.props.product_quantity !== 0) {
+      return;
+    }
+
+    if (this.Authorization !== null) {
+      this.props.dispatch(
+        ProductActions.addtocartdb(id, "plus", "", "ITEM_ADD_TO_CART")
+      );
+      this.props.dispatch(ProductActions.getCartList());
+      this.props.dispatch({ type: "IS_LOADING", is_loading: true });
+    } else {
+      this.props.dispatch(ProductActions.addToCartLocal(id));
+      toast.success("Item added to the cart");
+    }
+    this.props.dispatch({
+      type: "RESET_PRODUCT_QUANTITY",
+    });
   };
   // add to cart Function
 
@@ -189,81 +220,110 @@ class HomePage extends Component {
           <DeliveryProcess deliveryprocess={AccountData.DELIVERY_PROCESS} />
         </section>
 
-        <section className="product-list-wrapper" id="product-list-wrapper">
-          <Container>
-            <Row>
-              <Col md={12}>
-                <div className="our-collection-heading-wrap">
-                  <h6>Featured products new update</h6>
-                  <h6>View all</h6>
-                </div>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={3} xs={12} xl={2}>
-                <div className="brand-slider-offer">
-                  <img
-                    src={images.brand_images}
-                    alt="natureraise"
-                    className="img-fluid"
-                  />
-                </div>
-              </Col>
-              <Col md={9} xs={12} xl={10}>
-                <div className="product-card-mobile">
-                  <Slider {...settings}>
-                    {this.props.homeProducts?.newComings.map((x) => {
-                      return (
-                        <ProductCard
-                          className={`mr-2`}
-                          key={x.id}
-                          id={x.id}
-                          percentage={x.percentage}
-                          navigate_function={() => {
-                            this.navigate_function(x);
-                          }}
-                          item_name={x.item_name}
-                          special_price={x.special_price}
-                          selling_price={x.selling_price}
-                          retail_price={x.retail_price}
-                        />
-                      );
-                    })}
-                  </Slider>
-                </div>
-              </Col>
-            </Row>
-          </Container>
-        </section>
+        {!!this.props.homeProducts?.newComings.length && (
+          <section className="product-list-wrapper" id="product-list-wrapper">
+            <Container>
+              <Row>
+                <Col md={12}>
+                  <div className="our-collection-heading-wrap">
+                    <h6>Featured products new update</h6>
+                    {/* <h6>View all</h6> */}
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={3} xs={12} xl={2}>
+                  <div className="brand-slider-offer">
+                    <img
+                      src={images.brand_images}
+                      alt="natureraise"
+                      className="img-fluid"
+                    />
+                  </div>
+                </Col>
+                <Col md={9} xs={12} xl={10}>
+                  <div className="product-card-mobile">
+                    <Slider {...settings}>
+                      {this.props.homeProducts?.newComings.map((x) => {
+                        return (
+                          <ProductCard
+                            className={`mr-2`}
+                            key={x.id}
+                            id={x.id}
+                            percentage={x.percentage}
+                            navigate_function={() => {
+                              this.navigate_function(x);
+                            }}
+                            item_name={x.item_name}
+                            image={x.image_address}
+                            special_price={x.special_price}
+                            selling_price={x.selling_price}
+                            retail_price={x.retail_price}
+                            addToCart={() => this.add_to_cart(x.id)}
+                          />
+                        );
+                      })}
+                    </Slider>
+                  </div>
+                </Col>
+              </Row>
+            </Container>
+          </section>
+        )}
 
-        <section className="our-collection-section" id="our-collection-section">
-          <Container>
-            <Row>
-              <Col md={12}>
-                <div className="our-collection-heading-wrap">
-                  <h6>Our collections</h6>
-                  <h6>View all</h6>
-                </div>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={12}>
-                <BrandSlider
-                  brand_section="brand-section"
-                  brand_image_wrapper="brand-image-wrapper"
-                  brandimages={AccountData.SLIDER_IMAGE}
-                />
-              </Col>
-            </Row>
-          </Container>
-        </section>
+        {false && (
+          <section
+            className="our-collection-section"
+            id="our-collection-section"
+          >
+            <Container>
+              <Row>
+                <Col md={12}>
+                  <div className="our-collection-heading-wrap">
+                    <h6>Our collections</h6>
+                    {/* <h6>View all</h6> */}
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={12}>
+                  <BrandSlider
+                    brand_section="brand-section"
+                    brand_image_wrapper="brand-image-wrapper"
+                    brandimages={AccountData.SLIDER_IMAGE}
+                  />
+                </Col>
+              </Row>
+            </Container>
+          </section>
+        )}
 
         <section className="offers-section" id="offers-section">
           <Container>
             <Row>
               <Col md={12} lg={12} xl={12}>
                 <Row>
-                  <Col md={4}>
+                  {this.props.style2.map((style) => (
+                    <Col md={4} key={style.id}>
+                      <Link to={style.description}>
+                        <div className="offer-banner-wrap">
+                          <picture>
+                            <source
+                              srcset={style.image_address}
+                              type="image/webp"
+                            />
+                            <img
+                              src={style.image_address}
+                              alt="Natureraise"
+                              className="img-fluid"
+                            />
+                          </picture>
+                        </div>
+                      </Link>
+                    </Col>
+                  ))}
+
+                  {/* <Col md={4}>
                     <div className="offer-banner-wrap">
                       <img
                         src={images.offer_banner1}
@@ -303,71 +363,75 @@ class HomePage extends Component {
                         className="img-fluid"
                       />
                     </div>
-                  </Col>
+                  </Col> */}
                 </Row>
               </Col>
             </Row>
           </Container>
         </section>
 
-        <section className="product-list-wrapper" id="product-list-wrapper">
-          <Container>
-            <Row>
-              <Col md={12}>
-                <div className="our-collection-heading-wrap">
-                  <h6>Top Offers</h6>
-                  <h6>View all</h6>
-                </div>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={3} xs={12} xl={2}>
-                <div className="brand-slider-offer">
-                  <img
-                    src="https://www.solarclue.com/image/catalog/Sub-Banner/square-banner/Solar-Inverter.png"
-                    alt="natureraise"
-                    className="img-fluid"
-                  />
-                </div>
-              </Col>
-              <Col md={6} xs={12} xl={8}>
-                <div className="product-card-mobile">
-                  <Slider {...featuresilder}>
-                    {(this.props.homeProducts?.topOffers || []).map((x) => {
-                      return (
-                        <ProductCard
-                          className={`mr-2`}
-                          key={x.id}
-                          id={x.id}
-                          percentage={x.percentage}
-                          navigate_function={() => {
-                            this.navigate_function(x);
-                          }}
-                          item_name={x.item_name}
-                          special_price={x.special_price}
-                          selling_price={x.selling_price}
-                          retail_price={x.retail_price}
-                        />
-                      );
-                    })}
-                  </Slider>
-                </div>
-              </Col>
-              <Col md={3} xs={12} xl={2}>
-                <div className="brand-slider-offer">
-                  <img
-                    src="https://www.solarclue.com/image/catalog/Sub-Banner/square-banner/Solar-Inverter.png"
-                    alt="natureraise"
-                    className="img-fluid"
-                  />
-                </div>
-              </Col>
-            </Row>
-          </Container>
-        </section>
+        {!!this.props.homeProducts?.topOffers.length && (
+          <section className="product-list-wrapper" id="product-list-wrapper">
+            <Container>
+              <Row>
+                <Col md={12}>
+                  <div className="our-collection-heading-wrap">
+                    <h6>Top Offers</h6>
+                    {/* <h6>View all</h6> */}
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={3} xs={12} xl={2}>
+                  <div className="brand-slider-offer">
+                    <img
+                      src="https://www.solarclue.com/image/catalog/Sub-Banner/square-banner/Solar-Inverter.png"
+                      alt="natureraise"
+                      className="img-fluid"
+                    />
+                  </div>
+                </Col>
+                <Col md={6} xs={12} xl={8}>
+                  <div className="product-card-mobile">
+                    <Slider {...featuresilder}>
+                      {(this.props.homeProducts?.topOffers || []).map((x) => {
+                        return (
+                          <ProductCard
+                            className={`mr-2`}
+                            key={x.id}
+                            id={x.id}
+                            percentage={x.percentage}
+                            navigate_function={() => {
+                              this.navigate_function(x);
+                            }}
+                            item_name={x.item_name}
+                            image={x.image_address}
+                            special_price={x.special_price}
+                            selling_price={x.selling_price}
+                            retail_price={x.retail_price}
+                            addToCart={() => this.add_to_cart(x.id)}
+                          />
+                        );
+                      })}
+                    </Slider>
+                  </div>
+                </Col>
+                <Col md={3} xs={12} xl={2}>
+                  <div className="brand-slider-offer">
+                    <img
+                      src="https://www.solarclue.com/image/catalog/Sub-Banner/square-banner/Solar-Inverter.png"
+                      alt="natureraise"
+                      className="img-fluid"
+                    />
+                  </div>
+                </Col>
+              </Row>
+            </Container>
+          </section>
+        )}
 
         <section className="offers-second-section" id="offers-second-section">
-          <SecondOfferSection offersdata={AccountData.DELIVERY_PROCESS} />
+          <SecondOfferSection offersdata={this.props.style1} />
         </section>
 
         {!!this.props.recentView.length && (
@@ -377,9 +441,9 @@ class HomePage extends Component {
                 <Col md={12}>
                   <div className="our-collection-heading-wrap">
                     <h6>Recent View</h6>
-                    <Link to="/products" className="h6">
+                    {/* <Link to="/products" className="h6">
                       View all
-                    </Link>
+                    </Link> */}
                   </div>
                 </Col>
               </Row>
@@ -408,9 +472,11 @@ class HomePage extends Component {
                               this.navigate_function(x);
                             }}
                             item_name={x.item_name}
+                            image={x.image_address}
                             special_price={x.special_price}
                             selling_price={x.selling_price}
                             retail_price={x.retail_price}
+                            addToCart={() => this.add_to_cart(x.id)}
                           />
                         );
                       })}
@@ -431,10 +497,14 @@ class HomePage extends Component {
 const mapStateToProps = (state) => {
   return {
     banner_list: state.Banner.banner_list,
+    success_message: state.ProductActions.success_message,
     is_loading: state.ProductActions.is_loading,
+    product_quantity: state.ProductActions.product_quantity,
     product_list_data: state.ProductActions.product_list || [],
     homeProducts: state.ProductActions.homeProducts,
     recentView: state.ProductActions.recentView || [],
+    style1: state.ProductActions.style1 || [],
+    style2: state.ProductActions.style2 || [],
   };
 };
 
