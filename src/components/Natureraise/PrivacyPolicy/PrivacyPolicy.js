@@ -1,41 +1,51 @@
 import React, { Component } from "react";
+import { Helmet } from "react-helmet-async";
 import "./PrivacyPolicy.css";
-import { Container, Row, Col, } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import HeaderNavbar from "../HeaderNavbar/HeaderNavbar";
 import Footer from "../Footer/Footer";
-import PrivacyComp from './constant/PrivacyPolicy/PrivacyPolicyComp';
-
-
+import PrivacyComp from "./constant/PrivacyPolicy/PrivacyPolicyComp";
 
 export default class PrivacyPolicy extends Component {
-
-componentDidMount() {
-  window.scrollTo(0,0);
-}
+  componentDidMount() {
+    window.scrollTo(0, 0);
+  }
 
   render() {
     return (
-  <div>
-      <HeaderNavbar />
-    
-    <section>
-        <Container>
-            <Row>
+      <>
+        <Helmet>
+          <title>Privacy Policy | Natureraise</title>
+          <meta property="og:title" content="Natureraise" />
+          <meta property="og:type" content="website" />
+
+          <meta
+            property="og:description"
+            content="Natureraise Terms & Privay Policy Page"
+          />
+        </Helmet>
+
+        <div>
+          <HeaderNavbar />
+
+          <section>
+            <Container>
+              <Row>
                 <Col md={{ span: 8, offset: 2 }}>
-                   <div className="privacy_wrap">
-                     <PrivacyComp />
-                     <PrivacyComp />
-                     <PrivacyComp />
-                     <PrivacyComp />
-
-                   </div>
+                  <div className="privacy_wrap">
+                    <PrivacyComp />
+                    <PrivacyComp />
+                    <PrivacyComp />
+                    <PrivacyComp />
+                  </div>
                 </Col>
-            </Row>
-        </Container>
-    </section>
+              </Row>
+            </Container>
+          </section>
 
-      <Footer />
-  </div>
+          <Footer />
+        </div>
+      </>
     );
   }
 }

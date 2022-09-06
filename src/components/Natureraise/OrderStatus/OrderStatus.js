@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import "./OrderStatus.css";
 import { Container, Row, Col } from "react-bootstrap";
+import { Helmet } from "react-helmet-async";
+
 import HeaderNavbar from "../HeaderNavbar/HeaderNavbar";
 import images from "../../constants/images";
 import Footer from "../Footer/Footer";
@@ -59,83 +61,95 @@ class OrderStatus extends Component {
 
   render() {
     return (
-      <section className="product_list_container" id="product_list_container">
-        <PageLoading isLoadingComplete={this.props.is_loading} />
+      <>
+        <Helmet>
+          <title>Order Detail | Natureraise</title>
+          <meta property="og:title" content="Natureraise" />
+          <meta property="og:type" content="website" />
 
-        <HeaderNavbar />
-        <SectionHeader
-          about_banner="about_banner"
-          section_title="Order Detail"
-          section_subtitle="Orders"
-        />
-        <div className="product_list_wrap section_padding_top_bottom">
-          <Container>
-            <Row>
-              <Col md={12} xl={12}>
-                <div className="common_divison_padding">
-                  <Row>
-                    <Col md={12} xl={12}>
-                      <CardWrap className="order_status_container">
-                        {this.props?.detail?.detail && (
-                          <AddressDetails detail={this.props.detail.detail} />
-                        )}
-                        <Row>
-                          <Col
-                            md={12}
-                            xl={12}
-                            className="d-flex justify-content-end "
-                          >
-                            {!!this.props.detail.order_status ===
-                              "Delivered" && (
-                              <button className="btn btn-danger text-white">
-                                Return Product
-                              </button>
-                            )}
-                            {!!this.props.detail.order_status !==
-                              "Delivered" && (
-                              <button
-                                className="btn btn-primary text-white"
-                                onClick={this.cancelModalHandleOpen}
-                              >
-                                Cancel Order
-                              </button>
-                            )}
-                          </Col>
-                        </Row>
-                      </CardWrap>
-                    </Col>
-                  </Row>
-                  <Row className="mt-2">
-                    <Col md={12}>
-                      <CardWrap className="order_status_container">
-                        {this.props?.detail?.items?.map((item) => (
-                          <StatusDetails
-                            key={item.id}
-                            item={item}
-                            status={this.props.detail?.status}
-                            openReviewModal={this.setReviewProductId}
-                          />
-                        ))}
-                      </CardWrap>
-                    </Col>
-                  </Row>
-                </div>
-              </Col>
-            </Row>
-          </Container>
-        </div>
-        <ReviewModal
-          show={this.state.reviewModal}
-          handleClose={this.reviewModalHandleClose}
-          id={this.state.reviewProductId}
-        />
-        <CancelModal
-          show={this.state.cancelOrderModal}
-          handleClose={this.cancelModalHandleClose}
-          id={this.id}
-        />
-        <Footer />
-      </section>
+          <meta
+            property="og:description"
+            content="Natureraise Order Detail Page"
+          />
+        </Helmet>
+        <section className="product_list_container" id="product_list_container">
+          <PageLoading isLoadingComplete={this.props.is_loading} />
+
+          <HeaderNavbar />
+          <SectionHeader
+            about_banner="about_banner"
+            section_title="Order Detail"
+            section_subtitle="Orders"
+          />
+          <div className="product_list_wrap section_padding_top_bottom">
+            <Container>
+              <Row>
+                <Col md={12} xl={12}>
+                  <div className="common_divison_padding">
+                    <Row>
+                      <Col md={12} xl={12}>
+                        <CardWrap className="order_status_container">
+                          {this.props?.detail?.detail && (
+                            <AddressDetails detail={this.props.detail.detail} />
+                          )}
+                          <Row>
+                            <Col
+                              md={12}
+                              xl={12}
+                              className="d-flex justify-content-end "
+                            >
+                              {!!this.props.detail.order_status ===
+                                "Delivered" && (
+                                <button className="btn btn-danger text-white">
+                                  Return Product
+                                </button>
+                              )}
+                              {!!this.props.detail.order_status !==
+                                "Delivered" && (
+                                <button
+                                  className="btn btn-primary text-white"
+                                  onClick={this.cancelModalHandleOpen}
+                                >
+                                  Cancel Order
+                                </button>
+                              )}
+                            </Col>
+                          </Row>
+                        </CardWrap>
+                      </Col>
+                    </Row>
+                    <Row className="mt-2">
+                      <Col md={12}>
+                        <CardWrap className="order_status_container">
+                          {this.props?.detail?.items?.map((item) => (
+                            <StatusDetails
+                              key={item.id}
+                              item={item}
+                              status={this.props.detail?.status}
+                              openReviewModal={this.setReviewProductId}
+                            />
+                          ))}
+                        </CardWrap>
+                      </Col>
+                    </Row>
+                  </div>
+                </Col>
+              </Row>
+            </Container>
+          </div>
+          <ReviewModal
+            show={this.state.reviewModal}
+            handleClose={this.reviewModalHandleClose}
+            id={this.state.reviewProductId}
+          />
+          <CancelModal
+            show={this.state.cancelOrderModal}
+            handleClose={this.cancelModalHandleClose}
+            id={this.id}
+          />
+          <Footer />
+        </section>
+      </>
     );
   }
 }

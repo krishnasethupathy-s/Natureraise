@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Row, Container, Col, Form, Button } from "react-bootstrap";
+import { Helmet } from "react-helmet-async";
 import "./GstInformation.css";
 import Config from "../../../Config";
 import "react-toastify/dist/ReactToastify.css";
@@ -92,64 +93,73 @@ class GstInformation extends Component {
 
   render() {
     return (
-      <div className="personal-information-wrapper">
-        <Container>
-          <Row>
-            <Col md={12} className="Personal_Information_Heading">
-              <h6>GST Information</h6>
-              <Form name="form" onSubmit={this.handleSubmit}>
-                <Row>
-                  <Col md={6}>
-                    <Form.Group controlId="formBasicGst">
-                      <Form.Label>Gst Number</Form.Label>
-                      <Form.Control
-                        type="text"
-                        value={this.state.gst_number}
-                        placeholder="Gst Number *"
-                        name="gst_number"
-                        onChange={this.handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Label>Pan Number</Form.Label>
-                    <Form.Group controlId="formBasicPan">
-                      <Form.Control
-                        type="text"
-                        value={this.state.pan_number}
-                        placeholder="Pan Number *"
-                        name="pan_number"
-                        onChange={this.handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
+      <>
+        <Helmet>
+          <title>GST Information | Natureraise</title>
+          <meta property="og:title" content="Natureraise" />
+          <meta property="og:type" content="website" />
 
-                <Col md={12} className="Mobile_Button_container">
-                  <div className="Submit_Button_Section">
-                    <Button
-                      type="submit"
-                      variant="outline-primary"
-                      className="MyAccount_Update_Button"
-                    >
-                      Submit
-                    </Button>
-                  </div>
-                </Col>
-              </Form>
-            </Col>
-          </Row>
-          <Row>
-            <img
-              src={images.Account_Bottom}
-              alt="RealEsate"
-              className="img-fluid w-100"
-            />
-          </Row>
-        </Container>
-      </div>
+          <meta property="og:description" content="GST Information Page" />
+        </Helmet>
+        <div className="personal-information-wrapper">
+          <Container>
+            <Row>
+              <Col md={12} className="Personal_Information_Heading">
+                <h6>GST Information</h6>
+                <Form name="form" onSubmit={this.handleSubmit}>
+                  <Row>
+                    <Col md={6}>
+                      <Form.Group controlId="formBasicGst">
+                        <Form.Label>Gst Number</Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={this.state.gst_number}
+                          placeholder="Gst Number *"
+                          name="gst_number"
+                          onChange={this.handleChange}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Label>Pan Number</Form.Label>
+                      <Form.Group controlId="formBasicPan">
+                        <Form.Control
+                          type="text"
+                          value={this.state.pan_number}
+                          placeholder="Pan Number *"
+                          name="pan_number"
+                          onChange={this.handleChange}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+
+                  <Col md={12} className="Mobile_Button_container">
+                    <div className="Submit_Button_Section">
+                      <Button
+                        type="submit"
+                        variant="outline-primary"
+                        className="MyAccount_Update_Button"
+                      >
+                        Submit
+                      </Button>
+                    </div>
+                  </Col>
+                </Form>
+              </Col>
+            </Row>
+            <Row>
+              <img
+                src={images.Account_Bottom}
+                alt="RealEsate"
+                className="img-fluid w-100"
+              />
+            </Row>
+          </Container>
+        </div>
+      </>
     );
   }
 }

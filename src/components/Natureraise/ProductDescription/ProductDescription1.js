@@ -10,6 +10,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { connect } from "react-redux";
 import parse from "html-react-parser";
 import { toast, ToastContainer } from "react-toastify";
+import { Helmet } from "react-helmet-async";
 
 import * as ProductActions from "../store/actions/Product/ProductActions";
 import ProductCard from "../Common/Components/ProductCard/ProductCard";
@@ -455,297 +456,347 @@ class ProductDescription1 extends Component {
       ],
     };
     return (
-      <div>
-        <HeaderNavbar />
-        <PageLoading isLoadingComplete={this.props.is_loading} />
+      <>
+        <Helmet>
+          <title>{this.props.product_new_data.item_name} | Natureraise</title>
+          <meta property="og:title" content="Natureraise" />
+          <meta property="og:type" content="website" />
 
-        <section
-          className="product_description section_padding_top_bottom"
-          id="product_description"
-        >
-          <Container>
-            <Row>
-              <Col md={4}>
-                <div className="product_card">
-                  <InnerImageZoom
-                    src={product_slider}
-                    zoomSrc={product_slider}
-                    zoomType="hover"
-                  />
-                </div>
+          <meta
+            property="og:description"
+            content={this.props.product_new_data.description}
+          />
+        </Helmet>
 
-                <div>
-                  <div className="common_pading_10">
-                    <Row>
-                      <Col md={12}>
-                        <Slider {...Product_slider}>
-                          {(this.props.products_image_list || []).map(
-                            (x, index) => {
-                              return (
-                                <div
-                                  className="product_slider product_slider_margin"
-                                  key={index}
-                                >
-                                  <div
-                                    className="product_card"
-                                    onClick={() => {
-                                      this.product_slider(x);
-                                    }}
-                                  >
-                                    <img
-                                      src={x}
-                                      className="img-fluid"
-                                      alt={
-                                        this.props.product_new_data.item_name
-                                      }
-                                    />
-                                  </div>
-                                </div>
-                              );
-                            }
-                          )}
-                        </Slider>
-                      </Col>
-                    </Row>
+        <div>
+          <HeaderNavbar />
+          <PageLoading isLoadingComplete={this.props.is_loading} />
+
+          <section
+            className="product_description section_padding_top_bottom"
+            id="product_description"
+          >
+            <Container>
+              <Row>
+                <Col md={4}>
+                  <div className="product_card">
+                    <InnerImageZoom
+                      src={product_slider}
+                      zoomSrc={product_slider}
+                      zoomType="hover"
+                    />
                   </div>
-                </div>
-              </Col>
 
-              <Col md={5}>
-                <div className="product_heading">
-                  <h5>{this.props.product_new_data.item_name}</h5>
-                  <div className="product_reviews_container">
-                    <div className="product_start">
-                      <StarRatingComponent
-                        name="rate1"
-                        starCount={5}
-                        value={+this.props.product_new_data.rating_point}
-                      />
+                  <div>
+                    <div className="common_pading_10">
+                      <Row>
+                        <Col md={12}>
+                          <Slider {...Product_slider}>
+                            {(this.props.products_image_list || []).map(
+                              (x, index) => {
+                                return (
+                                  <div
+                                    className="product_slider product_slider_margin"
+                                    key={index}
+                                  >
+                                    <div
+                                      className="product_card"
+                                      onClick={() => {
+                                        this.product_slider(x);
+                                      }}
+                                    >
+                                      <img
+                                        src={x}
+                                        className="img-fluid"
+                                        alt={
+                                          this.props.product_new_data.item_name
+                                        }
+                                      />
+                                    </div>
+                                  </div>
+                                );
+                              }
+                            )}
+                          </Slider>
+                        </Col>
+                      </Row>
                     </div>
-                    <div>
-                      <h6 className="product_reviews">
-                        {this.props.product_new_data.brand_id} reviews
+                  </div>
+                </Col>
+
+                <Col md={5}>
+                  <div className="product_heading">
+                    <h5>{this.props.product_new_data.item_name}</h5>
+                    <div className="product_reviews_container">
+                      <div className="product_start">
+                        <StarRatingComponent
+                          name="rate1"
+                          starCount={5}
+                          value={+this.props.product_new_data.rating_point}
+                        />
+                      </div>
+                      <div>
+                        <h6 className="product_reviews">
+                          {this.props.product_new_data.brand_id} reviews
+                        </h6>
+                      </div>
+                    </div>
+
+                    {/* <h6>with 25 Years* Warranty</h6> */}
+
+                    <div className="product_rank_wrapper">
+                      <div className="product_rank">
+                        Best seller
+                        <span className="product_rank_arrow"></span>
+                      </div>
+                      <h6>
+                        in {this.props.product_new_data.item_category_name}
                       </h6>
                     </div>
-                  </div>
 
-                  {/* <h6>with 25 Years* Warranty</h6> */}
-
-                  <div className="product_rank_wrapper">
-                    <div className="product_rank">
-                      Best seller
-                      <span className="product_rank_arrow"></span>
-                    </div>
-                    <h6>in {this.props.product_new_data.item_category_name}</h6>
-                  </div>
-
-                  <div className="product_price">
-                    {this.props.product_new_data.retail_price ===
-                    this.props.product_new_data.selling_price ? (
-                      <div className="product_amount">
-                        <h6 className="product_special_price">
-                          &#8377;{" "}
-                          {this.props.product_new_data.special_price === "0.00"
-                            ? this.props.product_new_data.selling_price
-                            : this.props.product_new_data.special_price}
-                        </h6>
-                        <h6 className="product_retail_price">
-                          &#8377; {this.props.product_new_data.retail_price}
-                        </h6>
+                    <div className="product_price">
+                      {this.props.product_new_data.retail_price ===
+                      this.props.product_new_data.selling_price ? (
+                        <div className="product_amount">
+                          <h6 className="product_special_price">
+                            &#8377;{" "}
+                            {this.props.product_new_data.special_price ===
+                            "0.00"
+                              ? this.props.product_new_data.selling_price
+                              : this.props.product_new_data.special_price}
+                          </h6>
+                          <h6 className="product_retail_price">
+                            &#8377; {this.props.product_new_data.retail_price}
+                          </h6>
+                        </div>
+                      ) : (
+                        <div className="product_amount">
+                          <h6 className="product_special_price">
+                            &#8377;{" "}
+                            {this.props.product_new_data.special_price ===
+                            "0.00"
+                              ? this.props.product_new_data.selling_price
+                              : this.props.product_new_data.special_price}
+                          </h6>
+                          <h6 className="product_retail_price">
+                            &#8377; {this.props.product_new_data.retail_price}
+                          </h6>
+                          <h6 className="product_selling_price">
+                            {/* &#8377; {this.props.product_new_data.selling_price} */}
+                          </h6>
+                        </div>
+                      )}
+                      <div className="product_save">
+                        <h6>save {this.props.product_new_data.percentage}%</h6>
                       </div>
-                    ) : (
-                      <div className="product_amount">
-                        <h6 className="product_special_price">
-                          &#8377;{" "}
-                          {this.props.product_new_data.special_price === "0.00"
-                            ? this.props.product_new_data.selling_price
-                            : this.props.product_new_data.special_price}
-                        </h6>
-                        <h6 className="product_retail_price">
-                          &#8377; {this.props.product_new_data.retail_price}
-                        </h6>
-                        <h6 className="product_selling_price">
-                          {/* &#8377; {this.props.product_new_data.selling_price} */}
-                        </h6>
-                      </div>
-                    )}
-                    <div className="product_save">
-                      <h6>save {this.props.product_new_data.percentage}%</h6>
-                    </div>
 
-                    <div className="product_info_tooltip_wrap">
-                      <img
-                        src="https://static-assets-web.flixcart.com/www/linchpin/fk-cp-zion/img/info-basic_6c1a38.svg"
-                        alt="products"
-                        className="img-fluid"
-                      />
-                      <span className="product_info_tooltip_content">
-                        <div>
+                      <div className="product_info_tooltip_wrap">
+                        <img
+                          src="https://static-assets-web.flixcart.com/www/linchpin/fk-cp-zion/img/info-basic_6c1a38.svg"
+                          alt="products"
+                          className="img-fluid"
+                        />
+                        <span className="product_info_tooltip_content">
                           <div>
-                            <h3 className="product_info_title">
-                              Price Details
-                            </h3>
-                          </div>
-                          <div className="product_info_special_price">
-                            <h3>
-                              Maximum retail price: <br />{" "}
-                              <span>(inc of all taxes)</span>
-                            </h3>
-                            <h3 className="product_info_text_strike">
-                              &#8377;{this.props.product_new_data.retail_price}
-                            </h3>
-                          </div>
-                          <div className="product_info_special_price retail_underline">
-                            <h3>selling price: </h3>
-                            <h3
-                              className={`${
-                                this.props.product_new_data.special_price ===
-                                "0.00"
-                                  ? ""
-                                  : "product_info_text_strike"
-                              } `}
-                            >
-                              &#8377;{this.props.product_new_data.selling_price}
-                            </h3>
-                          </div>
-                          {!!this.props.product_new_data.special_price !==
-                            "0.00" && (
-                            <div className="product_info_special_price special_price_underline ">
-                              <h3 className="product_info_special_title">
-                                {" "}
-                                special price:{" "}
-                              </h3>
-                              <h3>
-                                {this.props.product_new_data.special_price}
+                            <div>
+                              <h3 className="product_info_title">
+                                Price Details
                               </h3>
                             </div>
-                          )}
-                          <div className="product_info_special_price saving_amount ">
-                            <h3 className="product_info_special_title">
-                              Overall you save &#8377;
-                              {this.props.product_new_data.retail_price -
-                                (this.props.product_new_data.special_price ===
-                                "0.00"
-                                  ? this.props.product_new_data.selling_price
-                                  : this.props.product_new_data.special_price)}
-                              ({this.props.product_new_data.percentage} %) on
-                              this product{" "}
-                            </h3>
+                            <div className="product_info_special_price">
+                              <h3>
+                                Maximum retail price: <br />{" "}
+                                <span>(inc of all taxes)</span>
+                              </h3>
+                              <h3 className="product_info_text_strike">
+                                &#8377;
+                                {this.props.product_new_data.retail_price}
+                              </h3>
+                            </div>
+                            <div className="product_info_special_price retail_underline">
+                              <h3>selling price: </h3>
+                              <h3
+                                className={`${
+                                  this.props.product_new_data.special_price ===
+                                  "0.00"
+                                    ? ""
+                                    : "product_info_text_strike"
+                                } `}
+                              >
+                                &#8377;
+                                {this.props.product_new_data.selling_price}
+                              </h3>
+                            </div>
+                            {!!this.props.product_new_data.special_price !==
+                              "0.00" && (
+                              <div className="product_info_special_price special_price_underline ">
+                                <h3 className="product_info_special_title">
+                                  {" "}
+                                  special price:{" "}
+                                </h3>
+                                <h3>
+                                  {this.props.product_new_data.special_price}
+                                </h3>
+                              </div>
+                            )}
+                            <div className="product_info_special_price saving_amount ">
+                              <h3 className="product_info_special_title">
+                                Overall you save &#8377;
+                                {this.props.product_new_data.retail_price -
+                                  (this.props.product_new_data.special_price ===
+                                  "0.00"
+                                    ? this.props.product_new_data.selling_price
+                                    : this.props.product_new_data
+                                        .special_price)}
+                                ({this.props.product_new_data.percentage} %) on
+                                this product{" "}
+                              </h3>
+                            </div>
                           </div>
-                        </div>
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="product_size_wrapper">
-                    <div className="product_size_wrapper_inner">
-                      <h5 className="product_size_title">size</h5>
-                      {this.uniqueSizes.map((item, index) => {
-                        return (
-                          <h6
-                            className={this.size === item ? "active_size" : ""}
-                            onClick={() => {
-                              this.productChange(item, "");
-                            }}
-                            key={index}
-                          >
-                            {item}
-                          </h6>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  <div className="product_color_wrapper">
-                    <div className="product_color_wrapper_inner">
-                      <h5 className="product_color_title">Color</h5>
-                      {this.uniqueColors.map((item, index) => {
-                        return (
-                          <div
-                            onClick={() => {
-                              this.size_colors.indexOf(item) === -1
-                                ? this.productChange("", "")
-                                : this.productChange("", item);
-                            }}
-                            className={
-                              "product_color_wrapper_box " +
-                              (this.color === item ? "active_color" : "") +
-                              (this.size_colors.indexOf(item) === -1
-                                ? "disable_color"
-                                : "")
-                            }
-                            key={index}
-                            style={{ backgroundColor: item }}
-                          ></div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <div className="product_delivery_wrapper">
-                    <div className="product_delivery_inner">
-                      <h5 className="product_delivery_title">Delivery</h5>
-                      <div className="product_delivery_input_wrapper">
-                        <Form.Control
-                          className="product_pincode_input"
-                          type="text"
-                          placeholder="Pincode"
-                          value={this.state.pincode}
-                          onChange={this.pinhandleChange}
-                          disabled={this.state.pincode_label === "Change"}
-                        />
-                        <div className="product_delivery_map">
-                          <i
-                            className="fa fa-map-marker"
-                            aria-hidden="true"
-                          ></i>
-                        </div>
-                        <div className="product_delivery_button">
-                          <h5 onClick={this.pincode_change}>
-                            {this.state.pincode_label}
-                          </h5>
-                        </div>
-                        {this.props.product_new_data.availability ===
-                        "false" ? (
-                          this.state.pincode !== "" &&
-                          this.state.pincode_label !== "Check" ? (
-                            <span className="red_color"> Not available</span>
-                          ) : (
-                            <></>
-                          )
-                        ) : this.state.pincode !== "" &&
-                          this.state.pincode_label !== "Check" ? (
-                          <>
-                            <span className="green_color">
-                              {" "}
-                              Product available for this pincode
-                            </span>
-                          </>
-                        ) : (
-                          <>Enter Pincode!</>
-                        )}
+                        </span>
                       </div>
-                      {/* <div className="product_check_label">
+                    </div>
+
+                    <div className="product_size_wrapper">
+                      <div className="product_size_wrapper_inner">
+                        <h5 className="product_size_title">size</h5>
+                        {this.uniqueSizes.map((item, index) => {
+                          return (
+                            <h6
+                              className={
+                                this.size === item ? "active_size" : ""
+                              }
+                              onClick={() => {
+                                this.productChange(item, "");
+                              }}
+                              key={index}
+                            >
+                              {item}
+                            </h6>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    <div className="product_color_wrapper">
+                      <div className="product_color_wrapper_inner">
+                        <h5 className="product_color_title">Color</h5>
+                        {this.uniqueColors.map((item, index) => {
+                          return (
+                            <div
+                              onClick={() => {
+                                this.size_colors.indexOf(item) === -1
+                                  ? this.productChange("", "")
+                                  : this.productChange("", item);
+                              }}
+                              className={
+                                "product_color_wrapper_box " +
+                                (this.color === item ? "active_color" : "") +
+                                (this.size_colors.indexOf(item) === -1
+                                  ? "disable_color"
+                                  : "")
+                              }
+                              key={index}
+                              style={{ backgroundColor: item }}
+                            ></div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="product_delivery_wrapper">
+                      <div className="product_delivery_inner">
+                        <h5 className="product_delivery_title">Delivery</h5>
+                        <div className="product_delivery_input_wrapper">
+                          <Form.Control
+                            className="product_pincode_input"
+                            type="text"
+                            placeholder="Pincode"
+                            value={this.state.pincode}
+                            onChange={this.pinhandleChange}
+                            disabled={this.state.pincode_label === "Change"}
+                          />
+                          <div className="product_delivery_map">
+                            <i
+                              className="fa fa-map-marker"
+                              aria-hidden="true"
+                            ></i>
+                          </div>
+                          <div className="product_delivery_button">
+                            <h5 onClick={this.pincode_change}>
+                              {this.state.pincode_label}
+                            </h5>
+                          </div>
+                          {this.props.product_new_data.availability ===
+                          "false" ? (
+                            this.state.pincode !== "" &&
+                            this.state.pincode_label !== "Check" ? (
+                              <span className="red_color"> Not available</span>
+                            ) : (
+                              <></>
+                            )
+                          ) : this.state.pincode !== "" &&
+                            this.state.pincode_label !== "Check" ? (
+                            <>
+                              <span className="green_color">
+                                {" "}
+                                Product available for this pincode
+                              </span>
+                            </>
+                          ) : (
+                            <>Enter Pincode!</>
+                          )}
+                        </div>
+                        {/* <div className="product_check_label">
                         <div className="product_check_pincode_label">Check</div>
                         <i className="fa fa-close product_check_close" aria-hidden="true"></i>
                         <div className="product_check_arrow"></div>
                       </div> */}
+                      </div>
                     </div>
-                  </div>
-                  {!!this.props?.product_new_data?.description && (
-                    <div className="product_summary">
-                      <h2>Product Summary</h2>
-                      <p>{this.props.product_new_data.description}</p>
-                    </div>
-                  )}
-                  {/* <div className="product_seller_name_wrapper">
+                    {!!this.props?.product_new_data?.description && (
+                      <div className="product_summary">
+                        <h2>Product Summary</h2>
+                        <p>{this.props.product_new_data.description}</p>
+                      </div>
+                    )}
+                    {/* <div className="product_seller_name_wrapper">
                     Best Seller
                     <span></span>
                   </div> */}
-                </div>
-              </Col>
-              <Col md={3}>
-                <div className="product_quan_wrap">
-                  {this.props.product_quantity === 0 ? (
+                  </div>
+                </Col>
+                <Col md={3}>
+                  <div className="product_quan_wrap">
+                    {this.props.product_quantity === 0 ? (
+                      <div
+                        className={
+                          "product_button " +
+                          (this.props.product_new_data.availability !==
+                            "true" && this.state.pincode_label === "Change"
+                            ? "is-disabled"
+                            : "")
+                        }
+                        onClick={this.addtocart_function}
+                      >
+                        <p>Add To Cart</p>
+                      </div>
+                    ) : (
+                      <div className="product_qunatity">
+                        <i
+                          className="fa fa-minus"
+                          aria-hidden="true"
+                          onClick={this.addtocart_decrement}
+                        ></i>
+                        <p>{this.props.product_quantity}</p>
+
+                        <i
+                          className="fa fa-plus"
+                          aria-hidden="true"
+                          onClick={this.addtocart_increment}
+                        ></i>
+                      </div>
+                    )}
+
                     <div
                       className={
                         "product_button " +
@@ -754,64 +805,36 @@ class ProductDescription1 extends Component {
                           ? "is-disabled"
                           : "")
                       }
-                      onClick={this.addtocart_function}
+                      onClick={this.handle_buy_navigate}
                     >
-                      <p>Add To Cart</p>
+                      <p>Buy Now</p>
                     </div>
-                  ) : (
-                    <div className="product_qunatity">
-                      <i
-                        className="fa fa-minus"
-                        aria-hidden="true"
-                        onClick={this.addtocart_decrement}
-                      ></i>
-                      <p>{this.props.product_quantity}</p>
-
-                      <i
-                        className="fa fa-plus"
-                        aria-hidden="true"
-                        onClick={this.addtocart_increment}
-                      ></i>
+                  </div>
+                  {this.props.product_quantity >= 1 && (
+                    <div className="product_total_wrapper">
+                      <p>
+                        <span className="product_total_title">Total </span>:{" "}
+                        <span className="product_total_quantity">
+                          {this.props.product_quantity} &#215;{" "}
+                          {this.props.product_new_data.special_price === "0.00"
+                            ? this.props.product_new_data.selling_price * 1
+                            : this.props.product_new_data.special_price * 1}
+                        </span>{" "}
+                        ={" "}
+                        <span className="product_total_amount">
+                          {this.props.product_quantity *
+                            1 *
+                            (this.props.product_new_data.special_price ===
+                            "0.00"
+                              ? this.props.product_new_data.selling_price * 1
+                              : this.props.product_new_data.special_price *
+                                1)}{" "}
+                        </span>
+                      </p>
                     </div>
                   )}
 
-                  <div
-                    className={
-                      "product_button " +
-                      (this.props.product_new_data.availability !== "true" &&
-                      this.state.pincode_label === "Change"
-                        ? "is-disabled"
-                        : "")
-                    }
-                    onClick={this.handle_buy_navigate}
-                  >
-                    <p>Buy Now</p>
-                  </div>
-                </div>
-                {this.props.product_quantity >= 1 && (
-                  <div className="product_total_wrapper">
-                    <p>
-                      <span className="product_total_title">Total </span>:{" "}
-                      <span className="product_total_quantity">
-                        {this.props.product_quantity} &#215;{" "}
-                        {this.props.product_new_data.special_price === "0.00"
-                          ? this.props.product_new_data.selling_price * 1
-                          : this.props.product_new_data.special_price * 1}
-                      </span>{" "}
-                      ={" "}
-                      <span className="product_total_amount">
-                        {this.props.product_quantity *
-                          1 *
-                          (this.props.product_new_data.special_price === "0.00"
-                            ? this.props.product_new_data.selling_price * 1
-                            : this.props.product_new_data.special_price *
-                              1)}{" "}
-                      </span>
-                    </p>
-                  </div>
-                )}
-
-                {/* <div className="product_social_wrapper">
+                  {/* <div className="product_social_wrapper">
                   <p>Share this</p>
                   <div className="">
                     <ul>
@@ -854,7 +877,7 @@ class ProductDescription1 extends Component {
                     </ul>
                   </div>
                 </div> */}
-                {/* <br></br>
+                  {/* <br></br>
                 <div>
                   <div className="product_seller">
                     <p className="product_sell_heading">
@@ -882,90 +905,91 @@ class ProductDescription1 extends Component {
                     </div>
                   </div>
                 </div> */}
-              </Col>
-            </Row>
-          </Container>
-        </section>
+                </Col>
+              </Row>
+            </Container>
+          </section>
 
-        <section>
-          <Container></Container>
-        </section>
+          <section>
+            <Container></Container>
+          </section>
 
-        <section
-          className="product_tab_section section_padding_top_bottom"
-          id="product_tab_section"
-        >
-          <Container>
-            <Row>
-              {!!this.props.product_descriptions_list.length && (
-                <Col md={8} lg={8} xl={8}>
-                  <Tabs id="uncontrolled-tab-example">
-                    {this.props.product_descriptions_list.map((data, y) => {
+          <section
+            className="product_tab_section section_padding_top_bottom"
+            id="product_tab_section"
+          >
+            <Container>
+              <Row>
+                {!!this.props.product_descriptions_list.length && (
+                  <Col md={8} lg={8} xl={8}>
+                    <Tabs id="uncontrolled-tab-example">
+                      {this.props.product_descriptions_list.map((data, y) => {
+                        return (
+                          <Tab
+                            eventKey={data.description_title}
+                            title={data.description_title}
+                            key={y}
+                          >
+                            <div className="product_tab_container">
+                              {parse(data.description_details)}
+                            </div>
+                          </Tab>
+                        );
+                      })}
+                    </Tabs>
+                  </Col>
+                )}
+
+                <Col md={3} lg={3} xl={4}>
+                  <Reviews
+                    data={this.props.reviews}
+                    hasMore={this.props.hasMore}
+                    reviewHandler={this.fetchReview}
+                  />
+                </Col>
+              </Row>
+            </Container>
+          </section>
+
+          <section className="related_products" id="related_products">
+            <Container>
+              <Row>
+                <Col md={12} xl={12}>
+                  <div className="related_products">
+                    <h3>Related Products</h3>
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={12}>
+                  <Slider {...RelatedProducts}>
+                    {(this.props.product_list_data || []).map((x, index) => {
                       return (
-                        <Tab
-                          eventKey={data.description_title}
-                          title={data.description_title}
-                          key={y}
-                        >
-                          <div className="product_tab_container">
-                            {parse(data.description_details)}
-                          </div>
-                        </Tab>
+                        <ProductCard
+                          key={x.id}
+                          className={`mr-2`}
+                          id={x?.id}
+                          percentage={x?.percentage}
+                          navigate_function={() => {
+                            this.navigate_function(x);
+                          }}
+                          item_name={x?.item_name}
+                          special_price={x?.special_price}
+                          selling_price={x?.selling_price}
+                          retail_price={x.retail_price}
+                          image={x?.image_address}
+                          addToCart={() => this.addtocart_function(x?.id)}
+                        />
                       );
                     })}
-                  </Tabs>
+                  </Slider>
                 </Col>
-              )}
-
-              <Col md={3} lg={3} xl={4}>
-                <Reviews
-                  data={this.props.reviews}
-                  hasMore={this.props.hasMore}
-                  reviewHandler={this.fetchReview}
-                />
-              </Col>
-            </Row>
-          </Container>
-        </section>
-
-        <section className="related_products" id="related_products">
-          <Container>
-            <Row>
-              <Col md={12} xl={12}>
-                <div className="related_products">
-                  <h3>Related Products</h3>
-                </div>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={12}>
-                <Slider {...RelatedProducts}>
-                  {(this.props.product_list_data || []).map((x, index) => {
-                    return (
-                      <ProductCard
-                        key={x.id}
-                        className={`mr-2`}
-                        id={x?.id}
-                        percentage={x?.percentage}
-                        navigate_function={() => {
-                          this.navigate_function(x);
-                        }}
-                        item_name={x?.item_name}
-                        special_price={x?.special_price}
-                        selling_price={x?.selling_price}
-                        retail_price={x.retail_price}
-                        image={x?.image_address}
-                        addToCart={() => this.addtocart_function(x?.id)}
-                      />
-                    );
-                  })}
-                </Slider>
-              </Col>
-            </Row>
-          </Container>
-        </section>
-        <Footer />
-      </div>
+              </Row>
+            </Container>
+          </section>
+          <Footer />
+        </div>
+      </>
     );
   }
 }

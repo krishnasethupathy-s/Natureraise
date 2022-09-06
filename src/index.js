@@ -12,18 +12,25 @@ import { store, persistedStore } from "./components/Natureraise/store/store";
 
 import { PersistGate } from "redux-persist/integration/react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import ReactGA from "react-ga4";
+import { HelmetProvider } from "react-helmet-async";
 
-const clientId =
-  "93793167500-omr4gb2sjr17c2gdcvejklp2dsd9m950.apps.googleusercontent.com";
+import Config from "./Config";
+
+const clientId = Config.gooleLogin;
+
+// ReactGA.initialize(Config.GA);
 
 ReactDOM.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistedStore}>
-      <GoogleOAuthProvider clientId={clientId}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </GoogleOAuthProvider>
+      <HelmetProvider>
+        <GoogleOAuthProvider clientId={clientId}>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </GoogleOAuthProvider>
+      </HelmetProvider>
     </PersistGate>
   </Provider>,
   document.getElementById("root")

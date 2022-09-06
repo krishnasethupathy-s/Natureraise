@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Carousel, Container, Row, Col } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { Helmet } from "react-helmet-async";
 
 import HeaderNavbar from "../HeaderNavbar/HeaderNavbar";
 import images from "../../constants/images";
@@ -65,15 +66,13 @@ class HomePage extends Component {
     console.log("hi");
     this.props.dispatch(ProductActions.getProductquantity(id, id));
     console.log(this.props.product_quantity);
-
-    this.addtocart_function(id);
+    if (this.props.product_quantity === 0) {
+      this.addtocart_function(id);
+    }
   };
 
   addtocart_function = (id) => {
-    console.log("hi1");
-    if (this.props.product_quantity !== 0) {
-      return;
-    }
+    this.Authorization = localStorage.getItem("Authorization");
 
     if (this.Authorization !== null) {
       this.props.dispatch(
@@ -196,6 +195,16 @@ class HomePage extends Component {
 
     return (
       <div>
+        <Helmet>
+          <title>Natureraise</title>
+          <meta property="og:title" content="Natureraise" />
+          <meta property="og:type" content="website" />
+
+          <meta
+            property="og:description"
+            content="NatureRaise extensive range of robust and reliable products backed by its cutting-edge R&D and more than two decades of expertise are designed to performance"
+          />
+        </Helmet>
         <HeaderNavbar />
         <PageLoading isLoadingComplete={this.props.is_loading} />
 
@@ -309,7 +318,7 @@ class HomePage extends Component {
                         <div className="offer-banner-wrap">
                           <picture>
                             <source
-                              srcset={style.image_address}
+                              srcSet={style.image_address}
                               type="image/webp"
                             />
                             <img

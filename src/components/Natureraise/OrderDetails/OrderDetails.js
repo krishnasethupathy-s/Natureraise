@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import "./OrderDetails.css";
 import { Container, Row, Col, Card, Form, Accordion } from "react-bootstrap";
+import { Helmet } from "react-helmet-async";
+
 import HeaderNavbar from "../HeaderNavbar/HeaderNavbar";
 import images from "../../constants/images";
 import Footer from "../Footer/Footer";
@@ -123,37 +125,50 @@ class OrderDetails extends Component {
   render() {
     const { rating, sort_by_value, rating_status } = this.state;
     return (
-      <section className="product_list_container" id="product_list_container">
-        <PageLoading isLoadingComplete={this.props.is_loading} />
+      <>
+        <Helmet>
+          <title>Order Detail | Natureraise</title>
+          <meta property="og:title" content="Natureraise" />
+          <meta property="og:type" content="website" />
 
-        <div className="product_list_wrap section_padding_top_bottom">
-          <Container>
-            <Row>
-              <Col md={9} xl={9}>
-                <div className="common_divison_padding">
-                  <Row>
-                    {(this.props.product_list_data || []).map((x, index) => {
-                      return (
-                        <Col md={12} xl={12} className="mb-2">
-                          <OrderDetailsCard
-                            heading="200 LPD NATURERAISE ECO ETC NON PRESSURISED.."
-                            color="Color, Silver"
-                            subtitle="Seller, E-Troinic"
-                            amount="520"
-                            deliverydate="Delivered on Sun, May 23"
-                            deleiverystatus="your item has been Delivered"
-                          />
-                        </Col>
-                      );
-                    })}
-                  </Row>
-                </div>
-              </Col>
-            </Row>
-          </Container>
-        </div>
-        <Footer />
-      </section>
+          <meta
+            property="og:description"
+            content="Natureraise Order Detail Page"
+          />
+        </Helmet>
+
+        <section className="product_list_container" id="product_list_container">
+          <PageLoading isLoadingComplete={this.props.is_loading} />
+
+          <div className="product_list_wrap section_padding_top_bottom">
+            <Container>
+              <Row>
+                <Col md={9} xl={9}>
+                  <div className="common_divison_padding">
+                    <Row>
+                      {(this.props.product_list_data || []).map((x, index) => {
+                        return (
+                          <Col md={12} xl={12} className="mb-2">
+                            <OrderDetailsCard
+                              heading="200 LPD NATURERAISE ECO ETC NON PRESSURISED.."
+                              color="Color, Silver"
+                              subtitle="Seller, E-Troinic"
+                              amount="520"
+                              deliverydate="Delivered on Sun, May 23"
+                              deleiverystatus="your item has been Delivered"
+                            />
+                          </Col>
+                        );
+                      })}
+                    </Row>
+                  </div>
+                </Col>
+              </Row>
+            </Container>
+          </div>
+          <Footer />
+        </section>
+      </>
     );
   }
 }
