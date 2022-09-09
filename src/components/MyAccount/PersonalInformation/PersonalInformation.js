@@ -5,6 +5,7 @@ import * as CustomerAddress from "../../Natureraise/store/actions/User/UserActio
 import * as AddCustomerAddress from "../../Natureraise/store/actions/UserProfile/CustomerAddress";
 
 import { toast } from "react-toastify";
+import { Helmet } from "react-helmet-async";
 import "react-toastify/dist/ReactToastify.css";
 import { connect } from "react-redux";
 import images from "../../constants/images";
@@ -72,94 +73,103 @@ class PersonalInformation extends Component {
 
   render() {
     return (
-      <div className="personal-information-wrapper">
-        <Container>
-          <Row>
-            <Col md={12} className="Personal_Information_Heading">
-              <h6>Personal Information</h6>
-              <Form name="form" onSubmit={this.handleSubmit}>
-                <Row>
-                  <Col md={6}>
-                    <Form.Group controlId="formBasicEmail">
-                      <Form.Label>First</Form.Label>
-                      <Form.Control
-                        type="text"
-                        value={this.state.first_name}
-                        placeholder="Enter First Name"
-                        name="first_name"
-                        onChange={this.handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Label>Last Name</Form.Label>
-                    <Form.Group controlId="formBasicEmail">
-                      <Form.Control
-                        type="text"
-                        value={this.state.last_name}
-                        placeholder="Enter Last Name"
-                        name="last_name"
-                        onChange={this.handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
+      <>
+        <Helmet>
+          <title>Profile | Natureraise</title>
+          <meta property="og:title" content="Natureraise" />
+          <meta property="og:type" content="website" />
 
-                <Row>
-                  <Col md={6}>
-                    <Form.Label>Email</Form.Label>
-                    <Form.Group controlId="formBasicEmail">
-                      <Form.Control
-                        type="text"
-                        value={this.state.email_id}
-                        placeholder="Enter email"
-                        name="email_id"
-                        onChange={this.handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Label>Mobile</Form.Label>
-                    <Form.Group controlId="formBasicEmail">
-                      <Form.Control
-                        type="text"
-                        maxLength="10"
-                        value={this.state.mobile_number1}
-                        placeholder="Enter Mobile Number"
-                        name="mobile_number1"
-                        onChange={this.handleChange}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={12} className="Mobile_Button_container">
-                    <div className="Submit_Button_Section">
-                      <Button
-                        type="submit"
-                        variant="outline-primary"
-                        className="MyAccount_Update_Button"
-                      >
-                        Update
-                      </Button>
-                    </div>
-                  </Col>
-                </Row>
+          <meta property="og:description" content="User's can their profile" />
+        </Helmet>
+        <div className="personal-information-wrapper">
+          <Container>
+            <Row>
+              <Col md={12} className="Personal_Information_Heading">
+                <h6>Personal Information</h6>
+                <Form name="form" onSubmit={this.handleSubmit}>
+                  <Row>
+                    <Col md={6}>
+                      <Form.Group controlId="formBasicEmail">
+                        <Form.Label>First</Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={this.state.first_name}
+                          placeholder="Enter First Name"
+                          name="first_name"
+                          onChange={this.handleChange}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Label>Last Name</Form.Label>
+                      <Form.Group controlId="formBasicEmail">
+                        <Form.Control
+                          type="text"
+                          value={this.state.last_name}
+                          placeholder="Enter Last Name"
+                          name="last_name"
+                          onChange={this.handleChange}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
 
-                <Row>
-                  <img
-                    src={images.Account_Bottom}
-                    alt="RealEsate"
-                    className="img-fluid w-100"
-                  />
-                </Row>
-              </Form>
-            </Col>
-          </Row>
-        </Container>
-      </div>
+                  <Row>
+                    <Col md={6}>
+                      <Form.Label>Email</Form.Label>
+                      <Form.Group controlId="formBasicEmail">
+                        <Form.Control
+                          type="text"
+                          value={this.state.email_id}
+                          placeholder="Enter email"
+                          name="email_id"
+                          onChange={this.handleChange}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Label>Mobile</Form.Label>
+                      <Form.Group controlId="formBasicEmail">
+                        <Form.Control
+                          type="text"
+                          maxLength="10"
+                          value={this.state.mobile_number1}
+                          placeholder="Enter Mobile Number"
+                          name="mobile_number1"
+                          onChange={this.handleChange}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={12} className="Mobile_Button_container">
+                      <div className="Submit_Button_Section">
+                        <Button
+                          type="submit"
+                          variant="outline-primary"
+                          className="MyAccount_Update_Button"
+                        >
+                          Update
+                        </Button>
+                      </div>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <img
+                      src={images.Account_Bottom}
+                      alt="RealEsate"
+                      className="img-fluid w-100"
+                    />
+                  </Row>
+                </Form>
+              </Col>
+            </Row>
+          </Container>
+        </div>
+      </>
     );
   }
 }

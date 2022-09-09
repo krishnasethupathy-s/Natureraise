@@ -2,8 +2,7 @@ import React, { Component } from "react";
 import { Row, Container, Col, Button, Form } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
 import "./BlogDetails.css";
-import Footer from "../Natureraise/Footer/Footer";
-import HeaderInnerNavbar from "../Natureraise/HeaderNavbar/HeaderNavbar";
+
 import Config from "../../Config";
 import http from "../../http_common";
 import parse from "html-react-parser";
@@ -155,7 +154,6 @@ export default class NewsDetails extends Component {
         </Helmet>
 
         <div>
-          <HeaderInnerNavbar />
           <section
             className="blog-description-section"
             id="blog-description-section"
@@ -312,8 +310,6 @@ export default class NewsDetails extends Component {
               </Row>
             </Container>
           </section>
-
-          <Footer />
         </div>
       </>
     );

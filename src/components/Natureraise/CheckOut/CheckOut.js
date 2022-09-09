@@ -598,7 +598,11 @@ class CheckOut extends Component {
     const order_id = id;
     const { order_amount: amount } = this.props.cart;
     const logo = images.nature_logo;
+    const { mobile_number } = this.props.address_data.find(
+      (address) => address.id === this.state.delivery_address_id
+    );
 
+    const email_id = localStorage.getItem("email_id");
     const options = {
       key: "rzp_test_iZt5e6oaqwbtfP", // Enter the Key ID generated from the Dashboard
       amount: amount.toString(),
@@ -608,8 +612,8 @@ class CheckOut extends Component {
       order_id: order_id,
       handler: this.orderPaymentChecking,
       prefill: {
-        email: Config.email_id,
-        contact: Config.contact_number,
+        email: email_id,
+        contact: mobile_number,
       },
       readonly: { email: true, contact: true },
 
@@ -686,7 +690,6 @@ class CheckOut extends Component {
         </Helmet>
 
         <div>
-          <HeaderNavbar />
           <PageLoading
             isLoadingComplete={this.props.is_loading || this.state.is_loading}
           />
@@ -1473,8 +1476,6 @@ class CheckOut extends Component {
               </Row>
             </Container>
           </div>
-
-          <Footer />
         </div>
       </>
     );

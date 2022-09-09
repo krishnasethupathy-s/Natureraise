@@ -5,9 +5,7 @@ import { Carousel, Container, Row, Col } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
 
-import HeaderNavbar from "../HeaderNavbar/HeaderNavbar";
 import images from "../../constants/images";
-import Footer from "../Footer/Footer";
 import BrandSlider from "../../constants/BrandSlider/BrandSlider";
 import { connect } from "react-redux";
 import * as Banner from "../store/actions/Sitedata/Banner";
@@ -18,7 +16,6 @@ import ProductCard from "../Common/Components/ProductCard/ProductCard";
 
 import DeliveryProcess from "../Common/Components/DeliveryProcess/DeliveryProcess";
 import SecondOfferSection from "../Common/Components/SecondOfferSection/SecondOfferSection";
-import PageLoading from "../../constants/PageLoader/PageLoading";
 
 import "./Homepage.css";
 class HomePage extends Component {
@@ -205,8 +202,6 @@ class HomePage extends Component {
             content="NatureRaise extensive range of robust and reliable products backed by its cutting-edge R&D and more than two decades of expertise are designed to performance"
           />
         </Helmet>
-        <HeaderNavbar />
-        <PageLoading isLoadingComplete={this.props.is_loading} />
 
         <div>
           <Carousel>
@@ -496,8 +491,6 @@ class HomePage extends Component {
             </Container>
           </section>
         )}
-
-        <Footer />
       </div>
     );
   }

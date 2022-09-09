@@ -28,6 +28,7 @@ import "react-toastify/dist/ReactToastify.css";
 class HeaderNavbar extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       profile_pic: localStorage.getItem("image_address"),
       first_name: localStorage.getItem("first_name"),

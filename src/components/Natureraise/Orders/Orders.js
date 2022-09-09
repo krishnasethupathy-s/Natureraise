@@ -11,8 +11,6 @@ import images from "../../constants/images";
 
 import { getOrderListPageWise } from "../store/actions/Order/OrderActions";
 
-import PageLoading from "../../constants/PageLoader/PageLoading";
-
 class Orders extends Component {
   constructor(props) {
     super(props);
@@ -50,7 +48,6 @@ class Orders extends Component {
         </Helmet>
 
         <div className="personal-information-wrapper">
-          <PageLoading isLoadingComplete={this.props.is_loading} />
           <Container>
             <Row style={{ minHeight: "30vh" }}>
               <Col md={12} className="Personal_Information_Heading">

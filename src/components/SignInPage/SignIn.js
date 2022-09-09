@@ -7,52 +7,60 @@ import { toast } from "react-toastify";
 import { GoogleLogin } from "@react-oauth/google";
 import FacebookLogin from "@greatsumini/react-facebook-login";
 import jwtDecode from "jwt-decode";
+import { Helmet } from "react-helmet-async";
+import { Formik } from "formik";
+import * as Yup from "yup";
 
 import PageLoading from "../constants/PageLoader/PageLoading";
 import Footer from "../Natureraise/Footer/Footer";
 import HeaderInnerNavbar from "../Natureraise/HeaderNavbar/HeaderNavbar";
 import * as UserActions from "../Natureraise/store/actions/User/UserActions";
-import { getCartList } from "../Natureraise/store/actions/Product/ProductActions";
+import {
+  empty_message,
+  getCartList,
+} from "../Natureraise/store/actions/Product/ProductActions";
 import "./SignIn.css";
+
+const SingInSchema = Yup.object().shape({
+  email: Yup.string().required("Required").email("Invalid E-mail"),
+  password: Yup.string()
+    .required("Required")
+    .min(8, "Minimum 8 characters long"),
+});
 class SignIn extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      lastname: "",
-      password: "",
       client_ip: "",
       redirect: false,
       isLoadingComplete: true,
     };
   }
   async componentDidMount() {
+    this.props.dispatch(empty_message());
+    this.props.dispatch(UserActions.empty_message());
     window.scrollTo(0, 0);
     // localStorage.clear();
     this.getIP().then((data) => {
       this.setState({ client_ip: data["ip"] });
     });
     setTimeout(() => {
-      this.setState({ isLoadingComplete: false });
       this.props.dispatch({ type: "IS_LOADING", is_loading: false });
     }, 1000);
     const { state } = this.props.location;
     console.log(state);
   }
 
-  handleChange = (e) => {
-    const { name, value } = e.target;
-    this.setState({ [name]: value });
-  };
-
   async getIP() {
+    this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     const response = await fetch("https://api64.ipify.org/?format=json");
     const data = await response.json();
     return data;
   }
   componentDidUpdate = () => {
-    if (this.props.message === "SUCCESS") {
+    if (this.props.message === "CART_SUCCESS") {
       this.props.dispatch(UserActions.empty_message());
-      this.props.dispatch({ type: "IS_LOADING", is_loading: false });
+      // this.props.dispatch({ type: "IS_LOADING", is_loading: false });
       this.navigate_function();
     } else if (this.props.error_msg === "Invalid Crediental") {
       this.props.dispatch({ type: "IS_LOADING", is_loading: false });
@@ -63,19 +71,27 @@ class SignIn extends Component {
       toast.error(this.props.error_msg);
       this.props.dispatch(UserActions.empty_message());
     }
+
+    if (this.props.error_msg === "error") {
+      this.props.dispatch({ type: "IS_LOADING", is_loading: false });
+      this.props.dispatch(UserActions.empty_message());
+      toast.error("Somthing went wrong , please try again");
+    }
   };
-  handleSubmit = async (e) => {
-    e.preventDefault();
-    const { username, password, client_ip } = this.state;
+  handleSubmit = async (values) => {
+    const { email, password } = values;
+    const { client_ip } = this.state;
 
     const localCart = this.props.cart_items.map((item) => ({
       item_id: item.id,
       quantity: item.cart_list,
-      pincode: item.pincode,
+      pincode: item.pincode ?? "",
     }));
+
+    console.log(localCart);
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     await this.props.dispatch(
-      UserActions.SignInAction(username, password, client_ip, localCart)
+      UserActions.SignInAction(email, password, client_ip, localCart)
     );
   };
 
@@ -101,7 +117,7 @@ class SignIn extends Component {
     const localCart = this.props.cart_items.map((item) => ({
       item_id: item.id,
       quantity: item.cart_list,
-      pincode: item.pincode,
+      pincode: item.pincode ?? "",
     }));
 
     this.props.dispatch(
@@ -132,7 +148,7 @@ class SignIn extends Component {
     const localCart = this.props.cart_items.map((item) => ({
       item_id: item.id,
       quantity: item.cart_list,
-      pincode: item.pincode,
+      pincode: item.pincode ?? "",
     }));
 
     this.props.dispatch(
@@ -155,69 +171,110 @@ class SignIn extends Component {
     // }
 
     return (
-      <section>
-        <PageLoading
-          isLoadingComplete={
-            this.state.isLoadingComplete || this.props.is_loading
-          }
-        />
-        <HeaderInnerNavbar />
+      <>
+        <Helmet>
+          <title>Login | Natureraise</title>
+          <meta property="og:title" content="Natureraise" />
+          <meta property="og:type" content="website" />
 
-        <div id="SignIn_Main_Section">
-          <Jumbotron fluid className="text-center">
-            <Container>
-              <div className="SingIn_title_wrapper">
-                <div className="SignIn_Section">
-                  <ul className="Inner_nav">
-                    <li>
-                      <Link to="/">
-                        <i className="fa fa-sign-in"></i> Home
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="/SignUp">
-                        <i className="fa fa-user-circle-o"></i> SignUp
-                      </Link>
-                    </li>
-                  </ul>
+          <meta property="og:description" content="Natureraise Login Page" />
+        </Helmet>
+        <section>
+          <div id="SignIn_Main_Section">
+            <Jumbotron fluid className="text-center">
+              <Container>
+                <div className="SingIn_title_wrapper">
+                  <div className="SignIn_Section">
+                    <ul className="Inner_nav">
+                      <li>
+                        <Link to="/">
+                          <i className="fa fa-sign-in"></i> Home
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/SignUp">
+                          <i className="fa fa-user-circle-o"></i> SignUp
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
-              </div>
-            </Container>
-          </Jumbotron>
-        </div>
-        <div className="SignIn_Form_Section">
-          <Container>
-            <Row>
-              <Col md={3}></Col>
+              </Container>
+            </Jumbotron>
+          </div>
+          <div className="SignIn_Form_Section">
+            <Container>
+              <Row>
+                <Col md={3}></Col>
 
-              <Col md={6}>
-                <span className="center_double_line">LOGIN </span>
-                <div className="form_card_details">
-                  <h1> Login Here</h1>
+                <Col md={6}>
+                  <span className="center_double_line">LOGIN </span>
+                  <div className="form_card_details">
+                    <h1> Login Here</h1>
 
-                  <Form name="form" onSubmit={this.handleSubmit}>
-                    <Form.Group controlId="formBasicEmail">
-                      <Form.Control
-                        type="text"
-                        placeholder="Your Email *"
-                        name="username"
-                        onChange={this.handleChange}
-                        required
-                      />
-                    </Form.Group>
-                    <Form.Group controlId="formBasicPassword">
-                      <Form.Control
-                        type="password"
-                        placeholder="Your Password *"
-                        name="password"
-                        onChange={this.handleChange}
-                        required
-                      />
-                    </Form.Group>
+                    <Formik
+                      initialValues={{ email: "", password: "" }}
+                      validationSchema={SingInSchema}
+                      onSubmit={(values) => this.handleSubmit(values)}
+                    >
+                      {({
+                        errors,
+                        touched,
+                        handleChange,
+                        handleSubmit,
+                        isSubmitting,
+                      }) => (
+                        <Form name="form" noValidate onSubmit={handleSubmit}>
+                          <Form.Group controlId="formBasicEmail">
+                            <Form.Control
+                              type="text"
+                              placeholder="Your Email *"
+                              name="email"
+                              onChange={handleChange}
+                              isInvalid={Boolean(errors.email && touched.email)}
+                            />
+                            <Form.Control.Feedback
+                              type="invalid"
+                              className="text-left"
+                            >
+                              {errors.email}
+                            </Form.Control.Feedback>
+                          </Form.Group>
+                          <Form.Group controlId="formBasicPassword">
+                            <Form.Control
+                              type="password"
+                              placeholder="Your Password *"
+                              name="password"
+                              onChange={handleChange}
+                              isInvalid={Boolean(
+                                touched.password && errors.password
+                              )}
+                            />
+                            <Form.Control.Feedback
+                              type="invalid"
+                              className="text-left"
+                            >
+                              {errors.password}
+                            </Form.Control.Feedback>
+                          </Form.Group>
 
-                    <Button variant="primary" type="submit" className="SignIn">
-                      Login
-                    </Button>
+                          <Row className="justify-content-end mr-2">
+                            <Link to="/ForgotPassword" className="text-dark">
+                              Forgot Password?
+                            </Link>
+                          </Row>
+
+                          <Button
+                            variant="primary"
+                            type="submit"
+                            className="SignIn mt-2"
+                            disabled={isSubmitting}
+                          >
+                            {isSubmitting ? "Logging in..." : "Login"}
+                          </Button>
+                        </Form>
+                      )}
+                    </Formik>
 
                     <div className="ortext ">
                       <h6>Or</h6>
@@ -311,15 +368,14 @@ class SignIn extends Component {
                         <h6>Return to Home</h6>
                       </Link>
                     </div>
-                  </Form>
-                </div>
-              </Col>
-              <Col md={3}></Col>
-            </Row>
-          </Container>
-        </div>
-        <Footer />
-      </section>
+                  </div>
+                </Col>
+                <Col md={3}></Col>
+              </Row>
+            </Container>
+          </div>
+        </section>
+      </>
     );
   }
 }

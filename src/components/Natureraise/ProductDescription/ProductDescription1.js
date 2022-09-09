@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-import { Container, Row, Col, Tab, Tabs, Form, Button } from "react-bootstrap";
-import HeaderNavbar from "../HeaderNavbar/HeaderNavbar";
-import Footer from "../Footer/Footer";
+import { Container, Row, Col, Tab, Tabs, Form } from "react-bootstrap";
+
 import InnerImageZoom from "react-inner-image-zoom";
 import StarRatingComponent from "react-star-rating-component";
 import Slider from "react-slick";
@@ -9,13 +8,12 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { connect } from "react-redux";
 import parse from "html-react-parser";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
 
 import * as ProductActions from "../store/actions/Product/ProductActions";
 import ProductCard from "../Common/Components/ProductCard/ProductCard";
 
-import PageLoading from "../../constants/PageLoader/PageLoading";
 import "./ProductDescription.css";
 
 import "react-inner-image-zoom/lib/InnerImageZoom/styles.min.css";
@@ -82,11 +80,12 @@ class ProductDescription1 extends Component {
         (product) => product.id === this.productId
       );
 
-      this.props.dispatch({
-        type: ProductActions.ADD_RECENT_VIEW,
-        data: recent,
-      });
-
+      if (recent.length) {
+        this.props.dispatch({
+          type: ProductActions.ADD_RECENT_VIEW,
+          data: recent,
+        });
+      }
       this.props.product_master_list.map((prod) => {
         if (this.uniqueColors.indexOf(prod.item_color) === -1) {
           this.uniqueColors.push(prod.item_color);
@@ -123,8 +122,8 @@ class ProductDescription1 extends Component {
         }
       });
 
-      this.props.dispatch({ type: "IS_LOADING", is_loading: false });
       this.props.dispatch(ProductActions.empty_message());
+      this.props.dispatch({ type: "IS_LOADING", is_loading: false });
       this.props.dispatch(
         ProductActions.getProductDetails(this.productId, this.unique_id)
       );
@@ -455,6 +454,32 @@ class ProductDescription1 extends Component {
         },
       ],
     };
+
+    if (!this.props.is_loading && !this.props.product_master_list.length)
+      return (
+        <>
+          <Helmet>
+            <title>404 | Natureraise</title>
+            <meta property="og:title" content="Natureraise" />
+            <meta property="og:type" content="website" />
+
+            <meta property="og:description" content="Not Found - 404" />
+          </Helmet>
+          <div className="text-center d-flex justify-content-center align-items-center flex-column mt-3">
+            <div>
+              <h4>Oops, Product Not Found</h4>
+            </div>
+            <div>
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/7387/7387740.png"
+                alt="product not found"
+                height={"100px"}
+              />
+            </div>
+          </div>
+        </>
+      );
+
     return (
       <>
         <Helmet>
@@ -469,9 +494,6 @@ class ProductDescription1 extends Component {
         </Helmet>
 
         <div>
-          <HeaderNavbar />
-          <PageLoading isLoadingComplete={this.props.is_loading} />
-
           <section
             className="product_description section_padding_top_bottom"
             id="product_description"
@@ -987,7 +1009,6 @@ class ProductDescription1 extends Component {
               </Row>
             </Container>
           </section>
-          <Footer />
         </div>
       </>
     );

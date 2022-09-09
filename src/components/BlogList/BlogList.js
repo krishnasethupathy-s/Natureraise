@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import { Row, Container, Col, Button, Card } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
 import "./BlogList.css";
-import Footer from "../Natureraise/Footer/Footer";
-import HeaderInnerNavbar from "../Natureraise/HeaderNavbar/HeaderNavbar";
 import Config from "../../Config";
 import Facebook from "../mincomponent/Facebook/Facebook";
 import * as Moment from "moment";
@@ -59,7 +57,6 @@ export default class BlogList extends Component {
           <meta property="og:description" content="Blog Page" />
         </Helmet>
         <div>
-          <HeaderInnerNavbar />
           <section className="news-list-container" id="news-list-container">
             <Container>
               <Row>
@@ -145,7 +142,6 @@ export default class BlogList extends Component {
               </Row>
             </Container>
           </section>
-          <Footer />
         </div>
       </>
     );

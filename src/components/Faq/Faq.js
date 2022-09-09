@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import { Helmet } from "react-helmet-async";
-import HeaderInnerNavbar from "../Natureraise/HeaderNavbar/HeaderNavbar";
+
 import "./Faq.css";
-import Footer from "../Natureraise/Footer/Footer";
 import { Accordion, Col, Row, Card, Form, Button } from "react-bootstrap";
 import Tollfree from "../constants/TollFree/TollFree";
 import { Faq_data } from "../constants/AccountData";
@@ -43,8 +42,6 @@ export default class Faq extends Component {
         </Helmet>
 
         <section className="faq_section" id="faq_section">
-          <HeaderInnerNavbar />
-
           <div className="faq_banner">
             <div className="faq_overlay"></div>
             <div className="faq_title">
@@ -276,7 +273,6 @@ export default class Faq extends Component {
               </Row>
             </div>
           </section>
-          <Footer />
         </section>
       </>
     );

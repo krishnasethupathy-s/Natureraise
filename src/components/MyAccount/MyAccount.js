@@ -4,16 +4,14 @@ import { Link, NavLink, Route, Switch, Redirect } from "react-router-dom";
 import Avatar from "react-avatar";
 
 import "./MyAccount.css";
-import Footer from "../Natureraise/Footer/Footer";
-import HeaderInnerNavbar from "../Natureraise/HeaderNavbar/HeaderNavbar";
 import PersonalInformation from "./PersonalInformation/PersonalInformation";
+import ChangePassword from "./ChangePassword/ChangePassword";
 import ManageAddress from "./ManageAddress/ManageAddress";
 import GstInformation from "./GstInformation/GstInformation";
 import { Container, Col, Row, Jumbotron } from "react-bootstrap";
 import * as AddCustomerAddress from "../Natureraise/store/actions/UserProfile/CustomerAddress";
 import { toast } from "react-toastify";
 import { connect } from "react-redux";
-import PageLoading from "../constants/PageLoader/PageLoading";
 import OrderDetailsCard from "../Natureraise/Common/Components/OrderDetailsCard/OrderDetailsCard";
 import Orders from "../Natureraise/Orders/Orders";
 
@@ -84,9 +82,7 @@ class MyAccount extends Component {
     const { path } = this.props.match;
     return (
       <React.Fragment>
-        <PageLoading isLoadingComplete={this.props.is_loading} />
         <section>
-          <HeaderInnerNavbar />
           <div id="SignIn_Main_Section">
             <Jumbotron fluid className="text-center">
               <Container>
@@ -174,6 +170,24 @@ class MyAccount extends Component {
                       </div>
                     </div>
                   </NavLink>
+
+                  <NavLink
+                    style={{
+                      color: " #666",
+                    }}
+                    activeClassName="active_background"
+                    to={`/MyAccount/changepassword`}
+                  >
+                    <div className="mb-1 My_Account_Basic_Details">
+                      <div className="My_Account_Heading_Section ">
+                        <h6 className={"MyAccount_SubHeading"}>
+                          Change Password
+                        </h6>
+                        <i className="fa fa-caret-right" aria-hidden="true"></i>
+                      </div>
+                    </div>
+                  </NavLink>
+
                   <NavLink
                     style={{
                       color: " #666",
@@ -254,6 +268,11 @@ class MyAccount extends Component {
                       <PersonalInformation />
                     </Col>
                   </Route>
+                  <Route path={`${path}/changepassword`}>
+                    <Col md={9} className="My_Account_Profile_Details">
+                      <ChangePassword />
+                    </Col>
+                  </Route>
                   <Route path={`${path}/address`}>
                     <Col md={9} className="MyAddress_Details_Section">
                       <ManageAddress />
@@ -317,7 +336,6 @@ class MyAccount extends Component {
               </Row>
             </Container>
           </section>
-          <Footer />
         </section>
       </React.Fragment>
     );

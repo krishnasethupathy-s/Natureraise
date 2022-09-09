@@ -2,8 +2,7 @@ import React, { Component } from "react";
 import { Helmet } from "react-helmet-async";
 import "./PrivacyPolicy.css";
 import { Container, Row, Col } from "react-bootstrap";
-import HeaderNavbar from "../HeaderNavbar/HeaderNavbar";
-import Footer from "../Footer/Footer";
+
 import PrivacyComp from "./constant/PrivacyPolicy/PrivacyPolicyComp";
 
 export default class PrivacyPolicy extends Component {
@@ -26,8 +25,6 @@ export default class PrivacyPolicy extends Component {
         </Helmet>
 
         <div>
-          <HeaderNavbar />
-
           <section>
             <Container>
               <Row>
@@ -42,8 +39,6 @@ export default class PrivacyPolicy extends Component {
               </Row>
             </Container>
           </section>
-
-          <Footer />
         </div>
       </>
     );

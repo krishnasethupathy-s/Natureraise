@@ -3,12 +3,9 @@ import "./OrderStatus.css";
 import { Container, Row, Col } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
 
-import HeaderNavbar from "../HeaderNavbar/HeaderNavbar";
 import images from "../../constants/images";
-import Footer from "../Footer/Footer";
 import SectionHeader from "../../constants/SectionHeader/SectionHeader";
 import { connect } from "react-redux";
-import PageLoading from "../../constants/PageLoader/PageLoading";
 import CardWrap from "../Common/UI/Card/Card";
 
 import AddressDetails from "./constant/AddressDetails/AddressDetails";
@@ -73,9 +70,6 @@ class OrderStatus extends Component {
           />
         </Helmet>
         <section className="product_list_container" id="product_list_container">
-          <PageLoading isLoadingComplete={this.props.is_loading} />
-
-          <HeaderNavbar />
           <SectionHeader
             about_banner="about_banner"
             section_title="Order Detail"
@@ -147,7 +141,6 @@ class OrderStatus extends Component {
             handleClose={this.cancelModalHandleClose}
             id={this.id}
           />
-          <Footer />
         </section>
       </>
     );

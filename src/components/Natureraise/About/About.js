@@ -2,10 +2,8 @@ import React, { Component } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
 
-import "./About.css";
-import HeaderNavbar from "../HeaderNavbar/HeaderNavbar";
 import images from "../../constants/images";
-import Footer from "../Footer/Footer";
+import "./About.css";
 
 export default class About extends Component {
   componentDidMount() {
@@ -23,8 +21,6 @@ export default class About extends Component {
           <meta property="og:description" content="About Natureraise" />
         </Helmet>
         <div>
-          <HeaderNavbar />
-
           <div className="about_banner">
             <div className="about_overlay"></div>
             <div className="about_title">
@@ -231,8 +227,6 @@ export default class About extends Component {
               </Row>
             </Container>
           </section>
-
-          <Footer />
         </div>
       </>
     );

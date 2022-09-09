@@ -5,11 +5,8 @@ import { connect } from "react-redux";
 import { Helmet } from "react-helmet-async";
 
 import "./Contact.css";
-import HeaderNavbar from "../HeaderNavbar/HeaderNavbar";
 
-import Footer from "../Footer/Footer";
 import images from "../../constants/images";
-import PageLoading from "../../constants/PageLoader/PageLoading";
 
 import Config from "../../../Config";
 
@@ -140,9 +137,6 @@ class Contact extends Component {
         </Helmet>
 
         <div>
-          <PageLoading isLoadingComplete={this.props.is_loading} />
-
-          <HeaderNavbar />
           <div className="contact_banner">
             <div className="contact_overlay"></div>
             <div className="contact_title">
@@ -337,8 +331,6 @@ class Contact extends Component {
               </Row>
             </Container>
           </section>
-
-          <Footer />
         </div>
       </>
     );
