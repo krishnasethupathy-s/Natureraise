@@ -26,6 +26,9 @@ export const set_user = (user, provider) => (dispath) => {
 };
 export const logout_user = () => (dispath) => {
   dispath({
+    type: "RESET_RECENT_VIEW",
+  });
+  dispath({
     type: LOGOUT_USER,
   });
 };
@@ -314,7 +317,8 @@ export const LoginWithSocialID =
         mobile_number1,
         email_id,
         gst_number,
-        pan_number
+        pan_number,
+        
     }
 }`;
 
@@ -342,10 +346,11 @@ export const LoginWithSocialID =
       .then((responseText) => {
         console.log(responseText);
         if (responseText.data.LoginWithSocialID["message"] === "SUCCESS") {
-          dispatch({
-            type: "SUCCESS_MESSAGE",
-            success_title: responseText.data.LoginWithSocialID["message"],
-          });
+          localStorage.setItem(
+            "user_id",
+            responseText.data.LoginWithSocialID["id"] ?? ""
+          );
+
           localStorage.setItem(
             "first_name",
             responseText.data.LoginWithSocialID["first_name"]
@@ -396,6 +401,10 @@ export const LoginWithSocialID =
           );
           console.log(localCart);
           dispatch(syncLocalCart(localCart));
+          dispatch({
+            type: "SUCCESS_MESSAGE",
+            success_title: responseText.data.LoginWithSocialID["message"],
+          });
         } else {
           dispatch({
             type: "ERROR_MESSAGE",
@@ -407,4 +416,172 @@ export const LoginWithSocialID =
         dispatch({ type: "ERROR_MESSAGE", error_title: "error" });
       });
     return Promise.resolve();
+  };
+
+export const GetResetPasswordLinkByMail = (email_id) => async (dispatch) => {
+  dispatch({ type: "IS_LOADING", is_loading: true });
+  try {
+    const form_Data1 = JSON.stringify({ email_id });
+    let response = await fetch(Config.BaseUrl + "GetResetPasswordLinkByMail", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      },
+      body: form_Data1,
+    });
+    let responseJsonData = await response.json();
+    console.log(responseJsonData);
+    if (responseJsonData.message === "SUCCESS") {
+      dispatch({
+        type: "SUCCESS_MESSAGE",
+        success_title: responseJsonData.message,
+      });
+    } else {
+      dispatch({
+        type: "ERROR_MESSAGE",
+        error_title: "FAILED",
+      });
+    }
+
+    dispatch({ type: "IS_LOADING", is_loading: false });
+  } catch (e) {
+    console.log(e);
+    dispatch({ type: "IS_LOADING", is_loading: false });
+    dispatch({
+      type: "ERROR_MESSAGE",
+      error_title: "ERROR",
+    });
+  }
+};
+
+export const ChangePasswordFunction1 =
+  (current_password, new_password, confirm_password) => async (dispatch) => {
+    dispatch({ type: "IS_LOADING", is_loading: true });
+    try {
+      const Authorization = localStorage.getItem("Authorization");
+      const customer_id = localStorage.getItem("user_id");
+      const form_Data1 = JSON.stringify({
+        Authorization,
+        current_password,
+        new_password,
+        confirm_password,
+      });
+      let response = await fetch(
+        Config.BaseUrl + "ChangePasswordByCurrentPassword",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+          },
+          body: form_Data1,
+        }
+      );
+      let responseJsonData = await response.json();
+      console.log(responseJsonData);
+      dispatch({ type: "IS_LOADING", is_loading: false });
+    } catch (e) {
+      console.log(e);
+      dispatch({ type: "IS_LOADING", is_loading: false });
+    }
+  };
+
+export const MailVerficationAction = (customer_id) => async (dispatch) => {
+  dispatch({ type: "IS_LOADING", is_loading: true });
+  const status = 1;
+  const form_Data1 = JSON.stringify({ status, customer_id });
+
+  fetch(Config.BaseUrl + "MailVerification", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+    },
+    body: form_Data1,
+  })
+    .then((response) => response.json())
+    .then((responseJson) => {
+      console.log(responseJson);
+      if (responseJson.message === "SUCCESS") {
+        dispatch({
+          type: "SUCCESS_MESSAGE",
+          success_title: "MAIL_VERIFICATION_SUCCESS",
+        });
+        dispatch({
+          type: "CUSTOMER_ID",
+          id: responseJson.id,
+        });
+      } else {
+        dispatch({
+          type: "SUCCESS_MESSAGE",
+          success_title: "MAIL_VERIFICATION_ERROR",
+        });
+        dispatch({
+          type: "ERROR_MESSAGE",
+          error_title: responseJson.message,
+        });
+      }
+      dispatch({ type: "IS_LOADING", is_loading: false });
+    })
+    .catch((error) => {
+      dispatch({
+        type: "SUCCESS_MESSAGE",
+        success_title: "MAIL_VERIFICATION_CATCH_ERROR",
+      });
+      dispatch({
+        type: "ERROR_MESSAGE",
+        error_title: "Somthing went wrong, try again",
+      });
+      dispatch({ type: "IS_LOADING", is_loading: false });
+    });
+};
+
+export const ChangePasswordById =
+  (new_password, confirm_password, customer_id) => (dispatch) => {
+    dispatch({ type: "IS_LOADING", is_loading: true });
+    const Authorization = Config.getRequestToken();
+    const form_Data1 = JSON.stringify({
+      Authorization,
+      new_password,
+      confirm_password,
+      customer_id,
+    });
+    fetch(Config.BaseUrl + "ChangePasswordById", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      },
+      body: form_Data1,
+    })
+      .then((res) => res.json())
+      .then((resjson) => {
+        console.log(resjson);
+        if (resjson.message === "SUCCESS") {
+          dispatch({
+            type: "SUCCESS_MESSAGE",
+            success_title: "PASSWORD_RESET_SUCCESS",
+          });
+        } else {
+          dispatch({
+            type: "SUCCESS_MESSAGE",
+            success_title: "PASSWORD_RESET_ERROR",
+          });
+          dispatch({
+            type: "ERROR_MESSAGE",
+            error_title: resjson.message,
+          });
+        }
+
+        dispatch({ type: "IS_LOADING", is_loading: false });
+      })
+      .catch((e) => {
+        console.log(e);
+        dispatch({
+          type: "SUCCESS_MESSAGE",
+          success_title: "PASSWORD_RESET_CATCH_ERROR",
+        });
+        dispatch({
+          type: "ERROR_MESSAGE",
+          error_title: "Something went wrong",
+        });
+        dispatch({ type: "IS_LOADING", is_loading: false });
+      });
   };

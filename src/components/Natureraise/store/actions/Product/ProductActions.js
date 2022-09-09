@@ -588,15 +588,24 @@ export const getItemListByMasterId = (id, pin) => {
           dispatch({ type: "IS_LOADING", is_loading: false });
           throw new Error("Something went wrong!, Please Try again");
         }
-
-        dispatch({
-          type: "PRODUCT_MASTER_LIST",
-          product_master_list: result.data.getItemListByMasterId,
-        });
-        dispatch({
-          type: "SUCCESS_MESSAGE",
-          success_title: "PRODUCT_MASTER_LIST_SUCCESS",
-        });
+        if (result.data.getItemListByMasterId.length) {
+          dispatch({
+            type: "PRODUCT_MASTER_LIST",
+            product_master_list: result.data.getItemListByMasterId,
+          });
+          dispatch({
+            type: "SUCCESS_MESSAGE",
+            success_title: "PRODUCT_MASTER_LIST_SUCCESS",
+          });
+        }
+        if (!result.data.getItemListByMasterId.length) {
+          dispatch(empty_message());
+          dispatch({
+            type: "PRODUCT_MASTER_LIST",
+            product_master_list: [],
+          });
+          dispatch({ type: "IS_LOADING", is_loading: false });
+        }
         return true;
       })
       .catch((error) => {
@@ -983,6 +992,7 @@ export const syncLocalCart = (cartArray) => async (dispatch) => {
     Authorization,
   });
   const cart_list = cartArray;
+  console.log(cart_list);
   const formData = new FormData();
   formData.append("cart_list", JSON.stringify({ cart_list }));
   formData.append("json", form_Data1);
@@ -1001,12 +1011,12 @@ export const syncLocalCart = (cartArray) => async (dispatch) => {
     .then((res) => res.json())
     .then((resJson) => {
       console.log(resJson);
+      dispatch(getCartList());
     })
     .catch((error) => {
       console.log(error);
+      dispatch({ type: "IS_LOADING", is_loading: false });
     });
-
-  dispatch({ type: "IS_LOADING", is_loading: false });
 };
 
 export const resetCart = () => {

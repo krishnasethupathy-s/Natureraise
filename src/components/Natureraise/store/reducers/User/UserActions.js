@@ -19,7 +19,9 @@ const initialState = {
     mobile_number1: localStorage.getItem("mobile_number1") || "",
     token: localStorage.getItem("Authorization") || "",
     expiryTime: localStorage.getItem("expiryTime") || 0,
+    id: localStorage.getItem("user_id") || "",
   },
+  customer_id: "",
 };
 
 export default (state = initialState, action) => {
@@ -77,6 +79,12 @@ export default (state = initialState, action) => {
         },
       };
     }
+
+    case "CUSTOMER_ID":
+      return {
+        ...state,
+        customer_id: action.id,
+      };
     default:
       return state;
   }

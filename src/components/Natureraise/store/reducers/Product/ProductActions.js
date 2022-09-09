@@ -152,6 +152,13 @@ export default (state = initialState, action) => {
 
     case ADD_RECENT_VIEW: {
       const { data } = action;
+
+      if (data.length === 0) {
+        return {
+          ...state,
+        };
+      }
+
       const alreadyExist = state.recentView.some(
         (item) => item.id === data[0].id
       );
@@ -163,7 +170,11 @@ export default (state = initialState, action) => {
         recentView: [...data, ...state.recentView],
       };
     }
-
+    case "RESET_RECENT_VIEW":
+      return {
+        ...state,
+        recentView: [],
+      };
     case GETITEMLISTBYSUBCATEGORY: {
       if (action.reset) {
         return {
@@ -544,6 +555,22 @@ export default (state = initialState, action) => {
       if (!item) {
         item = state.product_list.find((product) => product.id === productId);
       }
+      if (!item) {
+        item = state.homeProducts.topOffers.find(
+          (product) => product.id === productId
+        );
+      }
+
+      if (!item) {
+        item = state.homeProducts.newComings.find(
+          (product) => product.id === productId
+        );
+      }
+
+      if (!item) {
+        item = state.recentView.find((product) => product.id === productId);
+      }
+
       item.pincode = action.pincode;
       item.cart_list = +item.cart_list + 1;
       item.total_amount =
