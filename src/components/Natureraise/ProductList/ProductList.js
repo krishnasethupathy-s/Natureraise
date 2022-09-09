@@ -10,9 +10,7 @@ import {
   Accordion,
   Spinner,
 } from "react-bootstrap";
-import HeaderNavbar from "../HeaderNavbar/HeaderNavbar";
 import images from "../../constants/images";
-import Footer from "../Footer/Footer";
 import SectionHeader from "../../constants/SectionHeader/SectionHeader";
 import StarRatingComponent from "react-star-rating-component";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -33,7 +31,6 @@ import * as qs from "query-string";
 import { Helmet } from "react-helmet-async";
 
 import ProductCard from "../Common/Components/ProductCard/ProductCard";
-import PageLoading from "../../constants/PageLoader/PageLoading";
 import Filters from "./Filters";
 
 import "./ProductList.css";
@@ -55,7 +52,7 @@ const LOCAL_FILTERS = [
 class ProductList extends Component {
   constructor(props) {
     super(props);
-
+    this.query = qs.parse(this.props.location.search);
     this.state = {
       product_slider: images.product_image,
       rating: 1,
@@ -136,7 +133,7 @@ class ProductList extends Component {
           productdata_id ? productdata_id : "",
           "" + page_number,
           data_limit,
-          item_name,
+          this.query.search ?? item_name,
           filters, //filter_values
           slider_range, // price_values
           "" + sort, // sort_by
@@ -200,7 +197,7 @@ class ProductList extends Component {
           productdata_id ? productdata_id : "",
           "" + page_number,
           data_limit,
-          item_name,
+          this.query.search === "" ? item_name : this.query.search,
           "",
           slider_range,
           "" + sort,
@@ -329,7 +326,7 @@ class ProductList extends Component {
     const query = qs.stringify({
       range: this.state.slider_range,
       sort: this.state.sort,
-      search: this.state.item_name,
+      search: this.query.search ? this.query.search : this.state.item_name,
       ...this.state.filters,
     });
     console.log(query);
@@ -407,9 +404,6 @@ class ProductList extends Component {
         </Helmet>
 
         <section className="product_list_container" id="product_list_container">
-          <PageLoading isLoadingComplete={this.props.is_loading} />
-
-          <HeaderNavbar />
           <SectionHeader
             about_banner="about_banner"
             section_title="Shop"
@@ -521,6 +515,7 @@ class ProductList extends Component {
                               title={data.filter_heading}
                               eventKey={index}
                               key={data.id}
+                              defaultActiveKey={index}
                             >
                               <Filters
                                 values={
@@ -735,7 +730,6 @@ class ProductList extends Component {
               </Row>
             </Container>
           </div>
-          <Footer />
         </section>
       </>
     );

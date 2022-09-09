@@ -36,8 +36,10 @@ const Filters = ({
   }, [persistSelected]);
 
   useEffect(() => {
+    persistSelected &&
+      handlerFilters({ [filterName]: [...persistSelected, ...filterValues] });
     !persistSelected && handlerFilters({ [filterName]: filterValues });
-  }, [filterSelect]);
+  }, [filterSelect, persistSelected]);
 
   const filterHandleChange = (e, eIdx) => {
     const isChecked = e.target.checked;

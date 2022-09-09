@@ -2,14 +2,14 @@ import React, { useState } from "react";
 
 import { Accordion, Card } from "react-bootstrap";
 
-const FilterAccordion = ({ title, eventKey, children }) => {
+const FilterAccordion = ({ title, eventKey, children, defaultActiveKey }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleAccordionOpen = () => setIsOpen((prev) => !prev);
 
   return (
     <div className="product_collapse">
-      <Accordion>
+      <Accordion defaultActiveKey={defaultActiveKey}>
         <Card>
           <Accordion.Toggle
             onClick={toggleAccordionOpen}
