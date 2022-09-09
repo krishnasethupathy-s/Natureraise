@@ -23,7 +23,10 @@ const BaseUrl = "https://democrm.vimkes.com/";
 
 //const BaseUrl = 'https://www.api.dhiyaonlineshop.com/';
 
-// Razorpay key : rzp_test_iZt5e6oaqwbtfP
+const Razorpaykey = "rzp_test_iZt5e6oaqwbtfP";
+const GA = "";
+const gooleLogin =
+  "93793167500-omr4gb2sjr17c2gdcvejklp2dsd9m950.apps.googleusercontent.com";
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
@@ -635,4 +638,9 @@ export default {
   doctor_id,
   chat_token_id,
   room_id,
+
+  //
+  Razorpaykey,
+  GA,
+  gooleLogin,
 };
