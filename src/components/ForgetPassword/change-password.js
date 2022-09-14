@@ -17,6 +17,7 @@ import "./ForgetPassword.css";
 
 const ChangePassword = () => {
   const [showForm, setShowForm] = useState(false);
+  const [resetSuccess, setResetSuccess] = useState(false);
 
   const { success_message, error_message, is_loading } = useSelector(
     (state) => state.ProductActions
@@ -48,13 +49,12 @@ const ChangePassword = () => {
       setShowForm(false);
       dispatch(empty_message());
     }
-
     if (success_message === "PASSWORD_RESET_SUCCESS") {
       setShowForm(true);
       toast.success("Password Changed Successfully");
       dispatch(empty_message());
-
-      history.replace("/signin");
+      setShowForm(false);
+      setResetSuccess(true);
     }
 
     if (success_message === "PASSWORD_RESET_ERROR") {
@@ -110,8 +110,8 @@ const ChangePassword = () => {
                   />
                 </Col>
               )}
-              {!showForm && !is_loading && (
-                <>
+              {!showForm && !is_loading && !resetSuccess && (
+                <Col md={6}>
                   <h3>Reset Link Expired! </h3>
                   <p>Please try again</p>
                   <Button
@@ -122,7 +122,22 @@ const ChangePassword = () => {
                   >
                     Back to Forgot Password
                   </Button>
-                </>
+                </Col>
+              )}
+
+              {!showForm && !is_loading && resetSuccess && (
+                <Col md={6}>
+                  <h3>Password Reseted Successfully! </h3>
+
+                  <Button
+                    type="button"
+                    as={Link}
+                    to="/signin"
+                    variant="outline-secondary"
+                  >
+                    Back to signin
+                  </Button>
+                </Col>
               )}
             </Row>
           </Container>
