@@ -3,6 +3,9 @@ import { Container, Col, Row, Form, Button } from "react-bootstrap";
 import { gql } from "@apollo/client";
 import { connect } from "react-redux";
 import { Helmet } from "react-helmet-async";
+import { toast } from "react-toastify";
+
+import { empty_message } from "../store/actions/Product/ProductActions";
 
 import "./Contact.css";
 
@@ -26,6 +29,22 @@ class Contact extends Component {
 
   componentDidMount() {
     window.scroll(0, 0);
+    this.props.dispatch(empty_message());
+  }
+
+  componentDidUpdate() {
+    if (this.props.success_message === "SENT_SUCCESS") {
+      toast.success("Our team contact you shortly!.");
+      this.props.dispatch(empty_message());
+    }
+    if (this.props.success_message === "ERROR_MESSAGE") {
+      toast.success("Your query sent successfully!.");
+      this.props.dispatch(empty_message());
+    }
+    if (this.props.error_message === "ERROR_MESSAGE") {
+      toast.success(this.props.error_message);
+      this.props.dispatch(empty_message());
+    }
   }
 
   handleChange = (e) => {
@@ -46,7 +65,7 @@ class Contact extends Component {
     } = this.state;
     const company_name = "";
     const query = gql`
-      query addWebEnquiry(
+      mutation addWebEnquiry(
         $company_name: String
         $contact_person: String
         $mobile_no: String
@@ -84,27 +103,39 @@ class Contact extends Component {
         },
       })
       .then((result) => {
-        console.log(result.data.getCategory);
-        this.props.dispatch({
-          type: "SUCCESS_MESSAGE",
-          success_title: "Request sent successfully",
-        });
+        const data = result.data.addWebEnquiry;
 
-        this.setState({
-          contact_person: "",
-          mobile_no: "",
-          email_id: "",
-          location: "",
-          enquiry_for: "",
-          message: "",
-        });
+        if (data.message === "SUCCESS") {
+          this.props.dispatch({
+            type: "SUCCESS_MESSAGE",
+            success_title: "SENT_SUCCESS",
+          });
+
+          this.setState({
+            contact_person: "",
+            mobile_no: "",
+            email_id: "",
+            location: "",
+            enquiry_for: "",
+            message: "",
+          });
+        } else {
+          this.props.dispatch({
+            type: "SUCCESS_MESSAGE",
+            success_title: "ERROR",
+          });
+          this.props.dispatch({
+            type: "ERROR_MESSAGE",
+            error_title: "something went wrong",
+          });
+        }
         this.props.dispatch({ type: "IS_LOADING", is_loading: false });
       })
       .catch((error) => {
         console.log(error);
         this.props.dispatch({
           type: "SUCCESS_MESSAGE",
-          success_title: "catch error",
+          success_title: "ERROR",
         });
         this.props.dispatch({
           type: "ERROR_MESSAGE",
