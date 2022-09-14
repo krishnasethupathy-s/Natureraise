@@ -3,7 +3,7 @@ import "./StatusDetails.css";
 import { Row, Col } from "react-bootstrap";
 import Stepper from "react-stepper-horizontal";
 
-const StatusDetails = ({ item, status, openReviewModal }) => {
+const StatusDetails = ({ item, status, openReviewModal, openReturnModal }) => {
   return (
     <Row>
       <Col md={4}>
@@ -69,12 +69,23 @@ const StatusDetails = ({ item, status, openReviewModal }) => {
       <Col md={3}>
         <div className="order_delivery_wrap">
           <h1 className="order_title">{status?.delivery_time}</h1>
-          <p className="order_sub" onClick={() => openReviewModal(item.id)}>
-            <span>
-              <i className="fa fa-star-o" aria-hidden="true"></i>{" "}
-            </span>
-            RATE AND REVIEW PRODUCT
-          </p>
+          {status.status === "Delivered" && (
+            <p className="order_sub" onClick={() => openReviewModal(item.id)}>
+              <span>
+                <i className="fa fa-star-o" aria-hidden="true"></i>{" "}
+              </span>
+              RATE AND REVIEW PRODUCT
+            </p>
+          )}
+
+          {status.status === "Delivered" && (
+            <p className="order_sub" onClick={() => openReturnModal(item.id)}>
+              <span>
+                <i className="fa fa-refresh" aria-hidden="true"></i>{" "}
+              </span>
+              Return Product
+            </p>
+          )}
           {/* <p className="order_sub">
             <span>
               <i className="fa fa-refresh" aria-hidden="true"></i>{" "}

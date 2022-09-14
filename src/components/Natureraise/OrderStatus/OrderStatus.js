@@ -18,6 +18,7 @@ import {
 } from "../store/actions/Order/OrderActions";
 import ReviewModal from "./review-modal";
 import CancelModal from "./cancel-modal";
+import ReturnModal from "./return-modal";
 
 class OrderStatus extends Component {
   constructor(props) {
@@ -25,6 +26,7 @@ class OrderStatus extends Component {
     this.state = {
       reviewModal: false,
       reviewProductId: "",
+      returnProductId: "",
       cancelOrderModal: false,
       returnModal: false,
     };
@@ -54,6 +56,10 @@ class OrderStatus extends Component {
   setReviewProductId = (id) => {
     this.setState({ reviewProductId: id });
     this.reviewModalHandleOpen();
+  };
+  setReturnProductId = (id) => {
+    this.setState({ returnProductId: id });
+    this.returnModalHandleOpen();
   };
 
   render() {
@@ -92,21 +98,17 @@ class OrderStatus extends Component {
                               xl={12}
                               className="d-flex justify-content-end "
                             >
-                              {!!this.props.detail.order_status ===
-                                "Delivered" && (
-                                <button className="btn btn-danger text-white">
-                                  Return Product
-                                </button>
-                              )}
-                              {!!this.props.detail.order_status !==
-                                "Delivered" && (
-                                <button
-                                  className="btn btn-primary text-white"
-                                  onClick={this.cancelModalHandleOpen}
-                                >
-                                  Cancel Order
-                                </button>
-                              )}
+                              {this.props.detail.detail.order_status !==
+                                "Delivered" &&
+                                this.props.detail.detail.order_status !==
+                                  "Cancelled" && (
+                                  <button
+                                    className="btn btn-primary text-white"
+                                    onClick={this.cancelModalHandleOpen}
+                                  >
+                                    Cancel Order
+                                  </button>
+                                )}
                             </Col>
                           </Row>
                         </CardWrap>
@@ -121,6 +123,7 @@ class OrderStatus extends Component {
                               item={item}
                               status={this.props.detail?.status}
                               openReviewModal={this.setReviewProductId}
+                              openReturnModal={this.setReturnProductId}
                             />
                           ))}
                         </CardWrap>
@@ -140,6 +143,12 @@ class OrderStatus extends Component {
             show={this.state.cancelOrderModal}
             handleClose={this.cancelModalHandleClose}
             id={this.id}
+          />
+          <ReturnModal
+            show={this.state.returnModal}
+            handleClose={this.returnModalHandleClose}
+            id={this.state.returnProductId}
+            order_id={this.id}
           />
         </section>
       </>

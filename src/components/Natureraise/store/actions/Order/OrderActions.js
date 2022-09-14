@@ -397,10 +397,17 @@ export const getOrderStatusList = (order_id) => (dispatch) => {
       console.log(result);
       const data = result.data.getOrderStatusList;
 
+      if (data === null) {
+        dispatch(resetCart());
+        dispatch(logout_user());
+        throw new Error("Time Expired");
+      }
+
       dispatch({
         type: GET_ORDER_DETAIL_STATUS,
         data,
       });
+      dispatch({ type: "IS_LOADING", is_loading: false });
     })
     .catch((error) => {
       //alert(error);
@@ -412,7 +419,7 @@ export const cancelOrder = (id) => (dispatch) => {
   dispatch({ type: "IS_LOADING", is_loading: true });
   const Authorization = localStorage.getItem("Authorization");
   const query = gql`
-    query cancelOrder($Authorization: String, $id: ID) {
+    mutation cancelOrder($Authorization: String, $id: ID) {
       cancelOrder(Authorization: $Authorization, id: $id) {
         message
       }
@@ -428,9 +435,19 @@ export const cancelOrder = (id) => (dispatch) => {
     .then((result) => {
       console.log(result);
       const data = result.data.cancelOrder;
-
-      dispatch(getOrderStatusList(id));
-      dispatch({ type: "IS_LOADING", is_loading: false });
+      if (data === null) {
+        dispatch(resetCart());
+        dispatch(logout_user());
+        throw new Error("Time Expired");
+      }
+      if (data.message === "SUCCESS") {
+        dispatch({
+          type: "SUCCESS_MESSAGE",
+          success_title: "CANCEL_SUCCESS",
+        });
+        dispatch(getOrderDetail(id));
+        dispatch(getOrderStatusList(id));
+      }
     })
     .catch((error) => {
       //alert(error);
@@ -438,6 +455,74 @@ export const cancelOrder = (id) => (dispatch) => {
       dispatch({ type: "IS_LOADING", is_loading: false });
     });
 };
+
+export const addOrderReturn =
+  (order_id, product_ids, defect_type, description) => (dispatch) => {
+    dispatch({ type: "IS_LOADING", is_loading: true });
+    const Authorization = localStorage.getItem("Authorization");
+    const order_return_type = "";
+
+    const query = gql`
+      mutation addOrderReturn(
+        $Authorization: String
+        $order_id: String
+        $order_return_type: String
+        $product_ids: String
+        $defect_type: String
+        $description: String
+      ) {
+        addOrderReturn(
+          Authorization: $Authorization
+          order_id: $order_id
+          order_return_type: $order_return_type
+          product_ids: $product_ids
+          defect_type: $defect_type
+          description: $description
+        ) {
+          message
+        }
+      }
+    `;
+
+    Config.client
+      .query({
+        query: query,
+        fetchPolicy: "no-cache",
+        variables: {
+          Authorization,
+          order_id,
+          order_return_type,
+          product_ids,
+          defect_type,
+          description,
+        },
+      })
+      .then((result) => {
+        console.log(result);
+        const data = result.data.addOrderReturn;
+
+        if (data === null) {
+          dispatch(resetCart());
+          dispatch(logout_user());
+          throw new Error("Time Expired");
+        }
+
+        if (data.message === "SUCCESS") {
+          dispatch({
+            type: "SUCCESS_MESSAGE",
+            success_title: "RETURN_SUCCESS",
+          });
+          dispatch(getOrderDetail(order_id));
+          dispatch(getOrderStatusList(order_id));
+        }
+      })
+      .catch((error) => {
+        //alert(error);
+        console.log(error);
+        dispatch({ type: "IS_LOADING", is_loading: false });
+      });
+  };
+
 /*
 let arr = result.data.getOrderStatusList;
       let arr1 = this.state.status_list;

@@ -1,19 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useFormik } from "formik";
 
 import { Button, Modal, Form } from "react-bootstrap";
 import StarRatingComponent from "react-star-rating-component";
 import { toast } from "react-toastify";
+import * as Yup from "yup";
 
-import {
-  addReview,
-  empty_message,
-} from "../store/actions/Product/ProductActions";
+import { empty_message } from "../store/actions/Product/ProductActions";
+import { addOrderReturn } from "../store/actions/Order/OrderActions";
 
-const ReturnModal = ({ handleClose, show, id }) => {
-  const [rating, setRating] = useState(0);
-  const [ratingTitle, setRatingTitle] = useState("");
-  const [ratingComment, setRatingComment] = useState("");
+const ReturnOrderSchema = Yup.object().shape({
+  defect_type: Yup.string().required("Required"),
+  description: Yup.string().required("Required"),
+});
+
+const ReturnModal = ({ handleClose, show, id, order_id }) => {
+  const {
+    handleSubmit,
+    handleChange,
+    errors,
+    values,
+    touched,
+    handleBlur,
+    isValid,
+    handleReset,
+  } = useFormik({
+    initialValues: {
+      defect_type: "",
+      description: "",
+    },
+    validationSchema: ReturnOrderSchema,
+    onSubmit: (values) => {
+      handleOrderReturnSubmit(values);
+    },
+  });
 
   const { success_message, error_message } = useSelector(
     (state) => state.ProductActions
@@ -21,39 +42,28 @@ const ReturnModal = ({ handleClose, show, id }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (success_message === "RATING_SUCCESS") {
+    if (success_message === "RETURN_SUCCESS") {
       handleClose();
-      toast.success("Review Successfully Submitted!");
-      setRating(0);
-      setRatingTitle("");
-      setRatingComment("");
+      toast.success("Return request submitted!");
+      handleReset();
     }
     dispatch(empty_message());
-  }, [success_message]);
+  }, [success_message, dispatch]);
 
-  const onStarClick = (nextValue, prevValue, name) => {
-    setRating(nextValue);
-  };
+  const handleOrderReturnSubmit = (values) => {
+    const { defect_type, description } = values;
 
-  const handleRatingTitleChange = (e) => setRatingTitle(e.target.value);
-  const handleRatingCommentChange = (e) => setRatingComment(e.target.value);
-
-  const handleRatingSubmit = (e) => {
-    e.preventDefault();
-    dispatch(addReview(id, "" + rating, ratingTitle, ratingComment));
+    dispatch(addOrderReturn(order_id, id, defect_type, description));
   };
 
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Add A Review</Modal.Title>
+        <Modal.Title>Return Product</Modal.Title>
       </Modal.Header>
-      <Form onSubmit={handleRatingSubmit}>
+      <Form onSubmit={handleSubmit}>
         <Modal.Body>
-          <p>
-            Your email address will not be published. Required fields are marked
-            *
-          </p>
+          <p>Please Provide full details to return product*</p>
 
           {!!error_message && (
             <div class="alert alert-danger" role="alert">
@@ -61,32 +71,30 @@ const ReturnModal = ({ handleClose, show, id }) => {
             </div>
           )}
 
-          <div className="review_start_wrap">
-            <h6>Your rating</h6>
-            <StarRatingComponent
-              name="rate1"
-              starCount={5}
-              value={rating}
-              onStarClick={onStarClick}
-            />
-          </div>
-          <Form.Group controlId="formBasicEmail">
+          <Form.Group controlId="exampleForm.SelectCustom">
+            <Form.Label>Reason*</Form.Label>
             <Form.Control
-              type="text"
-              placeholder="Title *"
-              value={ratingTitle}
-              onChange={handleRatingTitleChange}
-              required
-            />
+              as="select"
+              custom
+              onChange={handleChange}
+              name="defect_type"
+            >
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </Form.Control>
           </Form.Group>
 
           <Form.Group controlId="exampleForm.ControlTextarea1">
             <Form.Control
               as="textarea"
               placeholder="Your Comments *"
+              name="description"
               rows={3}
-              onChange={handleRatingCommentChange}
-              value={ratingComment}
+              onChange={handleChange}
+              value={values.description}
             />
           </Form.Group>
         </Modal.Body>

@@ -19,7 +19,7 @@ const CancelModal = ({ handleClose, show, id }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (success_message === "RATING_SUCCESS") {
+    if (success_message === "CANCEL_SUCCESS") {
       handleClose();
       toast.success("Order Successfully Cancelled!");
     }
