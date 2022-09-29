@@ -208,7 +208,7 @@ class ManageAddress extends Component {
     return (
       <>
         <Helmet>
-          <title>My Address | Natureraise</title>
+          <title>My Address | NatureSave</title>
           <meta property="og:title" content="Natureraise" />
           <meta property="og:type" content="website" />
 

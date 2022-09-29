@@ -50,7 +50,7 @@ export default class BlogList extends Component {
     return (
       <>
         <Helmet>
-          <title>Blog | Natureraise</title>
+          <title>Blog | NatureSave</title>
           <meta property="og:title" content="Natureraise" />
           <meta property="og:type" content="website" />
 

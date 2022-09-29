@@ -72,7 +72,7 @@ const ChangePassword = () => {
   return (
     <>
       <Helmet>
-        <title>Reset Password | Natureraise</title>
+        <title>Reset Password | NatureSave</title>
         <meta property="og:title" content="Natureraise" />
         <meta property="og:type" content="website" />
 
@@ -127,7 +127,7 @@ const ChangePassword = () => {
 
               {!showForm && !is_loading && resetSuccess && (
                 <Col md={6}>
-                  <h3>Password Reseted Successfully! </h3>
+                  <h3>Password Reset Successfully! </h3>
 
                   <Button
                     type="button"

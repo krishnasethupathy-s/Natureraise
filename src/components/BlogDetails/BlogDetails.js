@@ -142,7 +142,7 @@ export default class NewsDetails extends Component {
       <>
         <Helmet>
           <title>
-            {this.state.news_data.heading ?? "Blog Detail"} | Natureraise
+            {this.state.news_data.heading ?? "Blog Detail"} | NatureSave
           </title>
           <meta property="og:title" content="Natureraise" />
           <meta property="og:type" content="website" />

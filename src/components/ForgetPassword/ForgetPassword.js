@@ -58,7 +58,7 @@ const ForgotPassword = () => {
     <>
       {" "}
       <Helmet>
-        <title>Forgot Password | Natureraise</title>
+        <title>Forgot Password | NatureSave</title>
         <meta property="og:title" content="Natureraise" />
         <meta property="og:type" content="website" />
 

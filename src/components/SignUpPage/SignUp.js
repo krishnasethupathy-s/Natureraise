@@ -91,7 +91,7 @@ class SignUp extends Component {
     return (
       <>
         <Helmet>
-          <title>Signup | Natureraise</title>
+          <title>Signup | NatureSave</title>
           <meta property="og:title" content="Natureraise" />
           <meta property="og:type" content="website" />
 

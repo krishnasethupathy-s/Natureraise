@@ -75,7 +75,7 @@ class PersonalInformation extends Component {
     return (
       <>
         <Helmet>
-          <title>Profile | Natureraise</title>
+          <title>Profile | NatureSave</title>
           <meta property="og:title" content="Natureraise" />
           <meta property="og:type" content="website" />
 

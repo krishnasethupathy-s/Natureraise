@@ -4,6 +4,10 @@ import "./PrivacyPolicy.css";
 import { Container, Row, Col } from "react-bootstrap";
 
 import PrivacyComp from "./constant/PrivacyPolicy/PrivacyPolicyComp";
+import Cookies from "./constant/PrivacyPolicy/Cookies";
+import RefundPolicy from "./constant/PrivacyPolicy/RefundPolicy";
+import ShippingPolicy from "./constant/PrivacyPolicy/ShippingPolicy";
+import TeamAndConditions from "./constant/PrivacyPolicy/TeamAndConditions";
 
 export default class PrivacyPolicy extends Component {
   componentDidMount() {
@@ -14,7 +18,7 @@ export default class PrivacyPolicy extends Component {
     return (
       <>
         <Helmet>
-          <title>Privacy Policy | Natureraise</title>
+          <title>Privacy Policy | NatureSave</title>
           <meta property="og:title" content="Natureraise" />
           <meta property="og:type" content="website" />
 
@@ -30,10 +34,12 @@ export default class PrivacyPolicy extends Component {
               <Row>
                 <Col md={{ span: 8, offset: 2 }}>
                   <div className="privacy_wrap">
+                    <h5 className="mb-2 text-center">Terms & Privay Policy </h5>
                     <PrivacyComp />
-                    <PrivacyComp />
-                    <PrivacyComp />
-                    <PrivacyComp />
+                    <Cookies />
+                    <RefundPolicy />
+                    <ShippingPolicy />
+                    <TeamAndConditions />
                   </div>
                 </Col>
               </Row>

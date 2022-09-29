@@ -127,7 +127,7 @@ class OrderDetails extends Component {
     return (
       <>
         <Helmet>
-          <title>Order Detail | Natureraise</title>
+          <title>Order Detail | NatureSave</title>
           <meta property="og:title" content="Natureraise" />
           <meta property="og:type" content="website" />
 

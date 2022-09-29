@@ -95,7 +95,7 @@ class GstInformation extends Component {
     return (
       <>
         <Helmet>
-          <title>GST Information | Natureraise</title>
+          <title>GST Information | NatureSave</title>
           <meta property="og:title" content="Natureraise" />
           <meta property="og:type" content="website" />
 
