@@ -19,11 +19,23 @@ const getRequestToken = () => {
 // const BaseUrl = "http://192.168.0.7:8080/";
 
 //  const BaseUrl = 'https://www.app.natureraise.in/';
-const BaseUrl = "https://democrm.vimkes.com/";
-
+// const BaseUrl = "https://democrm.vimkes.com/";
 //const BaseUrl = 'https://www.api.dhiyaonlineshop.com/';
 
-const Razorpaykey = "rzp_test_iZt5e6oaqwbtfP";
+let BaseUrl;
+let Razorpaykey;
+if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
+  Razorpaykey = "rzp_test_iZt5e6oaqwbtfP";
+  BaseUrl = "https://democrm.vimkes.com/";
+} else {
+  Razorpaykey = "rzp_live_Wrr6uxbeUoLQ9o";
+  BaseUrl = "https://www.api.naturesave.in/";
+}
+
+// Dev
+
+// Prod
+
 const GA = "";
 const gooleLogin =
   "93793167500-omr4gb2sjr17c2gdcvejklp2dsd9m950.apps.googleusercontent.com";
