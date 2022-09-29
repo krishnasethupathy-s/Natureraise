@@ -34,7 +34,7 @@ export default class Faq extends Component {
     return (
       <>
         <Helmet>
-          <title>FAQ | Natureraise</title>
+          <title>FAQ | NatureSave</title>
           <meta property="og:title" content="Natureraise" />
           <meta property="og:type" content="website" />
 

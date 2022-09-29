@@ -52,7 +52,7 @@ const ChangePassword = () => {
   return (
     <>
       <Helmet>
-        <title>Change Password | Natureraise</title>
+        <title>Change Password | NatureSave</title>
         <meta property="og:title" content="Natureraise" />
         <meta property="og:type" content="website" />
 

@@ -14,7 +14,7 @@ export default class About extends Component {
     return (
       <>
         <Helmet>
-          <title>About | Natureraise</title>
+          <title>About | NatureSave</title>
           <meta property="og:title" content="Natureraise" />
           <meta property="og:type" content="website" />
 
@@ -39,7 +39,7 @@ export default class About extends Component {
               <Row>
                 <Col md={6} lg={7}>
                   <div className="about_wrapper">
-                    <div className="about_image1">
+                    <div className="about_image1 d-felx align-items-center justify-content-center">
                       <img
                         src={images.about_image1}
                         alt="what we offe"
@@ -61,16 +61,41 @@ export default class About extends Component {
                       <span>About Us</span>
                       <h3>The Best Solution of Wind & Solar Energy</h3>
                       <p>
-                        For future, energy solar industry would definitely be
-                        the top demand option due to its superior in terms of
-                        availability, cost effectiveness, accessibility,
-                        capacity, and efficiency compared to other renewable
-                        energy sources. By overhauling the importance and
-                        requirements of solar to create a solar tech company,
-                        Natureraise was formed in 2019. Natureraise is one of
-                        the foremost solar energy companies in India having
-                        established its roots offline in the industry in the
-                        year 2010.
+                        At Nature raise Technologies Private Limited; our
+                        constant aim has been to provide the best water
+                        treatment system. And to offer a wide range of solar
+                        product. We provide fresh water treatment plant, waste
+                        water treatment plant sewage treatment plant .which are
+                        energy efficient and required negligible maintenance
+                        .The technology adopted is simple to operate and control
+                        ,useful in removing physical and biological chemicals
+                        and impurities from water . Naturraise technologies is a
+                        young company blessed with a team of experienced
+                        professionals .They are committed to giving utmost
+                        effort in providing 100% client satisfaction .We are
+                        continuously expanding our team to ensure we are able to
+                        bring you the widest selection of product at the best
+                        available prices to deliver an unmatched buying
+                        experience We are also working towards providing an
+                        online platform for customer to interact and use the
+                        product to gain the reliability and trust of our client
+                        and enabling easy decision making. We leverage on our
+                        experience. Our team has established Engineering,
+                        Procurement & Maintenance proficiencies. Natureraise was
+                        founded with a vision of providing affordable solar
+                        power in an effective, maintainable and socially
+                        accountable approach. Adequate sunlight touches the
+                        earth in one hour to energize the world for an entire
+                        year. The substantial resources and capital required
+                        mining and burn fossil fuels can be cut down when we
+                        take the advantage of solar energy that is in abundance
+                        quantity. Solar yields noteworthy long-term savings on
+                        electricity bills.{" "}
+                      </p>
+                      <p>Why wait until the last minute. </p>{" "}
+                      <p>
+                        Once again Welcome to our marketplace and leave us
+                        message and happy shopping .
                       </p>
                     </div>
                     <span className="double_line_common">About </span>

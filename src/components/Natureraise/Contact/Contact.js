@@ -157,7 +157,7 @@ class Contact extends Component {
     return (
       <>
         <Helmet>
-          <title>Contact us | Natureraise</title>
+          <title>Contact us | NatureSave</title>
           <meta property="og:title" content="Natureraise" />
           <meta property="og:type" content="website" />
 
