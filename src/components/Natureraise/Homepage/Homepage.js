@@ -59,21 +59,27 @@ class HomePage extends Component {
   };
 
   // add to cart Function
-  add_to_cart = (id) => {
+  add_to_cart = (id, product_price_id) => {
     console.log("hi");
     this.props.dispatch(ProductActions.getProductquantity(id, id));
     console.log(this.props.product_quantity);
     if (this.props.product_quantity === 0) {
-      this.addtocart_function(id);
+      this.addtocart_function(id, product_price_id);
     }
   };
 
-  addtocart_function = (id) => {
+  addtocart_function = (id, product_price_id) => {
     this.Authorization = localStorage.getItem("Authorization");
 
     if (this.Authorization !== null) {
       this.props.dispatch(
-        ProductActions.addtocartdb(id, "plus", "", "ITEM_ADD_TO_CART")
+        ProductActions.addtocartdb(
+          id,
+          "plus",
+          "",
+          product_price_id,
+          "ITEM_ADD_TO_CART"
+        )
       );
       this.props.dispatch(ProductActions.getCartList());
       this.props.dispatch({ type: "IS_LOADING", is_loading: true });
@@ -263,7 +269,9 @@ class HomePage extends Component {
                             special_price={x.special_price}
                             selling_price={x.selling_price}
                             retail_price={x.retail_price}
-                            addToCart={() => this.add_to_cart(x.id)}
+                            addToCart={() =>
+                              this.add_to_cart(x.id, x.product_price_id)
+                            }
                           />
                         );
                       })}
@@ -413,7 +421,9 @@ class HomePage extends Component {
                             special_price={x.special_price}
                             selling_price={x.selling_price}
                             retail_price={x.retail_price}
-                            addToCart={() => this.add_to_cart(x.id)}
+                            addToCart={() =>
+                              this.add_to_cart(x.id, x.product_price_id)
+                            }
                           />
                         );
                       })}
@@ -480,7 +490,9 @@ class HomePage extends Component {
                             special_price={x.special_price}
                             selling_price={x.selling_price}
                             retail_price={x.retail_price}
-                            addToCart={() => this.add_to_cart(x.id)}
+                            addToCart={() =>
+                              this.add_to_cart(x.id, x.product_price_id)
+                            }
                           />
                         );
                       })}

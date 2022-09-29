@@ -74,7 +74,22 @@ class ProductDescription1 extends Component {
     console.log(this.props.product_master_list);
   };
 
-  componentDidUpdate = async (prevProps) => {
+  componentDidUpdate = async (prevProps, prevState, snapshot) => {
+    if (prevProps.match.params.id !== this.props.match.params.id) {
+      window.scrollTo(0, 0);
+      this.unique_id = "";
+      this.uniqueColors = [];
+      this.size_colors = [];
+      this.uniqueSizes = [];
+      this.size = "";
+      this.color = "";
+      this.props.dispatch(ProductActions.empty_message());
+      this.props.dispatch({ type: "IS_LOADING", is_loading: true });
+      this.props.dispatch(
+        ProductActions.getItemListByMasterId(this.props.match.params.id, "")
+      );
+    }
+
     if (this.props.success_message === "PRODUCT_MASTER_LIST_SUCCESS") {
       const recent = this.props.product_master_list.filter(
         (product) => product.id === this.productId
@@ -201,10 +216,17 @@ class ProductDescription1 extends Component {
 
     let cart_id = typeof id === "string" ? id : this.unique_id;
     console.log(cart_id);
+    const { product_price_id } = this.props.product_new_data;
 
     if (this.Authorization !== null) {
       this.props.dispatch(
-        ProductActions.addtocartdb(cart_id, "plus", pincode, "ITEM_ADD_TO_CART")
+        ProductActions.addtocartdb(
+          cart_id,
+          "plus",
+          pincode,
+          product_price_id,
+          "ITEM_ADD_TO_CART"
+        )
       );
       this.props.dispatch(ProductActions.getCartList());
       this.props.dispatch({ type: "IS_LOADING", is_loading: true });
@@ -220,6 +242,7 @@ class ProductDescription1 extends Component {
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     // let increment_id = this.productId;
     const { pincode } = this.state;
+    const { product_price_id } = this.props.product_new_data;
 
     if (this.Authorization) {
       this.props.dispatch(
@@ -227,6 +250,7 @@ class ProductDescription1 extends Component {
           this.unique_id,
           "plus",
           pincode,
+          product_price_id,
           "CART_ITEM_UPDATED"
         )
       );
@@ -245,12 +269,15 @@ class ProductDescription1 extends Component {
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     const { pincode } = this.state;
     // let decrement_id = this.productId;
+
+    const { product_price_id } = this.props.product_new_data;
     if (this.Authorization) {
       this.props.dispatch(
         ProductActions.addtocartdb(
           this.unique_id,
           "minus",
           pincode,
+          product_price_id,
           "CART_ITEM_UPDATED"
         )
       );
@@ -459,7 +486,7 @@ class ProductDescription1 extends Component {
       return (
         <>
           <Helmet>
-            <title>404 | Natureraise</title>
+            <title>404 | NatureSave</title>
             <meta property="og:title" content="Natureraise" />
             <meta property="og:type" content="website" />
 
@@ -483,13 +510,18 @@ class ProductDescription1 extends Component {
     return (
       <>
         <Helmet>
-          <title>{this.props.product_new_data.item_name} | Natureraise</title>
+          <title>
+            {this.props?.product_new_data?.item_name ?? "Product Detail"} |
+            Natureraise
+          </title>
           <meta property="og:title" content="Natureraise" />
           <meta property="og:type" content="website" />
 
           <meta
             property="og:description"
-            content={this.props.product_new_data.description}
+            content={
+              this.props?.product_new_data?.description ?? "Product Description"
+            }
           />
         </Helmet>
 

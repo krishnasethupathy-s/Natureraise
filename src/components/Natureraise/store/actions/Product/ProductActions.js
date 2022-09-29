@@ -180,6 +180,7 @@ export const getHomePageProductList = () => (dispatch) => {
         item_color
         type_name
         id
+        product_price_id
         image_address
         cart_list
         wish_list
@@ -257,6 +258,8 @@ export const getItemSearch = (
           rack_id
           brand_id
           rating_point
+          product_price_id
+
           description
           item_category_id
           retail_price
@@ -282,6 +285,9 @@ export const getItemSearch = (
         }
       }
     `;
+
+    // no_of_records
+    // no_of_reviewers
     Config.client
       .query({
         query: query,
@@ -538,6 +544,7 @@ export const getItemListByMasterId = (id, pin) => {
           item_sub_category_id
           item_category_name
           rating_point
+
           brand_id
           description
           retail_price
@@ -560,6 +567,7 @@ export const getItemListByMasterId = (id, pin) => {
           retail_price
           special_price
           availability
+          product_price_id
           productDescription {
             description_title
             description_details
@@ -571,6 +579,8 @@ export const getItemListByMasterId = (id, pin) => {
         }
       }
     `;
+
+    // no_of_reviewers
     Config.client
       .query({
         query: query,
@@ -836,6 +846,7 @@ export const addtocartdb = (
   id,
   action_type,
   pincode,
+  product_price_id,
   message = "Item added to the cart"
 ) => {
   return async function (dispatch) {
@@ -843,8 +854,8 @@ export const addtocartdb = (
     const Authorization = localStorage.getItem("Authorization");
     console.log(id, action_type, Authorization);
     const cart_type = "0";
-    const mutation = `mutation addCartList($Authorization: String, $id: ID, $action_type:String ,$cart_type:String, $pincode: String ) {
-      addCartList(Authorization:$Authorization, id:$id, action_type:$action_type,  cart_type:$cart_type , pincode: $pincode ){
+    const mutation = `mutation addCartList($Authorization: String, $id: ID, $action_type:String ,$cart_type:String, $pincode: String, $product_price_id:String ) {
+      addCartList(Authorization:$Authorization, id:$id, action_type:$action_type,  cart_type:$cart_type , pincode: $pincode, product_price_id: $product_price_id ){
         message
       }
   }`;
@@ -858,7 +869,14 @@ export const addtocartdb = (
       body: JSON.stringify({
         query: mutation,
         fetchPolicy: "no-cache",
-        variables: { Authorization, id, action_type, cart_type, pincode },
+        variables: {
+          Authorization,
+          id,
+          action_type,
+          cart_type,
+          pincode,
+          product_price_id,
+        },
       }),
     })
       .then((response) => response.json())
@@ -904,6 +922,7 @@ export const getCartList = () => {
         getCartList(Authorization: $Authorization) {
           item_name
           item_sub_category_id
+          product_price_id
           retail_price
           selling_price
           percentage

@@ -99,9 +99,19 @@ class CheckOut extends Component {
   addtocart_increment = (id) => {
     let increment_id = id;
     // this.props.dispatch(ProductActions.addtocart_increment(increment_id));
+
+    const { product_price_id } = this.props.cart.items.find(
+      (item) => item.id === id
+    );
     if (this.Authorization) {
       this.props.dispatch(
-        ProductActions.addtocartdb(id, "plus", "CART_ITEM_UPDATED")
+        ProductActions.addtocartdb(
+          id,
+          "plus",
+          "",
+          product_price_id,
+          "CART_ITEM_UPDATED"
+        )
       );
       this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     } else {
@@ -112,9 +122,20 @@ class CheckOut extends Component {
   addtocart_decrement = (id) => {
     let decrement_id = id;
     // this.props.dispatch(ProductActions.addtocart_decrement(decrement_id));
+
+    const { product_price_id } = this.props.cart.items.find(
+      (item) => item.id === id
+    );
+
     if (this.Authorization) {
       this.props.dispatch(
-        ProductActions.addtocartdb(id, "minus", "CART_ITEM_UPDATED")
+        ProductActions.addtocartdb(
+          id,
+          "minus",
+          "",
+          product_price_id,
+          "CART_ITEM_UPDATED"
+        )
       );
       this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     } else {
@@ -136,10 +157,19 @@ class CheckOut extends Component {
 
   handle_to_delete_record = () => {
     let remove_id = this.state.cart_remove_product_id;
+    const { product_price_id } = this.props.cart.items.find(
+      (item) => item.id === remove_id
+    );
     console.log(remove_id);
     if (this.Authorization) {
       this.props.dispatch(
-        ProductActions.addtocartdb(remove_id, "", "CART_ITEM_UPDATED")
+        ProductActions.addtocartdb(
+          remove_id,
+          "",
+          "",
+          product_price_id,
+          "CART_ITEM_UPDATED"
+        )
       );
       this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     } else {
@@ -604,10 +634,10 @@ class CheckOut extends Component {
 
     const email_id = localStorage.getItem("email_id");
     const options = {
-      key: "rzp_test_iZt5e6oaqwbtfP", // Enter the Key ID generated from the Dashboard
+      key: Config.Razorpaykey, // Enter the Key ID generated from the Dashboard
       amount: amount.toString(),
       currency: "INR",
-      name: "Natureraise",
+      name: "Naturesave",
       image: { logo },
       order_id: order_id,
       handler: this.orderPaymentChecking,
@@ -679,7 +709,7 @@ class CheckOut extends Component {
     return (
       <>
         <Helmet>
-          <title>Checkout | Natureraise</title>
+          <title>Checkout | NatureSave</title>
           <meta property="og:title" content="Natureraise" />
           <meta property="og:type" content="website" />
 

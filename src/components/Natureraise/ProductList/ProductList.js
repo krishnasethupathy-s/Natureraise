@@ -286,18 +286,24 @@ class ProductList extends Component {
     this.props.history.push(`/ProductDescription/${item.id}`);
   };
 
-  add_to_cart = (id) => {
+  add_to_cart = (id, product_price_id) => {
     this.props.dispatch(ProductActions.getProductquantity(id, id));
 
     if (this.props.product_quantity === 0) {
-      this.addtocart_function(id);
+      this.addtocart_function(id, product_price_id);
     }
   };
 
-  addtocart_function = (id) => {
+  addtocart_function = (id, product_price_id) => {
     if (this.Authorization !== null) {
       this.props.dispatch(
-        ProductActions.addtocartdb(id, "plus", "", "ITEM_ADD_TO_CART")
+        ProductActions.addtocartdb(
+          id,
+          "plus",
+          "",
+          product_price_id,
+          "ITEM_ADD_TO_CART"
+        )
       );
       this.props.dispatch(ProductActions.getCartList());
       this.props.dispatch({ type: "IS_LOADING", is_loading: true });
@@ -659,8 +665,8 @@ class ProductList extends Component {
                           </Form.Control>
                         </div>
                       </div>
-                      {!this.props.is_loading &&
-                      !!!this.props.product_list_data.length ? (
+                      {!!!this.props.product_list_data.length &&
+                      !this.props.is_loading ? (
                         <p style={{ textAlign: "center" }}>
                           <b>New products coming soon!...</b>
                         </p>
@@ -716,7 +722,12 @@ class ProductList extends Component {
                                     selling_price={x?.selling_price}
                                     retail_price={x.retail_price}
                                     image={x?.image_address}
-                                    addToCart={() => this.add_to_cart(x?.id)}
+                                    addToCart={() =>
+                                      this.add_to_cart(
+                                        x?.id,
+                                        x?.product_price_id
+                                      )
+                                    }
                                   />
                                 </Col>
                               ))}
