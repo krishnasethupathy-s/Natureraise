@@ -16,6 +16,8 @@ const ReturnOrderSchema = Yup.object().shape({
 });
 
 const ReturnModal = ({ handleClose, show, id, order_id }) => {
+  const { reason } = useSelector((state) => state.OrderReducer);
+
   const {
     handleSubmit,
     handleChange,
@@ -78,12 +80,16 @@ const ReturnModal = ({ handleClose, show, id, order_id }) => {
               custom
               onChange={handleChange}
               name="defect_type"
+              defaultValue={values.defect_type}
+              isInvalid={!!errors.defect_type}
             >
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
+              <option value={""}>---Select Reason---</option>
+              {!!reason &&
+                reason?.map((value) => (
+                  <option value={value.id} key={value.id}>
+                    {value.item_category_name}
+                  </option>
+                ))}
             </Form.Control>
           </Form.Group>
 
@@ -95,6 +101,7 @@ const ReturnModal = ({ handleClose, show, id, order_id }) => {
               rows={3}
               onChange={handleChange}
               value={values.description}
+              isInvalid={!!errors.description}
             />
           </Form.Group>
         </Modal.Body>

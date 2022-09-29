@@ -15,6 +15,7 @@ import {
   getOrderDetail,
   getOrderedProductList,
   getOrderStatusList,
+  getOrderReturnReason,
 } from "../store/actions/Order/OrderActions";
 import ReviewModal from "./review-modal";
 import CancelModal from "./cancel-modal";
@@ -42,6 +43,7 @@ class OrderStatus extends Component {
     this.props.dispatch(getOrderDetail(this.id));
     this.props.dispatch(getOrderedProductList(this.id));
     this.props.dispatch(getOrderStatusList(this.id));
+    this.props.dispatch(getOrderReturnReason());
   }
 
   reviewModalHandleOpen = () => this.setState({ reviewModal: true });
@@ -66,7 +68,7 @@ class OrderStatus extends Component {
     return (
       <>
         <Helmet>
-          <title>Order Detail | Natureraise</title>
+          <title>Order Detail | NatureSave</title>
           <meta property="og:title" content="Natureraise" />
           <meta property="og:type" content="website" />
 
@@ -98,9 +100,9 @@ class OrderStatus extends Component {
                               xl={12}
                               className="d-flex justify-content-end "
                             >
-                              {this.props.detail.detail.order_status !==
+                              {this.props.detail?.detail?.order_status !==
                                 "Delivered" &&
-                                this.props.detail.detail.order_status !==
+                                this.props.detail?.detail?.order_status !==
                                   "Cancelled" && (
                                   <button
                                     className="btn btn-primary text-white"

@@ -11,6 +11,7 @@ export const GET_ORDER_DETAIL = "GET_ORDER_DETAIL";
 export const GET_ORDER_DETAIL_PRODUCTS = "GET_ORDER_DETAIL_PRODUCT";
 export const GET_ORDER_DETAIL_STATUS = "GET_ORDER_DETAIL_STATUS";
 export const RESERT_ORDER_DETAIL = "RESERT_ORDER_DETAIL";
+export const GETORDERRETURNREASON = "GETORDERRETURNREASON";
 
 export const getOrderListPageWise = (page_number, data_limit) => (dispatch) => {
   console.log("Hey");
@@ -350,9 +351,16 @@ export const getOrderedProductList = (id) => (dispatch) => {
         delivery_charges
         net_total
         total_amount
+        return_validity
+        refund_availability
+        return_availability
       }
     }
   `;
+
+  // return_validity
+  // refund_availability
+  // return_availability
 
   Config.client
     .query({
@@ -522,6 +530,43 @@ export const addOrderReturn =
         dispatch({ type: "IS_LOADING", is_loading: false });
       });
   };
+
+export const getOrderReturnReason = () => (dispatch) => {
+  const Authorization = localStorage.getItem("Authorization");
+  const type = `PDT`;
+  const query = gql`
+    query getCategoriesByType($Authorization: String, $type: String) {
+      getCategoriesByType(Authorization: $Authorization, type: $type) {
+        item_category_name
+        id
+      }
+    }
+  `;
+  Config.client
+    .query({
+      query: query,
+      // fetchPolicy: 'no-cache',
+      variables: { Authorization, type },
+    })
+    .then((result) => {
+      console.log(result);
+      const data = result.data.getCategoriesByType;
+      if (data === null) {
+        dispatch(resetCart());
+        dispatch(logout_user());
+        throw new Error("Time Expired");
+      }
+
+      dispatch({
+        type: GETORDERRETURNREASON,
+        data,
+      });
+    })
+    .catch((error) => {
+      //alert(error);
+      console.log(error);
+    });
+};
 
 /*
 let arr = result.data.getOrderStatusList;
