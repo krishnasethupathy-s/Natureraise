@@ -78,17 +78,20 @@ class SignIn extends Component {
       toast.error("Somthing went wrong , please try again");
     }
   };
+
+  getLocalCart = () =>
+    this.props.cart_items.map((item) => ({
+      item_id: item.id,
+      quantity: item.cart_list,
+      pincode: item.pincode ?? "",
+      product_price_id: item.product_price_id ?? "",
+    }));
+
   handleSubmit = async (values) => {
     const { email, password } = values;
     const { client_ip } = this.state;
 
-    const localCart = this.props.cart_items.map((item) => ({
-      item_id: item.id,
-      quantity: item.cart_list,
-      pincode: item.pincode ?? "",
-    }));
-
-    console.log(localCart);
+    const localCart = this.getLocalCart();
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     await this.props.dispatch(
       UserActions.SignInAction(email, password, client_ip, localCart)
@@ -114,11 +117,7 @@ class SignIn extends Component {
       picture: image_address,
     } = jwtDecode(res.credential);
     const { client_ip } = this.state;
-    const localCart = this.props.cart_items.map((item) => ({
-      item_id: item.id,
-      quantity: item.cart_list,
-      pincode: item.pincode ?? "",
-    }));
+    const localCart = this.getLocalCart();
 
     this.props.dispatch(
       UserActions.LoginWithSocialID(
@@ -145,11 +144,7 @@ class SignIn extends Component {
     const image_address = picture.data.url;
     const { client_ip } = this.state;
 
-    const localCart = this.props.cart_items.map((item) => ({
-      item_id: item.id,
-      quantity: item.cart_list,
-      pincode: item.pincode ?? "",
-    }));
+    const localCart = this.getLocalCart();
 
     this.props.dispatch(
       UserActions.LoginWithSocialID(
@@ -173,7 +168,7 @@ class SignIn extends Component {
     return (
       <>
         <Helmet>
-          <title>Login | Natureraise</title>
+          <title>Login | NatureSave</title>
           <meta property="og:title" content="Natureraise" />
           <meta property="og:type" content="website" />
 
