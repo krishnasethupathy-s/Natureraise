@@ -37,6 +37,7 @@ class SignUp extends Component {
   }
   async componentDidMount() {
     window.scrollTo(0, 0);
+    this.props.dispatch(UserActions.empty_message());
     localStorage.clear();
     this.getIP().then((data) => {
       this.setState({ client_ip: data["ip"] });
@@ -54,29 +55,32 @@ class SignUp extends Component {
   componentDidUpdate = () => {
     if (this.props.message === "SUCCESS") {
       this.props.dispatch(UserActions.empty_message());
+      this.props.dispatch({ type: "IS_LOADING", is_loading: false });
       this.navigate_function();
     } else if (this.props.message === "0") {
-      toast.error("Already Existing Data, ");
+      toast.error("User Already Existing ");
       this.props.dispatch(UserActions.empty_message());
+      this.props.dispatch({ type: "IS_LOADING", is_loading: false });
     } else if (this.props.message === "error") {
       toast.error(this.props.error_msg);
       this.props.dispatch(UserActions.empty_message());
+      this.props.dispatch({ type: "IS_LOADING", is_loading: false });
     } else if (this.props.message === "catch error") {
       toast.error("Somthing went wrong, Please try again");
+      this.props.dispatch({ type: "IS_LOADING", is_loading: false });
     } else {
     }
   };
 
   handleRegisterSubmit = async (values) => {
-    const { first_name, last_name, mobile_number1, email_id, password } =
-      values;
+    const { first_name, last_name, mobile_number1, email, password } = values;
     const { client_ip } = this.state;
     await this.props.dispatch(
       UserActions.register(
         first_name,
         last_name,
         mobile_number1,
-        email_id,
+        email,
         password,
         client_ip
       )

@@ -36,6 +36,7 @@ export const logout_user = () => (dispath) => {
 export const register =
   (first_name, last_name, mobile_number1, email_id, password, client_ip) =>
   (dispatch) => {
+    dispatch({ type: "IS_LOADING", is_loading: true });
     const request_token = Config.getRequestToken();
     const mutation = `mutation SignUpAction($email_id:String, $mobile_number1:String, $first_name:String, $last_name:String,  
                                      $password:String, $request_token:String, $client_ip:String ) {
