@@ -69,7 +69,7 @@ const StatusDetails = ({ item, status, openReviewModal, openReturnModal }) => {
       <Col md={3}>
         <div className="order_delivery_wrap">
           <h1 className="order_title">{status?.delivery_time}</h1>
-          {status.status === "Delivered" && (
+          {status?.status === "Delivered" && (
             <p className="order_sub" onClick={() => openReviewModal(item.id)}>
               <span>
                 <i className="fa fa-star-o" aria-hidden="true"></i>{" "}
@@ -78,7 +78,7 @@ const StatusDetails = ({ item, status, openReviewModal, openReturnModal }) => {
             </p>
           )}
 
-          {status.status === "Delivered" && (
+          {status?.status === "Delivered" && (
             <p className="order_sub" onClick={() => openReturnModal(item.id)}>
               <span>
                 <i className="fa fa-refresh" aria-hidden="true"></i>{" "}
