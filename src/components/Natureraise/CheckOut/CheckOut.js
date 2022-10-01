@@ -50,6 +50,7 @@ class CheckOut extends Component {
       delivery_address_id: "",
       payment_type: "1",
       availabilityError: [],
+      orderId: "",
     };
     this.Authorization = localStorage.getItem("Authorization");
   }
@@ -481,12 +482,18 @@ class CheckOut extends Component {
 
     const Authorization = localStorage.getItem("Authorization");
     console.log(this.state);
-    const { type, payment_type, delivery_address_id, coupon_code_value } =
-      this.state;
+    const {
+      type,
+      payment_type,
+      delivery_address_id,
+      coupon_code_value,
+      orderId,
+    } = this.state;
 
     const { order_amount, coupon_validation_amount } = this.props.cart;
     console.log(payment_type, order_amount);
     const form_data1 = JSON.stringify({
+      id: orderId,
       Authorization,
       member_id: "0",
       order_amount: "" + order_amount,
@@ -527,6 +534,7 @@ class CheckOut extends Component {
             this.props.history.push(`OrderDetails/${responseJson.id}`);
           } else {
             Config.order_id = responseJson.id;
+            this.setState({ orderId: responseJson.id });
             this.displayRazorpay(responseJson.razorpay_order_id);
           }
         } else {
@@ -646,6 +654,11 @@ class CheckOut extends Component {
         contact: mobile_number,
       },
       readonly: { email: true, contact: true },
+      modal: {
+        ondismiss: function () {
+          console.log("Checkout form closed");
+        },
+      },
 
       theme: {
         color: "#8bc34a",
@@ -1403,6 +1416,7 @@ class CheckOut extends Component {
                                     onChange={this.payment_Onchange}
                                     checked={this.state.payment_type === "0"}
                                   />
+
                                   <img
                                     src="http://pngimg.com/uploads/credit_card/credit_card_PNG207.png"
                                     className="img-fluid"
