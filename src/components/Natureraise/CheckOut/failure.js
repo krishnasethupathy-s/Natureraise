@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import HeaderNavbar from "../HeaderNavbar/HeaderNavbar";
 
 import PageLoading from "../../constants/PageLoader/PageLoading";
 
@@ -12,7 +11,6 @@ const PaymentFailure = (props) => {
   console.log(state);
   useEffect(() => {
     setIsLoading(true);
-
     const timeout = setTimeout(() => {
       setIsLoading(false);
     }, 1000);
@@ -21,7 +19,6 @@ const PaymentFailure = (props) => {
 
   return (
     <div>
-      <HeaderNavbar />
       <PageLoading isLoadingComplete={isLoading} />
       <div className="check_out_no_record_wrapper">
         <Container>
