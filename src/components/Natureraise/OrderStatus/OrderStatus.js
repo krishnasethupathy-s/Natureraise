@@ -21,6 +21,7 @@ import {
 import ReviewModal from "./review-modal";
 import CancelModal from "./cancel-modal";
 import ReturnModal from "./return-modal";
+import { Link } from "react-router-dom";
 
 class OrderStatus extends Component {
   constructor(props) {
@@ -97,7 +98,7 @@ class OrderStatus extends Component {
                             <AddressDetails detail={this.props.detail.detail} />
                           )}
                           <Row>
-                            <Col md={9}  >
+                            <Col md={9}>
                               <div>
                                 <div>
                                   <Stepper
@@ -124,14 +125,15 @@ class OrderStatus extends Component {
                             <Col
                               md={3}
                               xl={3}
-                              className="d-flex justify-content-end "
+                              className="d-flex justify-content-center "
                             >
                               {this.props.detail?.detail?.order_status !==
                                 "Delivered" &&
                                 this.props.detail?.detail?.order_status !==
                                   "Cancelled" && (
                                   <button
-                                    className="btn btn-primary text-white"
+                                    className="btn btn-primary text-white "
+                                    style={{height: "60px"}}
                                     onClick={this.cancelModalHandleOpen}
                                   >
                                     Cancel Order
@@ -154,6 +156,14 @@ class OrderStatus extends Component {
                               openReturnModal={this.setReturnProductId}
                             />
                           ))}
+                          <div className="order_return_wrap">
+                            <h6 className="order_return_policy">
+                              Return policy valid till 30{" "}
+                              <Link to="/PrivacyPolicy"  className="order_retrun_sub">
+                                Know More
+                              </Link >
+                            </h6>
+                          </div>
                         </CardWrap>
                       </Col>
                     </Row>

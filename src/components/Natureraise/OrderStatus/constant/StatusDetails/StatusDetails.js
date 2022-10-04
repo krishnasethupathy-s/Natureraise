@@ -36,12 +36,7 @@ const StatusDetails = ({ item, status, openReviewModal, openReturnModal }) => {
             <h6 className="order_amount">₹ {item.total_amount}</h6>
           </div>
         </div>
-        <div className="order_return_wrap">
-          <h6 className="order_return_policy">
-            Return policy valid till 30{" "}
-            <span className="order_retrun_sub">Know More</span>
-          </h6>
-        </div>
+        
       </Col>
       {/* <Col md={5}>
         <div>
@@ -99,6 +94,7 @@ const StatusDetails = ({ item, status, openReviewModal, openReturnModal }) => {
             RATE AND REVIEW PRODUCT
           </p> */}
         </div>
+     
       </Col>
     </Row>
   );
