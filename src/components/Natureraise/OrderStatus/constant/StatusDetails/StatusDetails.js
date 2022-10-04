@@ -43,7 +43,7 @@ const StatusDetails = ({ item, status, openReviewModal, openReturnModal }) => {
           </h6>
         </div>
       </Col>
-      <Col md={5}>
+      {/* <Col md={5}>
         <div>
           <div>
             <Stepper
@@ -64,7 +64,7 @@ const StatusDetails = ({ item, status, openReviewModal, openReturnModal }) => {
             <p>{status?.status_details}</p>
           </div>
         </div>
-      </Col>
+      </Col> */}
 
       <Col md={3}>
         <div className="order_delivery_wrap">

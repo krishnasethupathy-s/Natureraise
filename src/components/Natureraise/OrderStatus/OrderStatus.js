@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./OrderStatus.css";
 import { Container, Row, Col } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
+import Stepper from "react-stepper-horizontal";
 
 import images from "../../constants/images";
 import SectionHeader from "../../constants/SectionHeader/SectionHeader";
@@ -65,6 +66,7 @@ class OrderStatus extends Component {
   };
 
   render() {
+    const status = this.props.detail?.status;
     return (
       <>
         <Helmet>
@@ -95,9 +97,33 @@ class OrderStatus extends Component {
                             <AddressDetails detail={this.props.detail.detail} />
                           )}
                           <Row>
+                            <Col md={9}  >
+                              <div>
+                                <div>
+                                  <Stepper
+                                    steps={[
+                                      {
+                                        title:
+                                          status?.status === "Cancelled"
+                                            ? "Cancelled"
+                                            : "Ordered",
+                                      },
+                                      { title: "Placed" },
+                                      { title: "Packed" },
+                                      { title: "Shipped" },
+                                      { title: "Delivered" },
+                                    ]}
+                                    activeStep={status?.stepper}
+                                  />
+                                </div>
+                                <div className="order_status_text">
+                                  <p>{status?.status_details}</p>
+                                </div>
+                              </div>
+                            </Col>
                             <Col
-                              md={12}
-                              xl={12}
+                              md={3}
+                              xl={3}
                               className="d-flex justify-content-end "
                             >
                               {this.props.detail?.detail?.order_status !==
