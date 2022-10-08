@@ -292,6 +292,11 @@ class ProductDescription1 extends Component {
     );
   };
   handle_buy_navigate = () => {
+    const { pincode } = this.state;
+    if (pincode === "") {
+      toast.error("Please Enter Pincode");
+      return;
+    }
     if (this.props.product_quantity === 0) {
       this.addtocart_function();
     }
