@@ -278,6 +278,7 @@ export const getOrderDetail = (order_id) => (dispatch) => {
         delivery_city
         delivery_state
         delivery_pincode
+        delivery_date
         delivery_landmark
         delivery_address_type
         lab_address_id
@@ -456,10 +457,23 @@ export const cancelOrder = (id) => (dispatch) => {
         dispatch(getOrderDetail(id));
         dispatch(getOrderStatusList(id));
       }
+
+      if (data.message !== "SUCCESS") {
+        dispatch({
+          type: "SUCCESS_MESSAGE",
+          success_title: "CANCEL_ERROR",
+        });
+        dispatch({ type: "IS_LOADING", is_loading: false });
+      }
+
     })
     .catch((error) => {
       //alert(error);
       console.log(error);
+      dispatch({
+        type: "SUCCESS_MESSAGE",
+        success_title: "CANCEL_ERROR",
+      });
       dispatch({ type: "IS_LOADING", is_loading: false });
     });
 };
