@@ -206,12 +206,15 @@ class ProductDescription1 extends Component {
     this.setState({ product_slider: x });
   };
   addtocart_function = (id = null) => {
-    const { pincode } = this.state;
+    const { pincode ,pincode_label} = this.state;
     if (pincode === "") {
       toast.error("Please Enter Pincode");
       return;
     }
-
+    if(pincode_label==='Check'){
+      toast.error("Please Check with Pincode");
+      return;
+    }
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
 
     let cart_id = typeof id === "string" ? id : this.unique_id;
@@ -292,11 +295,17 @@ class ProductDescription1 extends Component {
     );
   };
   handle_buy_navigate = () => {
-    const { pincode } = this.state;
-    if (pincode === "") {
+    const { pincode, pincode_label } = this.state;
+    if (pincode === "" ) {
       toast.error("Please Enter Pincode");
       return;
     }
+
+    if(pincode_label==='Check'){
+      toast.error("Please Check with Pincode");
+      return;
+    }
+
     if (this.props.product_quantity === 0) {
       this.addtocart_function();
     }

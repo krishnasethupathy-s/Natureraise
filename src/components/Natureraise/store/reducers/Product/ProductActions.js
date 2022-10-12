@@ -261,8 +261,8 @@ export default (state = initialState, action) => {
         // console.log(state.product_master_list);
         // console.log(product_unique_id);
         // console.log(product_data_1)
-        // var str1 = product_data_1["productImage"];
-        var str1 = state.product_master_list[0]["productImage"];
+        var str1 = product_data_1["productImage"];
+        // var str1 = state.product_master_list[0]["productImage"];
         console.log(str1);
         if (str1.length > 0) {
           var str2 = str1[0].product_images;
