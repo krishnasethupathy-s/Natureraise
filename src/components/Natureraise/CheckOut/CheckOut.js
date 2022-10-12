@@ -539,12 +539,16 @@ class CheckOut extends Component {
           }
         } else {
           //alert(responseJson.message)
+          this.setState({ is_loading: false });
+          toast.error('Something went wrong, Please try again few min later!')
           console.log(responseJson);
         }
       })
       .catch((error) => {
         //alert(error)
         console.log(error);
+        this.setState({ is_loading: false });
+        toast.error('Something went wrong, Please try again few min later!')
       });
   };
 
