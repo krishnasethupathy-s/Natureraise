@@ -59,7 +59,7 @@ const ReturnModal = ({ handleClose, show, id, order_id }) => {
   };
 
   return (
-    <Modal show={show} onHide={handleClose}>
+    <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>Return Product</Modal.Title>
       </Modal.Header>

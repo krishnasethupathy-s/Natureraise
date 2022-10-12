@@ -3,11 +3,13 @@ import "./OrderStatus.css";
 import { Container, Row, Col } from "react-bootstrap";
 import { Helmet } from "react-helmet-async";
 import Stepper from "react-stepper-horizontal";
+import moment from "moment";
 
 import images from "../../constants/images";
 import SectionHeader from "../../constants/SectionHeader/SectionHeader";
 import { connect } from "react-redux";
 import CardWrap from "../Common/UI/Card/Card";
+import Config from "../../../Config";
 
 import AddressDetails from "./constant/AddressDetails/AddressDetails";
 import StatusDetails from "./constant/StatusDetails/StatusDetails";
@@ -21,6 +23,7 @@ import {
 import ReviewModal from "./review-modal";
 import CancelModal from "./cancel-modal";
 import ReturnModal from "./return-modal";
+
 import { Link } from "react-router-dom";
 
 class OrderStatus extends Component {
@@ -68,6 +71,9 @@ class OrderStatus extends Component {
 
   render() {
     const status = this.props.detail?.status;
+
+    const retrunDate =moment("10-10-2022", "DD-MM-YYYY").add(10, "days").calendar();
+    console.log(moment('10/20/2022').isSameOrAfter(moment()))
     return (
       <>
         <Helmet>
@@ -100,8 +106,12 @@ class OrderStatus extends Component {
                           <Row>
                             <Col md={9}>
                               <div>
-                                <div>
-                                  <Stepper
+                                <div >
+                                  <Stepper 
+                                  
+                                  titleFontSize={10}  
+                                  circleFontSize={14}                  
+
                                     steps={[
                                       {
                                         title:
@@ -129,11 +139,13 @@ class OrderStatus extends Component {
                             >
                               {this.props.detail?.detail?.order_status !==
                                 "Delivered" &&
+                               !!!+ status?.stepper >= 4
+                                &&
                                 this.props.detail?.detail?.order_status !==
                                   "Cancelled" && (
                                   <button
                                     className="btn btn-primary text-white "
-                                    style={{height: "60px"}}
+                                    style={{ height: "60px" }}
                                     onClick={this.cancelModalHandleOpen}
                                   >
                                     Cancel Order
@@ -159,9 +171,12 @@ class OrderStatus extends Component {
                           <div className="order_return_wrap">
                             <h6 className="order_return_policy">
                               Return policy valid till 30{" "}
-                              <Link to="/PrivacyPolicy"  className="order_retrun_sub">
+                              <Link
+                                to="/PrivacyPolicy"
+                                className="order_retrun_sub"
+                              >
                                 Know More
-                              </Link >
+                              </Link>
                             </h6>
                           </div>
                         </CardWrap>

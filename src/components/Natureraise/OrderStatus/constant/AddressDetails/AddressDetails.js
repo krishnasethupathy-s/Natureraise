@@ -68,14 +68,20 @@ const AddressDetails = ({ detail }) => {
               <h6 className="order_subtitle">Invoice Download</h6>
             </div>
           </div> */}
+          {
+            !!+detail.coupon_amount && 
           <h6 className="order_address">
             Coupon Amount: ₹ {detail.coupon_amount}
+          </h6>
+          }
+          <h6 className="order_address">
+            Delivery Charge: ₹ {detail.delivery_charges}
           </h6>
           <h6 className="order_title">Total Amount: ₹ {detail.order_amount}</h6>
         </div>
       </Col>
 
-      <Col md={3} className="order_download_wrap">
+      <Col md={3} xs={12} className="order_download_wrap">
         {!!detail.invoice_file_path && (
           <a
             href={detail.invoice_file_path}
@@ -84,6 +90,7 @@ const AddressDetails = ({ detail }) => {
             rel="noopener noreferrer"
             download
           >
+            <i className="fa fa-download pr-2" aria-hidden="true"></i>
             Download invoice
           </a>
         )}

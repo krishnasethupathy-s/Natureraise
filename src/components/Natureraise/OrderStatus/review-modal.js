@@ -44,7 +44,7 @@ const ReviewModal = ({ handleClose, show, id }) => {
   };
 
   return (
-    <Modal show={show} onHide={handleClose}>
+    <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>Add A Review</Modal.Title>
       </Modal.Header>

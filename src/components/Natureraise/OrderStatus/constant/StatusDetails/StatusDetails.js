@@ -5,7 +5,7 @@ import Stepper from "react-stepper-horizontal";
 
 const StatusDetails = ({ item, status, openReviewModal, openReturnModal }) => {
   return (
-    <Row>
+    <Row className="mb-3 border-bottom">
       <Col md={4}>
         <div className="order_track_wrap">
           <img
@@ -32,11 +32,18 @@ const StatusDetails = ({ item, status, openReviewModal, openReturnModal }) => {
               </h6>
             </div>
 
-            <h6 className="order_subtitle">Qty: {item.cart_list} </h6>
-            <h6 className="order_amount">₹ {item.total_amount}</h6>
+      
+           
           </div>
         </div>
         
+      </Col>
+
+      <Col className="d-flex align-items-center justify-content-center">
+      <h6 className="order_subtitle">Qty: {item.cart_list} </h6>
+      </Col>
+      <Col className="d-flex align-items-center justify-content-center">
+      <h6 className="order_amount">₹ {item.total_amount}</h6>
       </Col>
       {/* <Col md={5}>
         <div>
@@ -65,21 +72,21 @@ const StatusDetails = ({ item, status, openReviewModal, openReturnModal }) => {
         <div className="order_delivery_wrap">
           <h1 className="order_title">{status?.delivery_time}</h1>
           {status?.status === "Delivered" && (
-            <p className="order_sub" onClick={() => openReviewModal(item.id)}>
+            <button className="btn order_sub" onClick={() => openReviewModal(item.id)}>
               <span>
                 <i className="fa fa-star-o" aria-hidden="true"></i>{" "}
               </span>
               RATE AND REVIEW PRODUCT
-            </p>
+            </button>
           )}
 
           {status?.status === "Delivered" && (
-            <p className="order_sub" onClick={() => openReturnModal(item.id)}>
+            <button className="btn order_sub" onClick={() => openReturnModal(item.id)}>
               <span>
                 <i className="fa fa-refresh" aria-hidden="true"></i>{" "}
               </span>
               Return Product
-            </p>
+            </button>
           )}
           {/* <p className="order_sub">
             <span>
