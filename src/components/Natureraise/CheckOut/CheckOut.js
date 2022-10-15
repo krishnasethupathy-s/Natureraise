@@ -670,7 +670,51 @@ class CheckOut extends Component {
     };
 
     const goToFaliurePage = (error) => {
-      this.props.history.replace("/CheckOut/failure", { state: error });
+      const id= this.state.orderId
+      this.props.dispatch({ type: "IS_LOADING", is_loading: true });
+      const Authorization = localStorage.getItem("Authorization");
+      const query = gql`
+        mutation orderFailed($Authorization: String, $id: ID) {
+          orderFailed(Authorization: $Authorization, id: $id) {
+            message
+          }
+        }
+      `;
+    
+      Config.client
+        .query({
+          query: query,
+          fetchPolicy: "no-cache",
+          variables: { Authorization, id },
+        })
+        .then((result) => {
+          console.log(result);
+          const data = result.data.orderFailed;
+          
+          if (data.message === "SUCCESS") {
+            this.props.dispatch({ type: "IS_LOADING", is_loading: false });
+            this.props.history.replace("/CheckOut/failure", { state: error });
+
+          }
+    
+          if (data.message !== "SUCCESS") {
+            this.props.dispatch({
+              type: "SUCCESS_MESSAGE",
+              success_title: "CANCEL_ERROR",
+            });
+            this.props.dispatch({ type: "IS_LOADING", is_loading: false });
+          }
+    
+        })
+        .catch((error) => {
+          //alert(error);
+          console.log(error);
+          this.props.dispatch({
+            type: "SUCCESS_MESSAGE",
+            success_title: "CANCEL_ERROR",
+          });
+          this.props.dispatch({ type: "IS_LOADING", is_loading: false });
+        });
     };
 
     const paymentObject = new window.Razorpay(options);
@@ -683,6 +727,7 @@ class CheckOut extends Component {
 
   orderPaymentChecking = async (data) => {
     console.log("Payment Check");
+    this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     const Authorization = localStorage.getItem("Authorization");
     const razorpay_payment_id = data.razorpay_payment_id;
     const razorpay_order_id = data.razorpay_order_id;
@@ -706,6 +751,7 @@ class CheckOut extends Component {
       .then((responseJson) => {
         console.log(responseJson);
         if (responseJson.message === "SUCCESS") {
+          this.props.dispatch({ type: "IS_LOADING", is_loading: false });
           Config.cart_count = "";
           this.props.dispatch(ProductActions.resetCart());
           this.props.dispatch(ProductActions.getCartList());
@@ -713,10 +759,14 @@ class CheckOut extends Component {
         } else {
           //alert(responseJson.message)
           console.log(responseJson);
+          this.props.dispatch({ type: "IS_LOADING", is_loading: false });
+
         }
       })
       .catch((error) => {
         //alert(error);
+        this.props.dispatch({ type: "IS_LOADING", is_loading: false });
+
         console.log(error);
       });
   };
