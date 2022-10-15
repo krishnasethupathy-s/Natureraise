@@ -2,8 +2,28 @@ import React from "react";
 import "./StatusDetails.css";
 import { Row, Col } from "react-bootstrap";
 import Stepper from "react-stepper-horizontal";
+import moment from "moment";
 
-const StatusDetails = ({ item, status, openReviewModal, openReturnModal }) => {
+const StatusDetails = ({
+  item,
+  status,
+  openReviewModal,
+  openReturnModal,
+  orderDate,
+  returnValidity,
+}) => {
+  const orderDate1 = moment(orderDate, "DD-MM-YYYY").format("MM-DD-YYYY");
+  const returnDate = moment(orderDate, "DD-MM-YYYY")
+    .add(returnValidity, "days")
+    .format("MM-DD-YYYY");
+  // console.log(returnDate, moment(returnDate).isSameOrAfter(moment().format("MM-DD-YYYY")) );
+  // console.log(orderDate1,   moment(orderDate1).isSameOrBefore(moment().format("MM-DD-YYYY")));
+  const isReturnAvaliable =
+    moment(orderDate1).isSameOrBefore(moment().format("MM-DD-YYYY")) &&
+    moment(returnDate).isSameOrAfter(moment().format("MM-DD-YYYY"));
+  // console.log(isReturnAvaliable);
+  // console.log(moment().format("MM-DD-YYYY"));
+
   return (
     <Row className="mb-3 border-bottom">
       <Col md={4}>
@@ -31,19 +51,15 @@ const StatusDetails = ({ item, status, openReviewModal, openReturnModal }) => {
                 Size: {item.item_size}{" "}
               </h6>
             </div>
-
-      
-           
           </div>
         </div>
-        
       </Col>
 
       <Col className="d-flex align-items-center justify-content-center">
-      <h6 className="order_subtitle">Qty: {item.cart_list} </h6>
+        <h6 className="order_subtitle">Qty: {item.cart_list} </h6>
       </Col>
       <Col className="d-flex align-items-center justify-content-center">
-      <h6 className="order_amount">₹ {item.total_amount}</h6>
+        <h6 className="order_amount">₹ {item.total_amount}</h6>
       </Col>
       {/* <Col md={5}>
         <div>
@@ -72,7 +88,10 @@ const StatusDetails = ({ item, status, openReviewModal, openReturnModal }) => {
         <div className="order_delivery_wrap">
           <h1 className="order_title">{status?.delivery_time}</h1>
           {status?.status === "Delivered" && (
-            <button className="btn order_sub" onClick={() => openReviewModal(item.id)}>
+            <button
+              className="btn order_sub"
+              onClick={() => openReviewModal(item.id)}
+            >
               <span>
                 <i className="fa fa-star-o" aria-hidden="true"></i>{" "}
               </span>
@@ -80,12 +99,15 @@ const StatusDetails = ({ item, status, openReviewModal, openReturnModal }) => {
             </button>
           )}
 
-          {status?.status === "Delivered" && (
-            <button className="btn order_sub" onClick={() => openReturnModal(item.id)}>
+          {status?.status === "Delivered" && isReturnAvaliable && (
+            <button
+              className="btn order_sub"
+              onClick={() => openReturnModal(item.id)}
+            >
               <span>
                 <i className="fa fa-refresh" aria-hidden="true"></i>{" "}
               </span>
-              Return Product
+              Return Product {orderDate}
             </button>
           )}
           {/* <p className="order_sub">
@@ -101,7 +123,6 @@ const StatusDetails = ({ item, status, openReviewModal, openReturnModal }) => {
             RATE AND REVIEW PRODUCT
           </p> */}
         </div>
-     
       </Col>
     </Row>
   );
