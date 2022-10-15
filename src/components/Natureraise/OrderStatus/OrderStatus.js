@@ -72,8 +72,7 @@ class OrderStatus extends Component {
   render() {
     const status = this.props.detail?.status;
 
-    const retrunDate =moment("10-10-2022", "DD-MM-YYYY").add(10, "days").calendar();
-    console.log(moment('10/20/2022').isSameOrAfter(moment()))
+    
     return (
       <>
         <Helmet>
@@ -106,12 +105,10 @@ class OrderStatus extends Component {
                           <Row>
                             <Col md={9}>
                               <div>
-                                <div >
-                                  <Stepper 
-                                  
-                                  titleFontSize={10}  
-                                  circleFontSize={14}                  
-
+                                <div>
+                                  <Stepper
+                                    titleFontSize={10}
+                                    circleFontSize={14}
                                     steps={[
                                       {
                                         title:
@@ -139,8 +136,7 @@ class OrderStatus extends Component {
                             >
                               {this.props.detail?.detail?.order_status !==
                                 "Delivered" &&
-                               !!!+ status?.stepper >= 4
-                                &&
+                                +status?.stepper < 3 &&
                                 this.props.detail?.detail?.order_status !==
                                   "Cancelled" && (
                                   <button
@@ -166,6 +162,8 @@ class OrderStatus extends Component {
                               status={this.props.detail?.status}
                               openReviewModal={this.setReviewProductId}
                               openReturnModal={this.setReturnProductId}
+                              orderDate={this.props.detail?.detail?.order_date}
+                              returnValidity = {item.return_validity}
                             />
                           ))}
                           <div className="order_return_wrap">
