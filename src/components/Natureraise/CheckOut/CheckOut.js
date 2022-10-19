@@ -85,6 +85,7 @@ class CheckOut extends Component {
       address_form: !prevState.address_form,
     }));
     this.setState({
+      address_id:"",
       state: "",
       contact_name: "",
       mobile_number: "",
@@ -207,6 +208,7 @@ class CheckOut extends Component {
       this.setState((prevState) => ({
         address_form: !prevState.address_form,
       }));
+      this.resetAddress();
       this.props.dispatch(AddCustomerAddress.empty_message());
       this.setState({ is_loading: false });
     } else if (this.props.message === "DELETE_SUCCESS_MESSAGE") {
@@ -253,8 +255,21 @@ class CheckOut extends Component {
     }
   };
 
+  moveToPayment = ()=> {
+    const {delivery_address_id} = this.state;
+
+    if(delivery_address_id==="") {
+      toast.error('Please select delivery address');
+      return;
+    }
+
+    this.stepper.next()
+
+  }
+
   AddCustomerAddress = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
     const {
       address_id,
       contact_name,
@@ -281,7 +296,26 @@ class CheckOut extends Component {
         type
       )
     );
+    if(address_id)
+      this.delivery_address_function(address_id);
+      
+   
   };
+
+  resetAddress=()=>{
+    this.setState({
+      address_id:"",
+      state: "",
+      contact_name: "",
+      mobile_number: "",
+      address_line1: "",
+      address_line2: "",
+      city: "",
+      pincode: "",
+      landmark: "",
+      type: "0",
+    })
+  }
 
   radio_Onchange = () => {
     if (this.state.type === "0") {
@@ -1398,8 +1432,8 @@ class CheckOut extends Component {
                               <Button
                                 type="button"
                                 variant="primary"
-                                onClick={() => this.stepper.next()}
-                                disabled={this.state.delivery_address_id === ""}
+                                onClick={this.moveToPayment}
+                                // disabled={this.state.delivery_address_id === ""}
                                 // disabled={this.state.button_disable}
                               >
                                 Next

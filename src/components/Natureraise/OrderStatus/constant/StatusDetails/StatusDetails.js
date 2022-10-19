@@ -107,7 +107,7 @@ const StatusDetails = ({
               <span>
                 <i className="fa fa-refresh" aria-hidden="true"></i>{" "}
               </span>
-              Return Product {orderDate}
+              Return Product 
             </button>
           )}
           {/* <p className="order_sub">

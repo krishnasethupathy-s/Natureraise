@@ -355,6 +355,7 @@ export const getOrderedProductList = (id) => (dispatch) => {
         return_validity
         refund_availability
         return_availability
+        
       }
     }
   `;
