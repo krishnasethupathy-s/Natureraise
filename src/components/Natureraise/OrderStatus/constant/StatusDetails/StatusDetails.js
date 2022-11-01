@@ -99,16 +99,27 @@ const StatusDetails = ({
             </button>
           )}
 
-          {status?.status === "Delivered" && isReturnAvaliable && (
-            <button
-              className="btn order_sub"
-              onClick={() => openReturnModal(item.id)}
-            >
+          {status?.status === "Delivered" &&
+            isReturnAvaliable &&
+            !!!item?.order_status && (
+              <button
+                className="btn order_sub"
+                onClick={() => openReturnModal(item.id)}
+              >
+                <span>
+                  <i className="fa fa-refresh" aria-hidden="true"></i>{" "}
+                </span>
+                Return Product
+              </button>
+            )}
+          {!!item?.order_status && (
+            <p className=" order_sub_status">
+              {" "}
               <span>
                 <i className="fa fa-refresh" aria-hidden="true"></i>{" "}
               </span>
-              Return Product 
-            </button>
+              {item?.order_status}{" "}
+            </p>
           )}
           {/* <p className="order_sub">
             <span>

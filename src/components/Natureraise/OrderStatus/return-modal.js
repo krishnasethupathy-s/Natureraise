@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
+import { useHistory } from "react-router-dom";
 
 import { Button, Modal, Form } from "react-bootstrap";
 import StarRatingComponent from "react-star-rating-component";
@@ -42,12 +43,14 @@ const ReturnModal = ({ handleClose, show, id, order_id }) => {
     (state) => state.ProductActions
   );
   const dispatch = useDispatch();
+  let history = useHistory();
 
   useEffect(() => {
     if (success_message === "RETURN_SUCCESS") {
       handleClose();
       toast.success("Return request submitted!");
       handleReset();
+      history.push("/MyAccount/orders");
     }
     dispatch(empty_message());
   }, [success_message, dispatch]);

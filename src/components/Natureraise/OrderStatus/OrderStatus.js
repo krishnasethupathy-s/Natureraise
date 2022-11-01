@@ -72,7 +72,6 @@ class OrderStatus extends Component {
   render() {
     const status = this.props.detail?.status;
 
-    
     return (
       <>
         <Helmet>
@@ -106,27 +105,40 @@ class OrderStatus extends Component {
                             <Col md={9}>
                               <div>
                                 <div>
-                                  <Stepper
-                                    titleFontSize={10}
-                                    circleFontSize={14}
-                                    steps={[
-                                      {
-                                        title:
-                                          status?.status === "Cancelled"
-                                            ? "Cancelled"
-                                            : "Ordered",
-                                      },
-                                      { title: "Placed" },
-                                      { title: "Packed" },
-                                      { title: "Shipped" },
-                                      { title: "Delivered" },
-                                    ]}
-                                    activeStep={status?.stepper}
-                                  />
+                                  {this.props.detail?.detail?.order_status !==
+                                    "Payment Failed" && (
+                                    <Stepper
+                                      titleFontSize={10}
+                                      circleFontSize={14}
+                                      steps={[
+                                        {
+                                          title:
+                                            status?.status === "Cancelled"
+                                              ? "Cancelled"
+                                              : "Ordered",
+                                        },
+                                        { title: "Placed" },
+                                        { title: "Packed" },
+                                        { title: "Shipped" },
+                                        { title: "Delivered" },
+                                      ]}
+                                      activeStep={status?.stepper}
+                                    />
+                                  )}
                                 </div>
                                 <div className="order_status_text">
                                   <p>{status?.status_details}</p>
                                 </div>
+                                {this.props.detail?.detail?.order_status ===
+                                  "Payment Failed" && (
+                                  <div>
+                                    <p>
+                                      * If any money deducted , wait 3-4 days
+                                      before reach out to your bank / contact us
+                                      for more information.
+                                    </p>
+                                  </div>
+                                )}
                               </div>
                             </Col>
                             <Col
@@ -136,6 +148,8 @@ class OrderStatus extends Component {
                             >
                               {this.props.detail?.detail?.order_status !==
                                 "Delivered" &&
+                                this.props.detail?.detail?.order_status !==
+                                  "Payment Failed" &&
                                 +status?.stepper < 3 &&
                                 this.props.detail?.detail?.order_status !==
                                   "Cancelled" && (
@@ -163,7 +177,7 @@ class OrderStatus extends Component {
                               openReviewModal={this.setReviewProductId}
                               openReturnModal={this.setReturnProductId}
                               orderDate={this.props.detail?.detail?.order_date}
-                              returnValidity = {item.return_validity}
+                              returnValidity={item.return_validity}
                             />
                           ))}
                           <div className="order_return_wrap">

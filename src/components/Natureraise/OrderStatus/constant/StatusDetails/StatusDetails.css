@@ -40,10 +40,18 @@
 .order_delivery_wrap > .order_sub > span {
   padding-right: 10px;
 }
+.order_delivery_wrap > .order_sub_status {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 0px 11px;
+}
+.order_delivery_wrap > .order_sub_status > span {
+  padding-right: 10px;
+}
 .order_status_text > p {
   color: black;
-  padding-top: 15px;
   text-align: center;
+  padding-top: 15px;
 }
 
 .order_color_wrapper_inner {

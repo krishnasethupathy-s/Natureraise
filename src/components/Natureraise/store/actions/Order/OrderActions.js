@@ -355,7 +355,7 @@ export const getOrderedProductList = (id) => (dispatch) => {
         return_validity
         refund_availability
         return_availability
-        
+        order_status
       }
     }
   `;
@@ -466,7 +466,6 @@ export const cancelOrder = (id) => (dispatch) => {
         });
         dispatch({ type: "IS_LOADING", is_loading: false });
       }
-
     })
     .catch((error) => {
       //alert(error);
