@@ -223,7 +223,7 @@ function App() {
 
         <PrivateRoute
           exact
-          path="/CheckOut/failure"
+          path="/orderfailure"
           name="CheckOut Page"
           component={PaymentFailure}
         />
