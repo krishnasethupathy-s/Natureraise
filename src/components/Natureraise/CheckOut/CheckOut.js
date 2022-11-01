@@ -51,6 +51,7 @@ class CheckOut extends Component {
       payment_type: "1",
       availabilityError: [],
       orderId: "",
+      couponForm: false,
     };
     this.Authorization = localStorage.getItem("Authorization");
   }
@@ -85,7 +86,7 @@ class CheckOut extends Component {
       address_form: !prevState.address_form,
     }));
     this.setState({
-      address_id:"",
+      address_id: "",
       state: "",
       contact_name: "",
       mobile_number: "",
@@ -255,17 +256,16 @@ class CheckOut extends Component {
     }
   };
 
-  moveToPayment = ()=> {
-    const {delivery_address_id} = this.state;
+  moveToPayment = () => {
+    const { delivery_address_id } = this.state;
 
-    if(delivery_address_id==="") {
-      toast.error('Please select delivery address');
+    if (delivery_address_id === "") {
+      toast.error("Please select delivery address");
       return;
     }
 
-    this.stepper.next()
-
-  }
+    this.stepper.next();
+  };
 
   AddCustomerAddress = async (e) => {
     e.preventDefault();
@@ -296,15 +296,12 @@ class CheckOut extends Component {
         type
       )
     );
-    if(address_id)
-      this.delivery_address_function(address_id);
-      
-   
+    if (address_id) this.delivery_address_function(address_id);
   };
 
-  resetAddress=()=>{
+  resetAddress = () => {
     this.setState({
-      address_id:"",
+      address_id: "",
       state: "",
       contact_name: "",
       mobile_number: "",
@@ -314,8 +311,8 @@ class CheckOut extends Component {
       pincode: "",
       landmark: "",
       type: "0",
-    })
-  }
+    });
+  };
 
   radio_Onchange = () => {
     if (this.state.type === "0") {
@@ -574,7 +571,7 @@ class CheckOut extends Component {
         } else {
           //alert(responseJson.message)
           this.setState({ is_loading: false });
-          toast.error('Something went wrong, Please try again few min later!')
+          toast.error("Something went wrong, Please try again few min later!");
           console.log(responseJson);
         }
       })
@@ -582,7 +579,7 @@ class CheckOut extends Component {
         //alert(error)
         console.log(error);
         this.setState({ is_loading: false });
-        toast.error('Something went wrong, Please try again few min later!')
+        toast.error("Something went wrong, Please try again few min later!");
       });
   };
 
@@ -686,6 +683,7 @@ class CheckOut extends Component {
       name: "Naturesave",
       image: { logo },
       order_id: order_id,
+      retry: false,
       handler: this.orderPaymentChecking,
       prefill: {
         email: email_id,
@@ -704,7 +702,7 @@ class CheckOut extends Component {
     };
 
     const goToFaliurePage = (error) => {
-      const id= this.state.orderId
+      const id = this.state.orderId;
       this.props.dispatch({ type: "IS_LOADING", is_loading: true });
       const Authorization = localStorage.getItem("Authorization");
       const query = gql`
@@ -714,7 +712,7 @@ class CheckOut extends Component {
           }
         }
       `;
-    
+
       Config.client
         .query({
           query: query,
@@ -724,13 +722,12 @@ class CheckOut extends Component {
         .then((result) => {
           console.log(result);
           const data = result.data.orderFailed;
-          
+
           if (data.message === "SUCCESS") {
             this.props.dispatch({ type: "IS_LOADING", is_loading: false });
-            this.props.history.replace("/CheckOut/failure", { state: error });
-
+            this.props.history.replace("/orderfailure", { state: error });
           }
-    
+
           if (data.message !== "SUCCESS") {
             this.props.dispatch({
               type: "SUCCESS_MESSAGE",
@@ -738,7 +735,6 @@ class CheckOut extends Component {
             });
             this.props.dispatch({ type: "IS_LOADING", is_loading: false });
           }
-    
         })
         .catch((error) => {
           //alert(error);
@@ -794,7 +790,6 @@ class CheckOut extends Component {
           //alert(responseJson.message)
           console.log(responseJson);
           this.props.dispatch({ type: "IS_LOADING", is_loading: false });
-
         }
       })
       .catch((error) => {
@@ -803,6 +798,11 @@ class CheckOut extends Component {
 
         console.log(error);
       });
+  };
+
+  convertPriceWithTwoDecimals = (value) => {
+    const convertToInt = Number(value);
+    return (Math.round(convertToInt * 100) / 100).toFixed(2);
   };
 
   render() {
@@ -871,18 +871,14 @@ class CheckOut extends Component {
                       <div className="step" data-target="#test-l-1">
                         <button className="step-trigger">
                           <span className="bs-stepper-circle">1</span>
-                          <span className="bs-stepper-label">
-                            Shopping Cart
-                          </span>
+                          <span className="bs-stepper-label">Cart</span>
                         </button>
                       </div>
                       <div className="line"></div>
                       <div className="step" data-target="#test-l-2">
                         <button className="step-trigger">
                           <span className="bs-stepper-circle">2</span>
-                          <span className="bs-stepper-label">
-                            Shopping Details
-                          </span>
+                          <span className="bs-stepper-label">Address</span>
                         </button>
                       </div>
                       <div className="line"></div>
@@ -1547,51 +1543,98 @@ class CheckOut extends Component {
                     <div className="summary_card sticky-top">
                       <h3>Summary</h3>
                       {this.props.cart.coupon_validation_amount === 0 ? (
-                        <div className="summary_coupon_code">
-                          <h6>Enter Coupon Code</h6>
-                          <div>
-                            <div className="summary_coupon_button_wrapper">
-                              <Form onSubmit={this.validate_coupon_function}>
-                                <Form.Row>
-                                  <Form.Group
-                                    as={Col}
-                                    md={8}
-                                    controlId="formBasicEmail"
-                                  >
-                                    <Form.Control
-                                      onChange={this.couponcode_handler}
-                                      name="coupon_code_value"
-                                      type="text"
-                                      placeholder="Coupon Code *"
-                                    />
-                                  </Form.Group>
-                                  <Col>
-                                    <Button
-                                      type="submit"
-                                      className="summary_coupon_button"
-                                    >
-                                      Apply
-                                    </Button>
-                                  </Col>
-                                </Form.Row>
-                              </Form>
+                        <>
+                          {!this.state.couponForm && (
+                            <div className="coupon pb-2">
+                              <h6>Coupons</h6>
+                              <div className="d-flex align-items-center justify-content-between  text-center">
+                                <h6>
+                                  <span className="pr-2">
+                                    {" "}
+                                    <i className="fa fa-tags"></i>{" "}
+                                  </span>
+                                  Apply Coupons
+                                </h6>
+                                <Button
+                                  type="button"
+                                  className="btn btn-primary"
+                                  onClick={() =>
+                                    this.setState({ couponForm: true })
+                                  }
+                                >
+                                  Apply
+                                </Button>
+                              </div>
                             </div>
-                          </div>
-                        </div>
+                          )}
+                          {this.state.couponForm && (
+                            <div className="summary_coupon_code">
+                              {/* <h6>Enter Coupon Code</h6> */}
+                              <div>
+                                <div className="summary_coupon_button_wrapper">
+                                  <Form
+                                    onSubmit={this.validate_coupon_function}
+                                  >
+                                    <Form.Row>
+                                      <Form.Group
+                                        as={Col}
+                                        md={8}
+                                        controlId="formBasicEmail"
+                                      >
+                                        <Form.Control
+                                          onChange={this.couponcode_handler}
+                                          name="coupon_code_value"
+                                          type="text"
+                                          placeholder="Coupon Code *"
+                                        />
+                                      </Form.Group>
+                                      <Col>
+                                        <Button
+                                          type="submit"
+                                          className="summary_coupon_button"
+                                        >
+                                          Apply
+                                        </Button>
+                                      </Col>
+                                    </Form.Row>
+                                  </Form>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </>
                       ) : null}
 
                       <div className="summary_amount">
                         <div>
-                          <h6>Price({this.props.cart.items.length} items)</h6>
-                          <h6>₹ {this.props.cart.mrp_amount}</h6>
+                          <h6>
+                            Price(
+                            {this.props.cart.items.length} items)
+                          </h6>
+                          <h6>
+                            ₹{" "}
+                            {this.convertPriceWithTwoDecimals(
+                              this.props.cart.mrp_amount
+                            )}
+                          </h6>
                         </div>
                         <div>
                           <h6>Discount</h6>
-                          <h6>₹ {this.props.cart.save_amount}</h6>
+                          <h6>
+                            ₹{" "}
+                            {this.convertPriceWithTwoDecimals(
+                              this.props.cart.save_amount
+                            )}
+                          </h6>
                         </div>
                         <div>
                           <h6>Coupons for you</h6>
-                          <h6>₹ {this.props.cart.coupon_validation_amount}</h6>
+                          <h6>
+                            ₹{" "}
+                            {this.convertPriceWithTwoDecimals(
+                              this.props.cart.coupon_validation_amount
+                            )}
+                          </h6>
                         </div>
                         <div>
                           <h6>Delivery Charges</h6>
@@ -1600,7 +1643,12 @@ class CheckOut extends Component {
                       </div>
                       <div className="summary_total">
                         <h6>Total</h6>
-                        <h6>₹{this.props.cart.order_amount}</h6>
+                        <h6>
+                          ₹
+                          {this.convertPriceWithTwoDecimals(
+                            this.props.cart.order_amount
+                          )}
+                        </h6>
                       </div>
                     </div>
                   )}
