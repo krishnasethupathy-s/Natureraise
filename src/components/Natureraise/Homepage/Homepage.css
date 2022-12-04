@@ -1,32 +1,41 @@
-body, p {
-    font-family: 'Poppins', sans-serif;
-    font-size: 14px;
-    line-height: 22px;
-    color: #666;
-  
+body,
+p {
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  line-height: 22px;
+  color: #666;
 }
 
-body, ul, ol, li, h1, h2, h3, h4, h5, h6, figure, p {
-    padding: 0;
-    margin: 0;
-    list-style: none;
+body,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+figure,
+p {
+  padding: 0;
+  margin: 0;
+  list-style: none;
 }
 body {
-    background: #f6f8f9;
-    /* overflow: hidden;
+  background: #f6f8f9;
+  /* overflow: hidden;
     overflow-y: auto; */
-    font-family: 'Poppins', sans-serif;
-    scroll-behavior: smooth;
-    overflow-x: hidden;
+  font-family: "Poppins", sans-serif;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 * {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-    scroll-behavior: smooth;
-   
- 
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  scroll-behavior: smooth;
 }
 
 /* .container
@@ -34,42 +43,40 @@ body {
     max-width: 1400px !important;
     margin: 0 auto;
 } */
-a,h1,h2,h3,h4,h5,h6,p
-{
-    cursor: pointer;
-    text-decoration: none;
-    font-family: 'Poppins', sans-serif;
+a,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  cursor: pointer;
+  text-decoration: none;
+  font-family: "Poppins", sans-serif;
 }
-a:hover
-{
-    text-decoration: none;
+a:hover {
+  text-decoration: none;
 }
-
 
 /* carousel-item */
 
-.carousel-item
-{
-    height: 50vh;
+.carousel-item {
+  height: 100%;
 }
-.banner-image-size
-{
-    object-fit: cover;
+.banner-image-size {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .carousel-item {
     height: 100%;
-    width: 100%;
-}
-
-@media(max-width:1200px)
-{
-  
-.carousel-item
-{
-    height: 80vh;
-}  
+  }
 }
 
 /* carousel-item */
-
 
 /* What we offer section */
 /* 
@@ -78,383 +85,288 @@ a:hover
     height: 100%;
 } */
 
-.what_we_wrapper
-{
-    margin-top: 60px;
+.what_we_wrapper {
+  margin-top: 60px;
 }
 
-.what_we_subtitle
-{
-    z-index: 2;
-    margin-top: 25px;
+.what_we_subtitle {
+  z-index: 2;
+  margin-top: 25px;
 }
 
 /* End What we offer section */
 
-
-
-
-
 /* Common Text */
 
-
-.section_padding_top_bottom
-{
-    padding: 70px 0px;
+.section_padding_top_bottom {
+  padding: 70px 0px;
 }
-.common_margin_top_bottom
-{
-    margin: 70px 0px;
+.common_margin_top_bottom {
+  margin: 70px 0px;
 }
 
-.double_line_common
-{
-    top: -48px;
-    left: 50%;
-    transform: translateX(-62%);
-    text-transform: uppercase;
-    -webkit-text-stroke-color: rgba(214, 214, 214, 0.5);
-    display: inline;
-    position: absolute;
-    opacity: 1;
-    color: transparent !important;
-    -webkit-text-stroke-width: 1px;
-    font-size: 150px;
-    line-height: 160px;
-    font-weight: 900;
-    white-space: nowrap;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    z-index: -1;  
+.double_line_common {
+  top: -48px;
+  left: 50%;
+  transform: translateX(-62%);
+  text-transform: uppercase;
+  -webkit-text-stroke-color: rgba(214, 214, 214, 0.5);
+  display: inline;
+  position: absolute;
+  opacity: 1;
+  color: transparent !important;
+  -webkit-text-stroke-width: 1px;
+  font-size: 150px;
+  line-height: 160px;
+  font-weight: 900;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  z-index: -1;
 }
-.subtitle
-{
-    z-index: 2;
+.subtitle {
+  z-index: 2;
+  margin-top: 25px;
+}
+.subtitle span {
+  color: #295832;
+  font-size: 18px;
+  font-weight: 600;
+  position: relative;
+}
+.subtitle::before {
+  content: "";
+  position: absolute;
+  width: 2px;
+  background-color: red;
+  height: 20px;
+  left: -10px;
+}
+.subtitle h3 {
+  padding: 10px 0px;
+  color: #171a42;
+  font-size: 36px;
+  line-height: 48px;
+}
+.subtitle p {
+  font-size: 16px;
+  line-height: 30px;
+}
+
+/* End Common Text */
+
+/* why choose us */
+
+.why_choose {
+  transform: translateX(-54%);
+}
+.why_choose_us {
+  background-image: url("../../../assets/natureraise/homepage/whyus/bg.png");
+  background-position: center right;
+  background-repeat: no-repeat;
+}
+.why_choose_list {
+  padding: 10px 0px;
+}
+
+.card_wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 10px;
+}
+.card_icon {
+  margin-right: 20px;
+  box-shadow: 4px 5px 16px 0px rgb(0 0 0 / 10%);
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  padding: 10px;
+}
+.card_icon .fa {
+  color: black;
+}
+.card_wrapper:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+.card_wrapper:hover .card_icon {
+  background-color: #ff7029;
+}
+.card_wrapper:hover .card_icon .fa {
+  color: white;
+}
+.why_choose_gallery {
+  margin-top: 50px;
+  margin-left: 30px;
+}
+
+.why_choose_banner {
+  padding-left: 60px;
+}
+.why_choose_box {
+  background-color: #ef522e;
+  text-align: left;
+  padding: 70px 0px 40px 40px;
+  color: white;
+  position: relative;
+}
+.why_choose_box::before {
+  content: "";
+  position: absolute;
+  background-color: white;
+  height: 2px;
+  width: 40px;
+  top: 50px;
+}
+.why_choose_box h5 {
+  padding-bottom: 10px;
+}
+.why_choose_green {
+  background-color: #295832 !important;
+}
+/* end why choose */
+
+/* end project information */
+
+/* product-list-wrapper */
+
+.product-list-wrapper {
+  padding-top: 40px;
+}
+
+/* product-list-wrapper */
+
+/* our-collection-section */
+
+.our-collection-section {
+  padding-top: 40px;
+}
+.our-collection-heading-wrap {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  color: #000;
+}
+
+/* our-collection-section */
+
+/* tollfree-section */
+
+.tollfree-section {
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+/* tollfree-section */
+
+.brand-slider-offer {
+  height: 370px;
+}
+.brand-slider-offer img {
+  height: 100%;
+  width: 100%;
+}
+
+/* offers-section */
+
+.offers-section {
+  padding-top: 40px;
+  padding-bottom: 30px;
+}
+.offer-banner-wrap {
+  padding: 10px 10px 0px 10px;
+  overflow: hidden;
+}
+.offer-banner-wrap img {
+  width: 100%;
+}
+.offers-section .col-md-4 {
+  padding: 0px;
+}
+.offer-banner-wrap img {
+  transition: transform 1s;
+}
+.offer-banner-wrap:hover img {
+  transform: scale(1.1);
+  cursor: pointer;
+  opacity: 1;
+}
+/* offers-section */
+
+/* offers-second-section */
+
+.offers-second-section {
+  padding-top: 60px;
+}
+
+/* offers-second-section */
+
+@media (max-width: 776px) {
+  .product-card-mobile {
+    padding: 10px;
+  }
+}
+@media (min-width: 1440px) {
+  .container {
+    max-width: calc(100vw - 100px);
+  }
+}
+
+@media (min-width: 1200px) {
+  .container,
+  .container-lg,
+  .container-md,
+  .container-sm,
+  .container-xl {
+    max-width: 1300px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .container {
+    max-width: calc(100vw - 500px);
+  }
+}
+
+/* Media Query */
+@media (max-width: 776px) {
+  .what_we_wrapper {
     margin-top: 25px;
-}
-.subtitle span
-{
-    color: #295832;
-    font-size: 18px;
-    font-weight: 600;
-    position: relative;
-
-}
-.subtitle::before
-{
-    content: '';
+  }
+  .subtitle::before {
+    content: "";
     position: absolute;
     width: 2px;
     background-color: red;
     height: 20px;
-    left: -10px;
+    left: 0px;
+  }
+  .why_choose {
+    transform: translateX(-54%) !important;
+  }
+  .double_line_common {
+    top: -48px;
+    left: 50%;
+    transform: translateX(-62%);
+    font-size: 80px;
+  }
+  .section_padding_top_bottom {
+    padding: 20px 0px;
+  }
+  .why_choose_banner {
+    display: none;
+  }
+
+  .consultancy_form {
+    padding: 15px;
+  }
+  .consultancy_content {
+    padding: 20px;
+  }
 }
-.subtitle h3{
-    padding: 10px 0px;
-    color: #171A42;
-    font-size: 36px;
-    line-height: 48px;
-}
-.subtitle p{
-    font-size: 16px;
-    line-height: 30px;
-}
-
-
-
-
-
-
-/* End Common Text */
-
-
-/* why choose us */
-
-.why_choose
-{
-    transform: translateX(-54%);
-}
-.why_choose_us
-{
-    background-image: url('../../../assets/natureraise/homepage/whyus/bg.png');
-    background-position: center right;
-    background-repeat: no-repeat;
-}
-.why_choose_list
-{
-    padding: 10px 0px;
-}
-
-.card_wrapper
-{
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-    padding: 10px;
-}
-.card_icon
-{
-    margin-right: 20px;
-    box-shadow: 4px 5px 16px 0px rgb(0 0 0 / 10%);
-    background-color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    padding: 10px;
-}
-.card_icon .fa
-{
-    color:black;
-}
-.card_wrapper:hover{
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-}
-
-.card_wrapper:hover .card_icon {
-    background-color: #FF7029;
-   
-}
-.card_wrapper:hover .card_icon .fa{
-    color:white;
-
-}
-.why_choose_gallery
-{
-    margin-top: 50px;
-    margin-left: 30px;
-}
-
-.why_choose_banner 
-{
-    padding-left: 60px;
-}
-.why_choose_box{
-    background-color:#ef522e;
-    text-align: left;
-    padding: 70px 0px 40px 40px;
-    color: white;
-    position: relative;
-}
-.why_choose_box::before
-{
-content: '';
-position: absolute;
-background-color: white;
-height: 2px;
-width: 40px;
-top: 50px;
-}
-.why_choose_box h5
-{
-    padding-bottom: 10px;
-}
-.why_choose_green
-{
-    background-color:#295832 !important;
-
-}
-/* end why choose */
-
-
-
-
-/* end project information */
-
-
-/* product-list-wrapper */
-
-
-.product-list-wrapper
-{
-    padding-top: 40px;
-}
-
-/* product-list-wrapper */
-
-
-
-/* our-collection-section */
-
-.our-collection-section
-{
-    padding-top: 40px;
-}
-.our-collection-heading-wrap
-{
-display: flex;
-justify-content: space-between;
-padding-bottom: 20px;
-color: #000;
-}
-
-/* our-collection-section */
-
-/* tollfree-section */
-
-.tollfree-section
-{
-    padding-top: 40px;
-    padding-bottom: 40px;
-
-}
-
-/* tollfree-section */
-
-.brand-slider-offer
-{
-    height: 370px;
-}
-.brand-slider-offer img
-{
-    height: 100%;
-    width: 100%;
-}
-
-
-
-
-
-
-
-
-
-
-
-/* offers-section */
-
-.offers-section
-{
-    padding-top: 40px;
-    padding-bottom: 30px;
-}
-.offer-banner-wrap
-{
-    padding: 10px 10px 0px 10px;
-    overflow: hidden;
-}
-.offer-banner-wrap img
-{
-    width: 100%;
-}
-.offers-section .col-md-4
-{
-    padding: 0px;
-}
-.offer-banner-wrap img
-{
-    transition: transform 1s;
-}
-.offer-banner-wrap:hover img
-{
-    transform: scale(1.1); 
-    cursor: pointer;
-    opacity: 1;
-
-}
-/* offers-section */
-
-/* offers-second-section */
-
-.offers-second-section
-{
-    padding-top: 60px;
-}
-
-
-
-/* offers-second-section */
-
-
-
-@media(max-width:776px)
-{
-    .product-card-mobile
-{
-    padding: 10px;
-}
-
-}
-@media (min-width: 1440px)
-
-{
-    .container {
-        max-width: calc(100vw - 100px);
-    }
-   
-}
-
-
-
-@media (min-width: 1200px)
-
-{
-    .container, .container-lg, .container-md, .container-sm, .container-xl {
-        max-width: 1300px;
-    }
-}
-
-
-@media (min-width: 1600px)
-{
-    .container {
-        max-width: calc(100vw - 500px);
-    }
- 
-}
-
-
-
-
-
-
-/* Media Query */
-@media (max-width: 776px)
-{
-    .what_we_wrapper {
-        margin-top: 25px;
-    }
-    .subtitle::before {
-        content: '';
-        position: absolute;
-        width: 2px;
-        background-color: red;
-        height: 20px;
-        left: 0px;
-    }
-    .why_choose
-    {
-        transform: translateX(-54%) !important;
-        
-    }
-    .double_line_common {
-        top: -48px;
-        left: 50%;
-        transform: translateX(-62%);
-        font-size: 80px;
-       
-    }
-    .section_padding_top_bottom
-    {
-        padding: 20px 0px;
-    }
-    .why_choose_banner
-    {
-        display: none;
-    }
-
-
-    .consultancy_form
-    {
-        padding: 15px;
-    }
-    .consultancy_content
-    {
-        padding: 20px;
-    }
- 
-}
-
 
 /* End Media Query */

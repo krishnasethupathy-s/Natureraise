@@ -492,6 +492,7 @@
   display: flex;
   align-items: center;
   word-break: normal;
+  flex-wrap: wrap;
 }
 
 .product_size_title {

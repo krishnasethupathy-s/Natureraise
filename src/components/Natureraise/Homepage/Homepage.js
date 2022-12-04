@@ -215,7 +215,7 @@ class HomePage extends Component {
               return (
                 <Carousel.Item key={idx}>
                   <img
-                    className="d-block w-100 banner-image-size"
+                    className="w-100 h-100 banner-image-size "
                     src={image}
                     // src="https://cdn.shopify.com/s/files/1/2980/5140/articles/Main_Banner_Design_1800x_a5ed6c61-aa26-4e7d-87d7-8eb95d63f1fd_2x.jpg?v=1610512794"
                     alt="natureraise"
