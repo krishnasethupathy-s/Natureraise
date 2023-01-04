@@ -215,7 +215,7 @@ class HomePage extends Component {
               return (
                 <Carousel.Item key={idx}>
                   <img
-                    className="w-100 h-100 banner-image-size "
+                    className="d-block w-100 h-100 banner-image-size "
                     src={image}
                     // src="https://cdn.shopify.com/s/files/1/2980/5140/articles/Main_Banner_Design_1800x_a5ed6c61-aa26-4e7d-87d7-8eb95d63f1fd_2x.jpg?v=1610512794"
                     alt="natureraise"
@@ -236,7 +236,7 @@ class HomePage extends Component {
               <Row>
                 <Col md={12}>
                   <div className="our-collection-heading-wrap">
-                    <h6>Featured products new update</h6>
+                    <h6>New Arrivals</h6>
                     {/* <h6>View all</h6> */}
                   </div>
                 </Col>
@@ -309,7 +309,7 @@ class HomePage extends Component {
             </Container>
           </section>
         )}
-
+        {/* 
         <section className="offers-section" id="offers-section">
           <Container>
             <Row>
@@ -335,52 +335,12 @@ class HomePage extends Component {
                     </Col>
                   ))}
 
-                  {/* <Col md={4}>
-                    <div className="offer-banner-wrap">
-                      <img
-                        src={images.offer_banner1}
-                        alt="Natureraise"
-                        className="img-fluid"
-                      />
-                    </div>
-                    <div className="offer-banner-wrap">
-                      <img
-                        src={images.offer_banner2}
-                        alt="Natureraise"
-                        className="img-fluid"
-                      />
-                    </div>
-                  </Col>
-                  <Col md={4}>
-                    <div className="offer-banner-wrap">
-                      <img
-                        src={images.offer_banner3}
-                        alt="Natureraise"
-                        className="img-fluid"
-                      />
-                    </div>
-                  </Col>
-                  <Col md={4}>
-                    <div className="offer-banner-wrap">
-                      <img
-                        src={images.offer_banner4}
-                        alt="Natureraise"
-                        className="img-fluid"
-                      />
-                    </div>
-                    <div className="offer-banner-wrap">
-                      <img
-                        src={images.offer_banner5}
-                        alt="Natureraise"
-                        className="img-fluid"
-                      />
-                    </div>
-                  </Col> */}
+                 
                 </Row>
               </Col>
             </Row>
           </Container>
-        </section>
+        </section> */}
 
         {!!this.props.homeProducts?.topOffers.length && (
           <section className="product-list-wrapper" id="product-list-wrapper">
@@ -523,3 +483,46 @@ const mapStateToProps = (state) => {
 };
 
 export default connect(mapStateToProps, null)(HomePage);
+
+// eslint-disable-next-line no-lone-blocks
+/* <Col md={4}>
+                    <div className="offer-banner-wrap">
+                      <img
+                        src={images.offer_banner1}
+                        alt="Natureraise"
+                        className="img-fluid"
+                      />
+                    </div>
+                    <div className="offer-banner-wrap">
+                      <img
+                        src={images.offer_banner2}
+                        alt="Natureraise"
+                        className="img-fluid"
+                      />
+                    </div>
+                  </Col>
+                  <Col md={4}>
+                    <div className="offer-banner-wrap">
+                      <img
+                        src={images.offer_banner3}
+                        alt="Natureraise"
+                        className="img-fluid"
+                      />
+                    </div>
+                  </Col>
+                  <Col md={4}>
+                    <div className="offer-banner-wrap">
+                      <img
+                        src={images.offer_banner4}
+                        alt="Natureraise"
+                        className="img-fluid"
+                      />
+                    </div>
+                    <div className="offer-banner-wrap">
+                      <img
+                        src={images.offer_banner5}
+                        alt="Natureraise"
+                        className="img-fluid"
+                      />
+                    </div>
+                  </Col> */
