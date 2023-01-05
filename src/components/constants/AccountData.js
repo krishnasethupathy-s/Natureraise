@@ -47,23 +47,24 @@ export const DELIVERY_PROCESS = [
   },
   {
     id: "2",
-    title: "Secure Checkout",
-    process_images: images.deliveryicons2,
-  },
-  {
-    id: "3",
-    title: "Pay 25% advance",
+    title: "Check offer & EMI",
     process_images: images.deliveryicons3,
   },
   {
+    id: "3",
+    title: "Secure Checkout",
+    process_images: images.deliveryicons2,
+  },
+
+  {
     id: "4",
-    title: "Get Installation Done",
+    title: "Get Installation Support",
     process_images: images.deliveryicons4,
   },
   {
     id: "5",
-    title: "Pay Remaining Amount",
-    process_images: images.deliveryicons5,
+    title: "After Sales Support",
+    process_images: images.deliveryicons4,
   },
 ];
 

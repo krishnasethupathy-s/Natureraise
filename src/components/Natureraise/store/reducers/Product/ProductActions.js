@@ -27,6 +27,7 @@ import {
   ADD_RECENT_VIEW,
   ADD_STYLE1,
   ADD_STYLE2,
+  Add_CATEGORY_PRODUCTS,
 } from "../../actions/Product/ProductActions";
 
 const initialState = {
@@ -64,6 +65,7 @@ const initialState = {
   recentView: [],
   style1: [],
   style2: [],
+  category_products: {},
 };
 export default (state = initialState, action) => {
   console.log(action);
@@ -127,6 +129,18 @@ export default (state = initialState, action) => {
       return {
         ...state,
         filters: [],
+      };
+    }
+
+    case "Add_CATEGORY_PRODUCTS": {
+      const { category_name, data } = action.payload;
+
+      return {
+        ...state,
+        category_products: {
+          ...state.category_products,
+          [category_name]: data,
+        },
       };
     }
 
@@ -569,6 +583,12 @@ export default (state = initialState, action) => {
 
       if (!item) {
         item = state.recentView.find((product) => product.id === productId);
+      }
+
+      if (!item) {
+        item = Object.values(state.category_products)
+          .flat(1)
+          .find((product) => product.id === productId);
       }
 
       item.pincode = action.pincode;

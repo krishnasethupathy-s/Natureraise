@@ -57,9 +57,12 @@ const ProductCard = (props) => {
                   ? props?.selling_price
                   : props?.special_price}{" "}
               </h6>
-              {/* <h6 className="product-card-hightlight-green">
-                ₹ {props?.retail_price}{" "}
-              </h6> */}
+              {props.retail_price === props.selling_price &&
+              props?.special_price === "0.00" ? null : (
+                <h6 className="product-card-hightlight-green">
+                  ₹ {props?.selling_price}{" "}
+                </h6>
+              )}
             </div>
           ) : (
             <div className="product-card-amount-wrapper">
@@ -71,7 +74,10 @@ const ProductCard = (props) => {
               </h6>
               <h6 className="product-card-hightlight-green">
                 ₹
-                {props?.special_price === "0.00"
+                {props?.special_price === "0.00" &&
+                props?.selling_price === "0.00"
+                  ? props?.retail_price
+                  : props?.selling_price === "0.00"
                   ? props?.retail_price
                   : props?.selling_price}{" "}
               </h6>

@@ -18,7 +18,6 @@ import DeliveryProcess from "../Common/Components/DeliveryProcess/DeliveryProces
 import SecondOfferSection from "../Common/Components/SecondOfferSection/SecondOfferSection";
 
 import "./Homepage.css";
-import ProductSection from "./ProductSection";
 class HomePage extends Component {
   constructor(props) {
     super(props);
@@ -35,19 +34,6 @@ class HomePage extends Component {
     window.scrollTo(0, 0);
     this.props.dispatch(Banner.fetchBanners());
 
-    // if (this.props.category) {
-    //   this.props.category.forEach((c) => {
-    //     this.props.dispatch(
-    //       ProductActions.getItemListBySearchValue(
-    //         c.id,
-    //         "1",
-    //         "5",
-    //         c.item_category_name
-    //       )
-    //     );
-    //   });
-    // }
-
     this.props.dispatch(ProductActions.getSubCategoryList("2396"));
     this.props.dispatch(ProductActions.getSubCategoryList("2397"));
     this.props.dispatch(ProductActions.getHomePageProductList());
@@ -55,8 +41,6 @@ class HomePage extends Component {
     setTimeout(() => {
       this.props.dispatch({ type: "IS_LOADING", is_loading: false });
     }, 1000);
-
-    // console.log("Hi", Object.values(this.props.category_products).flat(1));
   }
 
   componentDidUpdate() {
@@ -100,7 +84,7 @@ class HomePage extends Component {
       this.props.dispatch(ProductActions.getCartList());
       this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     } else {
-      this.props.dispatch(ProductActions.addToCartLocal(id, ""));
+      this.props.dispatch(ProductActions.addToCartLocal(id));
       toast.success("Item added to the cart");
     }
     this.props.dispatch({
@@ -297,22 +281,6 @@ class HomePage extends Component {
               </Row>
             </Container>
           </section>
-        )}
-        {Object.entries(this.props.category_products).map(
-          ([key, values], idx) => {
-            return values.length ? (
-              <ProductSection
-                key={key}
-                title={key}
-                settings={settings}
-                images={images}
-                data={values}
-                id={values[0]?.item_category_id}
-                adPlacement={Boolean((idx + 1) % 2 === 0)}
-                addToCart={this.add_to_cart}
-              />
-            ) : null;
-          }
         )}
 
         {false && (
@@ -511,8 +479,6 @@ const mapStateToProps = (state) => {
     recentView: state.ProductActions.recentView || [],
     style1: state.ProductActions.style1 || [],
     style2: state.ProductActions.style2 || [],
-    category: state.ProductActions.product_categories_list,
-    category_products: state.ProductActions.category_products,
   };
 };
 
