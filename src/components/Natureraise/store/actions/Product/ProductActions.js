@@ -30,6 +30,7 @@ export const GET_REVIEWS = "GET_REVIEWS";
 export const ADD_RECENT_VIEW = "ADD_RECENT_VIEW";
 export const ADD_STYLE1 = "ADD_STYLE1";
 export const ADD_STYLE2 = "ADD_STYLE2";
+export const Add_CATEGORY_PRODUCTS = "Add_CATEGORY_PRODUCTS";
 
 export const empty_message = () => {
   return async (dispatch) => {
@@ -93,6 +94,13 @@ export const getCategory = () => {
         type: "PRODUCTCATEGORIES",
         category_data_list: responseJsonData,
       });
+      const category = responseJsonData;
+
+      category.forEach((c) => {
+        dispatch(
+          getItemListBySearchValue(c.id, "1", "5", c.item_category_name)
+        );
+      });
     } catch (error) {
       console.log(error);
     }
@@ -101,8 +109,8 @@ export const getCategory = () => {
 };
 
 export const getItemListBySearchValue =
-  (id, page_number, data_limit, search_value) => (dispatch) => {
-    const item_name = search_value;
+  (id, page_number, data_limit, category_name) => (dispatch) => {
+    const item_name = "";
     const item_category_id = id;
     const Authorization = Config.getRequestToken();
 
@@ -123,13 +131,17 @@ export const getItemListBySearchValue =
         ) {
           item_name
           item_sub_category_id
+          item_category_name
+          item_category_id
           retail_price
           selling_price
           percentage
           uom
           item_size
+          item_color
           type_name
           id
+          product_price_id
           image_address
           cart_list
           wish_list
@@ -138,7 +150,10 @@ export const getItemListBySearchValue =
           cart_count
           brand_name
           generic_id
+          save_price
+          retail_price
           special_price
+          availability
         }
       }
     `;
@@ -157,6 +172,16 @@ export const getItemListBySearchValue =
       })
       .then((result) => {
         console.log(result);
+
+        const data = result.data.getItemListByCategory;
+
+        dispatch({
+          type: Add_CATEGORY_PRODUCTS,
+          payload: {
+            category_name,
+            data,
+          },
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -979,14 +1004,16 @@ export const getCartList = () => {
   };
 };
 
-export const addToCartLocal = (id, pincode) => (dispatch) => {
-  dispatch({
-    type: ADD_TO_CART_LOCAL,
-    id,
-    pincode,
-  });
-  dispatch({ type: "IS_LOADING", is_loading: false });
-};
+export const addToCartLocal =
+  (id, pincode = "") =>
+  (dispatch) => {
+    dispatch({
+      type: ADD_TO_CART_LOCAL,
+      id,
+      pincode,
+    });
+    dispatch({ type: "IS_LOADING", is_loading: false });
+  };
 
 export const addToCartIncrementLocal = (id) => (dispatch) => {
   dispatch({
