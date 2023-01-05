@@ -59,7 +59,9 @@ export default class About extends Component {
                   <div>
                     <div className="subtitle">
                       <span>About Us</span>
-                      <h3>The Best Solution of Wind & Solar Energy</h3>
+                      <h3>
+                        The Best Solution of Solar Energy & Water Treatment
+                      </h3>
                       <p>
                         At Nature raise Technologies Private Limited; our
                         constant aim has been to provide the best water
