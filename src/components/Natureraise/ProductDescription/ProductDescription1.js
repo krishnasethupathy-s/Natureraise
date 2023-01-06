@@ -206,12 +206,12 @@ class ProductDescription1 extends Component {
     this.setState({ product_slider: x });
   };
   addtocart_function = (id = null) => {
-    const { pincode ,pincode_label} = this.state;
+    const { pincode, pincode_label } = this.state;
     if (pincode === "") {
       toast.error("Please Enter Pincode");
       return;
     }
-    if(pincode_label==='Check'){
+    if (pincode_label === "Check") {
       toast.error("Please Check with Pincode");
       return;
     }
@@ -296,12 +296,12 @@ class ProductDescription1 extends Component {
   };
   handle_buy_navigate = () => {
     const { pincode, pincode_label } = this.state;
-    if (pincode === "" ) {
+    if (pincode === "") {
       toast.error("Please Enter Pincode");
       return;
     }
 
-    if(pincode_label==='Check'){
+    if (pincode_label === "Check") {
       toast.error("Please Check with Pincode");
       return;
     }
@@ -978,9 +978,9 @@ class ProductDescription1 extends Component {
             </Container>
           </section>
 
-          <section>
+          {/* <section>
             <Container></Container>
-          </section>
+          </section> */}
 
           <section
             className="product_tab_section section_padding_top_bottom"
@@ -988,8 +988,8 @@ class ProductDescription1 extends Component {
           >
             <Container>
               <Row>
-                {!!this.props.product_descriptions_list.length && (
-                  <Col md={8} lg={8} xl={8}>
+                <Col md={8} lg={8} xl={8}>
+                  {!!this.props.product_descriptions_list.length && (
                     <Tabs id="uncontrolled-tab-example">
                       {this.props.product_descriptions_list.map((data, y) => {
                         return (
@@ -998,15 +998,15 @@ class ProductDescription1 extends Component {
                             title={data.description_title}
                             key={y}
                           >
-                            <div className="product_tab_container">
+                            <div className="product_tab_container pl-4 ">
                               {parse(data.description_details)}
                             </div>
                           </Tab>
                         );
                       })}
                     </Tabs>
-                  </Col>
-                )}
+                  )}
+                </Col>
 
                 <Col md={3} lg={3} xl={4}>
                   <Reviews
