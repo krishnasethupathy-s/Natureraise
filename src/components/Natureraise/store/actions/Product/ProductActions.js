@@ -96,24 +96,17 @@ export const getCategory = () => {
       });
       const category = responseJsonData;
 
-      category.forEach((c, idx) => {
-        dispatch(
-          getItemListBySearchValue(c.id, "1", "5", c.item_category_name)
-        );
+      // category.forEach((c, idx) => {
+      //   dispatch(
+      //     getItemListBySearchValue(c.id, "1", "5", c.item_category_name)
+      //   );
+      // });
+
+      const data = await getCategoryProducts(category);
+      dispatch({
+        type: Add_CATEGORY_PRODUCTS,
+        payload: { data },
       });
-
-      
-      // const promises = [];
-
-      // for (const c of category){
-
-      //   promises.push( getItemListBySearchValue1(c.id, "1", "5", c.item_category_name))
-      // }
-      // console.log(promises);
-      // const products = await Promise.all(promises)
-      // console.log(products)
-
-
     } catch (error) {
       console.log(error);
     }
@@ -121,7 +114,25 @@ export const getCategory = () => {
   };
 };
 
-export const getItemListBySearchValue1 = async(
+const getCategoryProducts = async (category) => {
+  const categoryProducts = category.map((c) =>
+    getItemListBySearchValue1(c.id, "1", "5", c.item_category_name)
+      .then((res) => {
+        const data = res.data.getItemListByCategory;
+
+        return {
+          category_name: c.item_category_name,
+          id: c.id,
+          data,
+        };
+      })
+      .catch((e) => console.log(e))
+  );
+
+  return Promise.all(categoryProducts).then((res) => res);
+};
+
+export const getItemListBySearchValue1 = async (
   id,
   page_number,
   data_limit,
@@ -175,29 +186,17 @@ export const getItemListBySearchValue1 = async(
     }
   `;
 
-  Config.client
-    .query({
-      query: query,
-      fetchPolicy: "no-cache",
-      variables: {
-        Authorization,
-        item_category_id,
-        page_number,
-        data_limit,
-        item_name,
-      },
-    })
-    .then((result) => {
-      console.log(result);
-
-      const data = result.data.getItemListByCategory;
-
-      console.log(data);
-      return data;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  return Config.client.query({
+    query: query,
+    fetchPolicy: "no-cache",
+    variables: {
+      Authorization,
+      item_category_id,
+      page_number,
+      data_limit,
+      item_name,
+    },
+  });
 };
 
 export const getItemListBySearchValue =

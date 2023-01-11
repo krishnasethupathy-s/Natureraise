@@ -246,7 +246,7 @@ class HomePage extends Component {
           <DeliveryProcess deliveryprocess={AccountData.DELIVERY_PROCESS} />
         </section>
 
-        { /* !!this.props.homeProducts?.newComings.length && (
+        {/* !!this.props.homeProducts?.newComings.length && (
           <section className="product-list-wrapper" id="product-list-wrapper">
             <Container>
               <Row>
@@ -298,12 +298,12 @@ class HomePage extends Component {
             </Container>
           </section>
                     ) */}
-        {Object.entries(this.props.category_products).map(
-          ([key, values], idx) => {
+        {this.props?.category_products.map(
+          ({ id, data: values, category_name }, idx) => {
             return values.length ? (
               <ProductSection
-                key={key}
-                title={key}
+                key={id}
+                title={category_name}
                 settings={settings}
                 images={images}
                 data={values}
@@ -374,7 +374,7 @@ class HomePage extends Component {
           </Container>
         </section> */}
 
-        { /* !!this.props.homeProducts?.topOffers.length && (
+        {/* !!this.props.homeProducts?.topOffers.length && (
           <section className="product-list-wrapper" id="product-list-wrapper">
             <Container>
               <Row>

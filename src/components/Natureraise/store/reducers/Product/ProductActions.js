@@ -65,7 +65,7 @@ const initialState = {
   recentView: [],
   style1: [],
   style2: [],
-  category_products: {},
+  category_products: [],
 };
 export default (state = initialState, action) => {
   console.log(action);
@@ -133,21 +133,10 @@ export default (state = initialState, action) => {
     }
 
     case "Add_CATEGORY_PRODUCTS": {
-      const { category_name, data } = action.payload;
-
-      // const new_category_products = {
-      //   ...state.category_products,
-      //   [category_name]: data,
-      // }
-
-      // const sort_category_products = new_category_products
-
+      const { data } = action.payload;
       return {
         ...state,
-        category_products: {
-          ...state.category_products,
-          [category_name]: data,
-        },
+        category_products: data,
       };
     }
 
