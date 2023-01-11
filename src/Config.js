@@ -26,7 +26,9 @@ let BaseUrl;
 let Razorpaykey;
 if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
   Razorpaykey = "rzp_test_iZt5e6oaqwbtfP";
-  BaseUrl = "https://democrm.vimkes.com/";
+  // BaseUrl = "https://democrm.vimkes.com/";
+  BaseUrl = "https://www.api.naturesave.in/";
+
 } else {
   Razorpaykey = "rzp_live_Wrr6uxbeUoLQ9o";
   BaseUrl = "https://www.api.naturesave.in/";

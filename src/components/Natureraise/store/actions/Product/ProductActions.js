@@ -96,16 +96,108 @@ export const getCategory = () => {
       });
       const category = responseJsonData;
 
-      category.forEach((c) => {
+      category.forEach((c, idx) => {
         dispatch(
           getItemListBySearchValue(c.id, "1", "5", c.item_category_name)
         );
       });
+
+      
+      // const promises = [];
+
+      // for (const c of category){
+
+      //   promises.push( getItemListBySearchValue1(c.id, "1", "5", c.item_category_name))
+      // }
+      // console.log(promises);
+      // const products = await Promise.all(promises)
+      // console.log(products)
+
+
     } catch (error) {
       console.log(error);
     }
     return true;
   };
+};
+
+export const getItemListBySearchValue1 = async(
+  id,
+  page_number,
+  data_limit,
+  category_name
+) => {
+  const item_name = "";
+  const item_category_id = id;
+  const Authorization = Config.getRequestToken();
+
+  const query = gql`
+    query getItemListByCategory(
+      $Authorization: String
+      $item_category_id: String
+      $page_number: String
+      $data_limit: String
+      $item_name: String
+    ) {
+      getItemListByCategory(
+        Authorization: $Authorization
+        item_category_id: $item_category_id
+        page_number: $page_number
+        data_limit: $data_limit
+        item_name: $item_name
+      ) {
+        item_name
+        item_sub_category_id
+        item_category_name
+        item_category_id
+        retail_price
+        selling_price
+        percentage
+        uom
+        item_size
+        item_color
+        type_name
+        id
+        product_price_id
+        image_address
+        cart_list
+        wish_list
+        net_amount
+        total_amount
+        cart_count
+        brand_name
+        generic_id
+        save_price
+        retail_price
+        special_price
+        availability
+      }
+    }
+  `;
+
+  Config.client
+    .query({
+      query: query,
+      fetchPolicy: "no-cache",
+      variables: {
+        Authorization,
+        item_category_id,
+        page_number,
+        data_limit,
+        item_name,
+      },
+    })
+    .then((result) => {
+      console.log(result);
+
+      const data = result.data.getItemListByCategory;
+
+      console.log(data);
+      return data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };
 
 export const getItemListBySearchValue =

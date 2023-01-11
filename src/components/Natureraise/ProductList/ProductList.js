@@ -73,9 +73,9 @@ class ProductList extends Component {
       ratingSelect: Array(CUSTOMER_RATING.length).fill(false),
 
       //filters
-      slider_range: [100, 100000],
+      slider_range: [100, 1000000],
       slider_min: 100,
-      slider_max: 100000,
+      slider_max: 1000000,
       sort: 1,
 
       filters: {},
@@ -147,7 +147,7 @@ class ProductList extends Component {
       this.setState({
         page_number: 1,
         categories_id: this.props.match.params.id,
-        slider_range: [100, 100000],
+        slider_range: [100, 1000000],
         sort: 1,
         item_name: "",
         discount: [],
@@ -467,7 +467,9 @@ class ProductList extends Component {
                           <div {...props}>
                             {+state.valueNow < 1000
                               ? +state.valueNow
-                              : Math.floor(+state.valueNow / 1000) + "K"}
+                              : +state.valueNow < 100000
+                              ? Math.floor(+state.valueNow / 1000) + "K"
+                              : Math.floor(+state.valueNow / 100000) + "L"}
                           </div>
                         )}
                       />

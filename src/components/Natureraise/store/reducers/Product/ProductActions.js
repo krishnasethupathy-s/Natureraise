@@ -135,6 +135,13 @@ export default (state = initialState, action) => {
     case "Add_CATEGORY_PRODUCTS": {
       const { category_name, data } = action.payload;
 
+      // const new_category_products = {
+      //   ...state.category_products,
+      //   [category_name]: data,
+      // }
+
+      // const sort_category_products = new_category_products
+
       return {
         ...state,
         category_products: {

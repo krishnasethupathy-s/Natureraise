@@ -246,14 +246,14 @@ class HomePage extends Component {
           <DeliveryProcess deliveryprocess={AccountData.DELIVERY_PROCESS} />
         </section>
 
-        {!!this.props.homeProducts?.newComings.length && (
+        { /* !!this.props.homeProducts?.newComings.length && (
           <section className="product-list-wrapper" id="product-list-wrapper">
             <Container>
               <Row>
                 <Col md={12}>
                   <div className="our-collection-heading-wrap">
                     <h6>New Arrivals</h6>
-                    {/* <h6>View all</h6> */}
+                     <h6>View all</h6> 
                   </div>
                 </Col>
               </Row>
@@ -297,7 +297,7 @@ class HomePage extends Component {
               </Row>
             </Container>
           </section>
-        )}
+                    ) */}
         {Object.entries(this.props.category_products).map(
           ([key, values], idx) => {
             return values.length ? (
@@ -374,14 +374,14 @@ class HomePage extends Component {
           </Container>
         </section> */}
 
-        {!!this.props.homeProducts?.topOffers.length && (
+        { /* !!this.props.homeProducts?.topOffers.length && (
           <section className="product-list-wrapper" id="product-list-wrapper">
             <Container>
               <Row>
                 <Col md={12}>
                   <div className="our-collection-heading-wrap">
                     <h6>Top Offers</h6>
-                    {/* <h6>View all</h6> */}
+                     <h6>View all</h6> 
                   </div>
                 </Col>
               </Row>
@@ -434,11 +434,11 @@ class HomePage extends Component {
               </Row>
             </Container>
           </section>
-        )}
+                    )*/}
 
-        <section className="offers-second-section" id="offers-second-section">
+        {/* <section className="offers-second-section" id="offers-second-section">
           <SecondOfferSection offersdata={this.props.style1} />
-        </section>
+        </section> */}
 
         {!!this.props.recentView.length && (
           <section className="product-list-wrapper" id="product-list-wrapper">

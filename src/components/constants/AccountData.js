@@ -64,7 +64,7 @@ export const DELIVERY_PROCESS = [
   {
     id: "5",
     title: "After Sales Support",
-    process_images: images.deliveryicons4,
+    process_images: images.deliveryicons5,
   },
 ];
 

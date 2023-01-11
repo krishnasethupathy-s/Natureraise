@@ -541,7 +541,7 @@ class ProductDescription1 extends Component {
 
         <div>
           <section
-            className="product_description section_padding_top_bottom"
+            className="product_description section_padding_top_bottom pb-1"
             id="product_description"
           >
             <Container>
@@ -824,7 +824,7 @@ class ProductDescription1 extends Component {
                     {!!this.props?.product_new_data?.description && (
                       <div className="product_summary">
                         <h2>Product Summary</h2>
-                        <p>{this.props.product_new_data.description}</p>
+                        <div>{this.props.product_new_data.description}</div>
                       </div>
                     )}
                     {/* <div className="product_seller_name_wrapper">
@@ -983,7 +983,7 @@ class ProductDescription1 extends Component {
           </section> */}
 
           <section
-            className="product_tab_section section_padding_top_bottom"
+            className="product_tab_section section_padding_top_bottom pt-0"
             id="product_tab_section"
           >
             <Container>

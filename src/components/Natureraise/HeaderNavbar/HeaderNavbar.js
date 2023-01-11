@@ -88,7 +88,7 @@ class HeaderNavbar extends Component {
       discount: [],
       rating: [],
       sort: 1,
-      range: [100, 100000],
+      range: [100, 1000000],
     });
     this.props.history.push({
       pathname: `/products`,
@@ -245,7 +245,7 @@ class HeaderNavbar extends Component {
                             // onClick={() => {
                             //   this.product_navigate(x.id);
                             // }}
-                            to={`/Products/${x.id}?range=100&range=100000&search=&sort=1`}
+                            to={`/Products/${x.id}?range=100&range=1000000&search=&sort=1`}
                             key={x.id}
                           >
                             {x.item_sub_category_name}
