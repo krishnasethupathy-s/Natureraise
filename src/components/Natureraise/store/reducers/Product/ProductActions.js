@@ -582,7 +582,8 @@ export default (state = initialState, action) => {
       }
 
       if (!item) {
-        item = Object.values(state.category_products)
+        item = state.category_products
+          .map((c) => c.data)
           .flat(1)
           .find((product) => product.id === productId);
       }
