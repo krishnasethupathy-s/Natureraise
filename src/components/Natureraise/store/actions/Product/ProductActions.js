@@ -31,6 +31,7 @@ export const ADD_RECENT_VIEW = "ADD_RECENT_VIEW";
 export const ADD_STYLE1 = "ADD_STYLE1";
 export const ADD_STYLE2 = "ADD_STYLE2";
 export const Add_CATEGORY_PRODUCTS = "Add_CATEGORY_PRODUCTS";
+export const GET_COUPON_LIST = "GET_COUPON_LIST";
 
 export const empty_message = () => {
   return async (dispatch) => {
@@ -1362,6 +1363,45 @@ export const checkItemAvailability = (ids, pincode) => (dispatch) => {
     })
     .catch((error) => {
       dispatch({ type: "IS_LOADING", is_loading: false });
+      console.log(error);
+    });
+};
+
+export const getCouponCodeList = () => (dispatch) => {
+  const Authorization = Config.getRequestToken();
+  const query = gql`
+    query getCouponCodeList($Authorization: String) {
+      getCouponCodeList(Authorization: $Authorization) {
+        id
+        coupon_code_value
+        coupon_code_percentage
+        min_purchase_amount
+        max_cashback_amount
+        order_amount
+        coupon_amount
+        start_date
+        end_date
+        coupon_code_for
+        message
+      }
+    }
+  `;
+  Config.client
+    .query({
+      query: query,
+      fetchPolicy: "no-cache",
+      variables: { Authorization },
+    })
+    .then((result) => {
+      console.log(result);
+      const data = result.data.getCouponCodeList;
+
+      dispatch({
+        type: GET_COUPON_LIST,
+        data,
+      });
+    })
+    .catch((error) => {
       console.log(error);
     });
 };

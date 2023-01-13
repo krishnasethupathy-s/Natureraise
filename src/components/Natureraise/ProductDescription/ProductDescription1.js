@@ -70,6 +70,7 @@ class ProductDescription1 extends Component {
     this.props.dispatch(
       ProductActions.getItemListByMasterId(this.productId, "")
     );
+    this.props.dispatch(ProductActions.getCouponCodeList());
 
     console.log(this.props.product_master_list);
   };
@@ -725,6 +726,38 @@ class ProductDescription1 extends Component {
                       </div>
                     </div>
 
+                    <div className="product_offer text-dark my-2">
+                      <h6>
+                        <span className="pr-1">
+                          {" "}
+                          <i className="fa fa-tags"></i>{" "}
+                        </span>{" "}
+                        Offers
+                      </h6>
+                      {this.props.coupons.map((coupon) => (
+                        <Row className="my-2 product-offer" key={coupon.id}>
+                          <Col className=" d-flex ">
+                            <Col xs={3} md={3} className=" text-center pr-0">
+                              <div className="bg-white p-1 coupon">
+                                <strong>{coupon.coupon_code_value}</strong>
+                              </div>
+                            </Col>
+                            <Col className="pl-1">
+                              <p className="text-success">
+                                Get {`${coupon.coupon_code_percentage}%`}{" "}
+                                cashback - maximum{" "}
+                                <strong>₹{coupon.max_cashback_amount}</strong>
+                              </p>
+                              <p>
+                                Min purchase amount ₹
+                                {coupon.min_purchase_amount}
+                              </p>
+                            </Col>
+                          </Col>
+                        </Row>
+                      ))}
+                    </div>
+
                     <div className="product_size_wrapper">
                       <div className="product_size_wrapper_inner">
                         <h5 className="product_size_title">size</h5>
@@ -824,7 +857,9 @@ class ProductDescription1 extends Component {
                     {!!this.props?.product_new_data?.description && (
                       <div className="product_summary">
                         <h2>Product Summary</h2>
-                        <div>{this.props.product_new_data.description}</div>
+                        <div>
+                          {parse(this.props.product_new_data.description)}
+                        </div>
                       </div>
                     )}
                     {/* <div className="product_seller_name_wrapper">
@@ -1076,6 +1111,7 @@ const mapStateToProps = (state) => {
     error_message: state.ProductActions.error_message,
     reviews: state.ProductActions.reviews,
     hasMore: state.ProductActions.hasMore,
+    coupons: state.ProductActions.coupons,
   };
 };
 

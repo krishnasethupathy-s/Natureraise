@@ -28,6 +28,7 @@ import {
   ADD_STYLE1,
   ADD_STYLE2,
   Add_CATEGORY_PRODUCTS,
+  GET_COUPON_LIST,
 } from "../../actions/Product/ProductActions";
 
 const initialState = {
@@ -66,6 +67,7 @@ const initialState = {
   style1: [],
   style2: [],
   category_products: [],
+  coupons: [],
 };
 export default (state = initialState, action) => {
   console.log(action);
@@ -205,6 +207,14 @@ export default (state = initialState, action) => {
         ...state,
 
         product_list: [...state.product_list, ...action.get_item_list],
+      };
+    }
+
+    case GET_COUPON_LIST: {
+      const { data } = action;
+      return {
+        ...state,
+        coupons: data,
       };
     }
 
