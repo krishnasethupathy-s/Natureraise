@@ -11,13 +11,13 @@ const ProductCard = (props) => {
         </h6>
         <span className="prodcut-card-arrow"></span>
       </div>
-      <div className="wish_list_icon">
+      {/* <div className="wish_list_icon">
         <i
           className="fa fa-heart"
           aria-hidden="true"
           style={{ color: props?.wishcolor }}
         ></i>
-      </div>
+      </div> */}
       <Link to={`/ProductDescription/${props?.id}`}>
         <div className=" img-hover-zoom">
           <img
