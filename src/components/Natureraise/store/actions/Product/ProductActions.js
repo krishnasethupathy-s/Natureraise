@@ -91,11 +91,27 @@ export const getCategory = () => {
         body: JSON.stringify({ Authorization }),
       });
       let responseJsonData = await response.json();
+
+      const sortingValues = [
+        "Solar Water Heater",
+        "Heat Pump",
+        "Water Softener and Filters",
+        "Ro Purifiers",
+        "Pumps and Controllers",
+        "Solar Lighting",
+        "UPS and Batteries",
+      ];
+      const sortedCategory = responseJsonData.sort(
+        (a, b) =>
+          sortingValues.indexOf(a.item_category_name) -
+          sortingValues.indexOf(b.item_category_name)
+      );
+
       dispatch({
         type: "PRODUCTCATEGORIES",
-        category_data_list: responseJsonData,
+        category_data_list: sortedCategory,
       });
-      const category = responseJsonData;
+      const category = sortedCategory;
 
       // category.forEach((c, idx) => {
       //   dispatch(
