@@ -29,9 +29,9 @@
   margin: 5px;
 }
 .product_heading p {
-  padding: 20px 0px;
+  padding: 0px 0px;
   font-size: 15px;
-  line-height: 30px;
+  line-height: 0.9;
 }
 .product_heading h5 {
   color: #171a42;
@@ -133,6 +133,11 @@
   font-size: 24px;
   color: black;
 }
+
+/* .product_summary h2 {
+  font-size: 24px;
+  color: black;
+} */
 
 .product_button {
   padding: 6px;

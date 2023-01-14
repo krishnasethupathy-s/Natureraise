@@ -749,8 +749,7 @@ class ProductDescription1 extends Component {
                                 <strong>₹{coupon.max_cashback_amount}</strong>
                               </p>
                               <p>
-                                Min purchase amount ₹
-                                {coupon.min_purchase_amount}
+                                Min order amount ₹{coupon.min_purchase_amount}
                               </p>
                             </Col>
                           </Col>
@@ -857,7 +856,7 @@ class ProductDescription1 extends Component {
                     {!!this.props?.product_new_data?.description && (
                       <div className="product_summary">
                         <h2>Product Summary</h2>
-                        <div>
+                        <div className="mt-1">
                           {parse(this.props.product_new_data.description)}
                         </div>
                       </div>
