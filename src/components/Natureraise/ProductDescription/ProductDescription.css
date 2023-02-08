@@ -682,3 +682,12 @@ div.is-disabled {
 
   line-height: 1.2;
 }
+
+.see-more {
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+  text-align: start;
+
+  line-height: 1.2;
+}

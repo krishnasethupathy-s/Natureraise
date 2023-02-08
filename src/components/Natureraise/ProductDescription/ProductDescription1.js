@@ -52,6 +52,7 @@ class ProductDescription1 extends Component {
 
       reviewPage: 1,
       reviewLimit: "5",
+      seeMore: false,
     };
     this.Authorization = localStorage.getItem("Authorization");
     this.unique_id = "";
@@ -734,27 +735,76 @@ class ProductDescription1 extends Component {
                         </span>{" "}
                         Offers
                       </h6>
-                      {this.props.coupons.map((coupon) => (
-                        <Row className="my-2 product-offer" key={coupon.id}>
-                          <Col className=" d-flex ">
-                            <Col xs={3} md={3} className=" text-center pr-0">
-                              <div className="bg-white p-1 coupon">
-                                <strong>{coupon.coupon_code_value}</strong>
-                              </div>
-                            </Col>
-                            <Col className="pl-1">
-                              <p className="text-success">
-                                Get {`${coupon.coupon_code_percentage}%`}{" "}
-                                cashback - maximum{" "}
-                                <strong>₹{coupon.max_cashback_amount}</strong>
-                              </p>
-                              <p>
-                                Min order amount ₹{coupon.min_purchase_amount}
-                              </p>
-                            </Col>
-                          </Col>
-                        </Row>
-                      ))}
+                      {this.state.seeMore
+                        ? this.props.coupons.map((coupon) => (
+                            <Row className="my-2 product-offer" key={coupon.id}>
+                              <Col className=" d-flex ">
+                                <Col
+                                  xs={3}
+                                  md={3}
+                                  className=" text-center pr-0"
+                                >
+                                  <div className="bg-white p-1 coupon">
+                                    <strong>{coupon.coupon_code_value}</strong>
+                                  </div>
+                                </Col>
+                                <Col className="pl-1">
+                                  <p className="text-success">
+                                    Get {`${coupon.coupon_code_percentage}%`}{" "}
+                                    cashback - maximum{" "}
+                                    <strong>
+                                      ₹{coupon.max_cashback_amount}
+                                    </strong>
+                                  </p>
+                                  <p>
+                                    Min order amount ₹
+                                    {coupon.min_purchase_amount}
+                                  </p>
+                                </Col>
+                              </Col>
+                            </Row>
+                          ))
+                        : this.props.coupons.slice(0, 2).map((coupon) => (
+                            <Row className="my-2 product-offer" key={coupon.id}>
+                              <Col className=" d-flex ">
+                                <Col
+                                  xs={3}
+                                  md={3}
+                                  className=" text-center pr-0"
+                                >
+                                  <div className="bg-white p-1 coupon">
+                                    <strong>{coupon.coupon_code_value}</strong>
+                                  </div>
+                                </Col>
+                                <Col className="pl-1">
+                                  <p className="text-success">
+                                    Get {`${coupon.coupon_code_percentage}%`}{" "}
+                                    cashback - maximum{" "}
+                                    <strong>
+                                      ₹{coupon.max_cashback_amount}
+                                    </strong>
+                                  </p>
+                                  <p>
+                                    Min order amount ₹
+                                    {coupon.min_purchase_amount}
+                                  </p>
+                                </Col>
+                              </Col>
+                            </Row>
+                          ))}
+                      {this.props.coupons.length > 2 ? (
+                        <button
+                          type="button"
+                          class="btn btn-link text-dark see-more"
+                          onClick={() =>
+                            this.setState((prev) => ({
+                              seeMore: !prev.seeMore,
+                            }))
+                          }
+                        >
+                          {this.state.seeMore ? "Hide" : "See More"}
+                        </button>
+                      ) : null}
                     </div>
 
                     <div className="product_size_wrapper">

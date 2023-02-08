@@ -99,7 +99,7 @@ class HeaderNavbar extends Component {
   render() {
     return (
       <>
-        <section className="search_inner_navbar">
+        <section className="search_inner_navbar ">
           <Container>
             <Row>
               <Col md={2} className="d-none d-sm-block">
@@ -107,7 +107,7 @@ class HeaderNavbar extends Component {
                   <img src={images.nature_logo} alt="Logo" />
                 </Navbar.Brand>
               </Col>
-              <Col md={6}>
+              <Col md={6} className="mt-3 mt-md-0">
                 <div>
                   <Form onSubmit={this.handleSearch}>
                     <Form.Group controlId="formBasicSearch">
@@ -155,7 +155,7 @@ class HeaderNavbar extends Component {
                           </div>
                           <div></div>
                         </Col>
-                        <Col md={6} xs={6}>
+                        <Col md={8} lg={6} xs={6}>
                           <div>
                             <div>
                               <span>Welcome !</span>
@@ -192,7 +192,7 @@ class HeaderNavbar extends Component {
                             round={true}
                           />
                         </Col>
-                        <Col md={6} xs={6}>
+                        <Col md={8} lg={6} xs={6}>
                           <div>
                             <span>
                               Welcome{" "}
