@@ -85,6 +85,7 @@ class ProductDescription1 extends Component {
       this.uniqueSizes = [];
       this.size = "";
       this.color = "";
+      this.productId = this.props.match.params.id;
       this.props.dispatch(ProductActions.empty_message());
       this.props.dispatch({ type: "IS_LOADING", is_loading: true });
       this.props.dispatch(
@@ -795,7 +796,7 @@ class ProductDescription1 extends Component {
                       {this.props.coupons.length > 2 ? (
                         <button
                           type="button"
-                          class="btn btn-link text-dark see-more"
+                          className="btn btn-link text-dark see-more"
                           onClick={() =>
                             this.setState((prev) => ({
                               seeMore: !prev.seeMore,
