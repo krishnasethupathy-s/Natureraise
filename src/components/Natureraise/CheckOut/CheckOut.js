@@ -59,9 +59,9 @@ class CheckOut extends Component {
   componentDidMount() {
     window.scrollTo(0, 0);
     const Authorization = localStorage.getItem("Authorization");
-    this.props.dispatch(ProductActions.getCartList());
     if (Authorization) {
       this.props.dispatch({ type: "IS_LOADING", is_loading: true });
+      this.props.dispatch(ProductActions.getCartList());
     }
 
     this.props.dispatch(AddCustomerAddress.empty_message());
@@ -70,7 +70,7 @@ class CheckOut extends Component {
       linear: true,
       animation: true,
     });
-    this.props.dispatch({ type: "COUPON_VALIDATION", coupon_amount: 0 });
+    // this.props.dispatch({ type: "COUPON_VALIDATION", coupon_amount: 0 });
 
     console.log(this.props.cart);
 
@@ -200,6 +200,16 @@ class CheckOut extends Component {
       ProductActions.validateCouponCode(order_amount, coupon_code_value)
     );
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
+  };
+
+  deleteCoupon = (e) => {
+    e.preventDefault();
+    this.props.dispatch({
+      type: "COUPON_VALIDATION",
+      coupon_amount: 0,
+      coupon_code_value: null,
+    });
+    this.setState({ couponForm: false });
   };
 
   componentDidUpdate = () => {
@@ -912,7 +922,9 @@ class CheckOut extends Component {
                                           alt="natureraise"
                                           className="img-fluid product_image"
                                           onClick={() => {
-                                            this.props.history.push(item.id);
+                                            this.props.history.push(
+                                              `ProductDescription/${item.id}`
+                                            );
                                           }}
                                         />
                                       </Col>
@@ -1542,12 +1554,35 @@ class CheckOut extends Component {
                   ) : (
                     <div className="summary_card sticky-top">
                       <h3>Summary</h3>
-                      {this.props.cart.coupon_validation_amount === 0 ? (
-                        <>
-                          {!this.state.couponForm && (
-                            <div className="coupon pb-2">
-                              <h6>Coupons</h6>
-                              <div className="d-flex align-items-center justify-content-between  text-center">
+                      <div className="coupon ">
+                        <h6>Coupons</h6>
+                        {this.props.cart.coupon_code ? (
+                          <div className="my-2 alert alert-warning alert-dismissible fade show">
+                            <p>
+                              Coupon
+                              <span>
+                                {" "}
+                                <strong>
+                                  {" "}
+                                  {this.props.cart.coupon_code}{" "}
+                                </strong>{" "}
+                              </span>{" "}
+                              applied.
+                            </p>
+                            <button
+                              type="button"
+                              class="close"
+                              onClick={this.deleteCoupon}
+                              aria-label="Close"
+                            >
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                        ) : null}
+                        {this.props.cart.coupon_validation_amount === 0 ? (
+                          <>
+                            {!this.state.couponForm && (
+                              <div className="d-flex align-items-center justify-content-between  text-center pt-2 pb-2">
                                 <h6>
                                   <span className="pr-2">
                                     {" "}
@@ -1565,45 +1600,45 @@ class CheckOut extends Component {
                                   Apply
                                 </Button>
                               </div>
-                            </div>
-                          )}
-                          {this.state.couponForm && (
-                            <div className="summary_coupon_code">
-                              {/* <h6>Enter Coupon Code</h6> */}
-                              <div>
-                                <div className="summary_coupon_button_wrapper">
-                                  <Form
-                                    onSubmit={this.validate_coupon_function}
-                                  >
-                                    <Form.Row>
-                                      <Form.Group
-                                        as={Col}
-                                        md={8}
-                                        controlId="formBasicEmail"
-                                      >
-                                        <Form.Control
-                                          onChange={this.couponcode_handler}
-                                          name="coupon_code_value"
-                                          type="text"
-                                          placeholder="Coupon Code *"
-                                        />
-                                      </Form.Group>
-                                      <Col>
-                                        <Button
-                                          type="submit"
-                                          className="summary_coupon_button"
+                            )}
+                            {this.state.couponForm && (
+                              <div className="summary_coupon_code">
+                                {/* <h6>Enter Coupon Code</h6> */}
+                                <div>
+                                  <div className="summary_coupon_button_wrapper pt-2">
+                                    <Form
+                                      onSubmit={this.validate_coupon_function}
+                                    >
+                                      <Form.Row>
+                                        <Form.Group
+                                          as={Col}
+                                          md={8}
+                                          controlId="formBasicEmail"
                                         >
-                                          Apply
-                                        </Button>
-                                      </Col>
-                                    </Form.Row>
-                                  </Form>
+                                          <Form.Control
+                                            onChange={this.couponcode_handler}
+                                            name="coupon_code_value"
+                                            type="text"
+                                            placeholder="Coupon Code *"
+                                          />
+                                        </Form.Group>
+                                        <Col>
+                                          <Button
+                                            type="submit"
+                                            className="summary_coupon_button"
+                                          >
+                                            Apply
+                                          </Button>
+                                        </Col>
+                                      </Form.Row>
+                                    </Form>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          )}
-                        </>
-                      ) : null}
+                            )}
+                          </>
+                        ) : null}
+                      </div>
 
                       <div className="summary_amount">
                         <div>

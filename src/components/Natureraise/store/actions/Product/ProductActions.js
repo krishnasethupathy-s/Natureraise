@@ -100,6 +100,7 @@ export const getCategory = () => {
         "Pumps and Controllers",
         "Solar Lighting",
         "UPS and Batteries",
+        "AC and Inverter",
       ];
       const sortedCategory = responseJsonData.sort(
         (a, b) =>
@@ -133,12 +134,19 @@ export const getCategory = () => {
 
 const getCategoryProducts = async (category) => {
   const categoryProducts = category.map((c) =>
-    getItemListBySearchValue1(c.id, "1", "5", c.item_category_name)
+    getItemListBySearchValue1(
+      c.id,
+      "1",
+      "5",
+      c.item_category_name,
+      c.image_address
+    )
       .then((res) => {
         const data = res.data.getItemListByCategory;
 
         return {
           category_name: c.item_category_name,
+          ad_image: c.image_address,
           id: c.id,
           data,
         };
@@ -153,7 +161,8 @@ export const getItemListBySearchValue1 = async (
   id,
   page_number,
   data_limit,
-  category_name
+  category_name,
+  image
 ) => {
   const item_name = "";
   const item_category_id = id;
@@ -734,6 +743,10 @@ export const getItemListByMasterId = (id, pin) => {
         if (result.data.getItemListByMasterId.length) {
           dispatch({
             type: "PRODUCT_MASTER_LIST",
+            product_master_list: [],
+          });
+          dispatch({
+            type: "PRODUCT_MASTER_LIST",
             product_master_list: result.data.getItemListByMasterId,
           });
           dispatch({
@@ -945,6 +958,7 @@ export const validateCouponCode = (order_amount, coupon_code_value) => {
           dispatch({
             type: "COUPON_VALIDATION",
             coupon_amount,
+            coupon_code_value,
           });
           dispatch({
             type: "SUCCESS_MESSAGE",
