@@ -35,11 +35,11 @@ const ProductSection = ({
           {adPlacement && (
             <Col md={3} xs={12} xl={2}>
               <div className="brand-slider-offer">
-                <img
-                  src={images.brand_images}
-                  alt="natureraise"
-                  className="img-fluid"
-                />
+                {/* <Link
+                  to={`/Products/${id}?range=100&range=1000000&search=&sort=1`}
+                > */}
+                <img src={images} alt="natureraise" className="img-fluid" />
+                {/* </Link> */}
               </div>
             </Col>
           )}
@@ -71,11 +71,11 @@ const ProductSection = ({
           {!adPlacement && (
             <Col md={3} xs={12} xl={2}>
               <div className="brand-slider-offer">
-                <img
-                  src={images.brand_images}
-                  alt="natureraise"
-                  className="img-fluid"
-                />
+                {/* <Link
+                  to={`/Products/${id}?range=100&range=1000000&search=&sort=1`}
+                > */}
+                <img src={images} alt="natureraise" className="img-fluid" />
+                {/* </Link> */}
               </div>
             </Col>
           )}

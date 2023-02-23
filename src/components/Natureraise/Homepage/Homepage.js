@@ -151,6 +151,7 @@ class HomePage extends Component {
             slidesToShow: 1,
             slidesToScroll: 1,
             // infinite: true,
+            rows: 5,
           },
         },
       ],
@@ -299,13 +300,13 @@ class HomePage extends Component {
           </section>
                     ) */}
         {this.props?.category_products.map(
-          ({ id, data: values, category_name }, idx) => {
+          ({ id, data: values, category_name, ad_image }, idx) => {
             return values.length ? (
               <ProductSection
                 key={id}
                 title={category_name}
                 settings={settings}
-                images={images}
+                images={ad_image}
                 data={values}
                 id={values[0]?.item_category_id}
                 adPlacement={Boolean((idx + 1) % 2 === 0)}
@@ -456,11 +457,13 @@ class HomePage extends Component {
               <Row>
                 <Col md={3} xs={12} xl={2}>
                   <div className="brand-slider-offer">
-                    <img
-                      src="https://www.solarclue.com/image/catalog/Sub-Banner/square-banner/Solar-Inverter.png"
-                      alt="natureraise"
-                      className="img-fluid"
-                    />
+                    {!!this.props.category_products.length && (
+                      <img
+                        src={this.props.category_products[0].ad_image}
+                        alt="natureraise"
+                        className="img-fluid"
+                      />
+                    )}
                   </div>
                 </Col>
                 <Col md={9} xs={12} xl={10}>
