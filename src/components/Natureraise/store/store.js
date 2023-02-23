@@ -32,13 +32,53 @@ const migrations = {
       },
     };
   },
+  2: (state) => {
+    return {
+      ...state,
+      ProductActions: {
+        ...state.ProductActions,
+        coupons: [],
+        category_products: [],
+        category_data_list: [],
+      },
+    };
+  },
+  3: (state) => {
+    return {
+      ...state,
+      ProductActions: {
+        ...state.ProductActions,
+        category_products: [],
+        category_data_list: [],
+      },
+    };
+  },
+
+  4: (state) => {
+    return {
+      ...state,
+      ProductActions: {
+        ...state.ProductActions,
+        category_products: [],
+        category_data_list: [],
+        cart: {
+          items: [],
+          save_amount: 0,
+          order_amount: 0,
+          mrp_amount: 0,
+          coupon_validation_amount: 0,
+          coupon_code: null,
+        },
+      },
+    };
+  },
 };
 
 const persistConfig = {
   key: "root",
   storage,
   blacklist: ["UserActions"],
-  version: 2,
+  version: 4,
   stateReconciler: autoMergeLevel2,
   migrate: createMigrate(migrations, { debug: false }),
 };
