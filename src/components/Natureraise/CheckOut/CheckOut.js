@@ -935,7 +935,12 @@ class CheckOut extends Component {
                                         className="checkout_title_wrapper"
                                       >
                                         <div className="checkout_title">
-                                          <h6>{item.item_name}</h6>
+                                          <Link
+                                            to={`ProductDescription/${item.id}`}
+                                            className="text-dark"
+                                          >
+                                            <h6>{item.item_name}</h6>
+                                          </Link>
 
                                           {item.retail_price ===
                                           item.selling_price ? (
