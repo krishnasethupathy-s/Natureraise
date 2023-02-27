@@ -494,10 +494,13 @@ export default (state = initialState, action) => {
     }
     case COUPON_VALIDATION: {
       const { coupon_amount, coupon_code_value } = action;
-      let new_order_amount = +state.cart.order_amount - +coupon_amount;
+      let new_order_amount = 0;
+      if (coupon_amount !== 0) {
+        new_order_amount = +state.cart.order_amount - +coupon_amount;
+      }
       if (coupon_amount === 0) {
         state.cart.items.forEach((item) => {
-          new_order_amount = +item.total_amount * 1;
+          new_order_amount += +item.total_amount * 1;
         });
       }
       return {
