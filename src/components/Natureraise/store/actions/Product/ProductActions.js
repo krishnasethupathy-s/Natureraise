@@ -369,15 +369,18 @@ export const getItemSearch = (
   filter_values,
   price_values,
   sort_by,
-  reset = false
+  reset = false,
+  parent_id = ""
 ) => {
   return async (dispatch) => {
     const item_sub_category_id = id;
+    const item_category_id = parent_id;
     const Authorization = Config.getRequestToken();
     const query = gql`
       query getItemSearch(
         $Authorization: String
         $item_sub_category_id: String
+        $item_category_id: String
         $page_number: String
         $data_limit: String
         $search_values: String
@@ -388,6 +391,7 @@ export const getItemSearch = (
         getItemSearch(
           Authorization: $Authorization
           item_sub_category_id: $item_sub_category_id
+          item_category_id: $item_category_id
           page_number: $page_number
           data_limit: $data_limit
           search_values: $search_values
@@ -437,6 +441,7 @@ export const getItemSearch = (
         variables: {
           Authorization,
           item_sub_category_id,
+          item_category_id,
           page_number,
           data_limit,
           search_values,

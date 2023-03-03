@@ -86,6 +86,12 @@ class ProductList extends Component {
     this.Authorization = localStorage.getItem("Authorization");
   }
 
+  isParentPath = () => {
+    const { pathname } = this.props.location;
+    const isParent = pathname.split("/").includes("p");
+    return isParent;
+  };
+
   componentDidMount() {
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     this.props.dispatch(ProductActions.empty_message());
@@ -128,18 +134,35 @@ class ProductList extends Component {
       });
 
       this.props.dispatch({ type: "RESETITEMLISTBYSUBCATEGORY" });
-      this.props.dispatch(
-        ProductActions.getItemSearch(
-          productdata_id ? productdata_id : "",
-          "" + page_number,
-          data_limit,
-          this.query.search ?? item_name,
-          filters, //filter_values
-          slider_range, // price_values
-          "" + sort, // sort_by
-          true
-        )
-      );
+      if (this.isParentPath()) {
+        this.props.dispatch(
+          ProductActions.getItemSearch(
+            "",
+            "" + page_number,
+            data_limit,
+            this.query.search ?? item_name,
+            filters, //filter_values
+            slider_range, // price_values
+            "" + sort, // sort_by
+            true,
+            productdata_id
+          )
+        );
+      } else {
+        this.props.dispatch(
+          ProductActions.getItemSearch(
+            productdata_id ? productdata_id : "",
+            "" + page_number,
+            data_limit,
+            this.query.search ?? item_name,
+            filters, //filter_values
+            slider_range, // price_values
+            "" + sort, // sort_by
+            true,
+            ""
+          )
+        );
+      }
     }
   }
   getSnapshotBeforeUpdate(prevProps, prevState) {
@@ -194,14 +217,19 @@ class ProductList extends Component {
 
       this.props.dispatch(
         ProductActions.getItemSearch(
-          productdata_id ? productdata_id : "",
+          this.isParentPath()
+            ? ""
+            : this.state.categories_id
+            ? this.state.categories_id
+            : "",
           "" + page_number,
           data_limit,
           this.query.search === "" ? item_name : this.query.search,
           "",
           slider_range,
           "" + sort,
-          true
+          true,
+          this.isParentPath() ? this.state.categories_id : ""
         )
       );
     }
@@ -221,14 +249,19 @@ class ProductList extends Component {
       this.props.dispatch({ type: "IS_LOADING", is_loading: true });
       this.props.dispatch(
         ProductActions.getItemSearch(
-          categories_id ? categories_id : "",
+          this.isParentPath()
+            ? ""
+            : this.state.categories_id
+            ? this.state.categories_id
+            : "",
           "1",
           data_limit,
           query?.search || "",
           filters,
           slider_range,
           "" + sort,
-          true
+          true,
+          this.isParentPath() ? this.state.categories_id : ""
         )
       );
       this.setState({ page_number: 1, item_name: query?.search });
@@ -329,6 +362,14 @@ class ProductList extends Component {
     console.log(this.state.slider_range);
     console.log("filters", this.state.filters);
 
+    console.log(this.props.params);
+    console.log(this.props.location);
+    let { pathname } = this.props.location;
+
+    let stringArray = pathname.split("/");
+    let path = stringArray.splice(0, stringArray.length - 1).join("/");
+    console.log(path);
+
     const query = qs.stringify({
       range: this.state.slider_range,
       sort: this.state.sort,
@@ -339,7 +380,7 @@ class ProductList extends Component {
 
     if (this.state.categories_id) {
       this.props.history.push({
-        pathname: `/Products/${this.state.categories_id}`,
+        pathname: `${path}/${this.state.categories_id}`,
         search: "?" + query,
       });
     } else {
@@ -361,14 +402,19 @@ class ProductList extends Component {
 
     this.props.dispatch(
       ProductActions.getItemSearch(
-        this.state.categories_id ? this.state.categories_id : "",
+        this.isParentPath()
+          ? ""
+          : this.state.categories_id
+          ? this.state.categories_id
+          : "",
         this.state.page_number + 1 + "",
         this.state.data_limit,
         this.state.item_name,
         this.state.filters,
         this.state.slider_range,
         "" + this.state.sort,
-        false
+        false,
+        this.isParentPath() ? this.state.categories_id : ""
       )
     );
     this.setState((prev) => ({ page_number: prev.page_number + 1 }));
@@ -420,7 +466,7 @@ class ProductList extends Component {
               <Row>
                 <Col xs={{ order: 1 }} md={{ span: 3, order: 1 }} xl={3}>
                   <div className="product_list_card sticky-top">
-                    <div className="product_search_wrap">
+                    {/* <div className="product_search_wrap">
                       <Form onSubmit={this.handleSearch}>
                         <InputGroup>
                           <Form.Control
@@ -441,7 +487,7 @@ class ProductList extends Component {
                           </InputGroup.Append>
                         </InputGroup>
                       </Form>
-                    </div>
+                    </div> */}
                     <div className=" common_divison_padding">
                       <div className="product_title_parent">
                         <h3 className="product_titles">Price Range </h3>

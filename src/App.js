@@ -196,6 +196,13 @@ function App() {
 
         <Route
           exact
+          path="/Products/p/:id"
+          name="Parent ProductList Page"
+          render={(props) => <ProductList {...props} />}
+        />
+
+        <Route
+          exact
           path="/Products/:id"
           name="ProductList Page"
           render={(props) => <ProductList {...props} />}

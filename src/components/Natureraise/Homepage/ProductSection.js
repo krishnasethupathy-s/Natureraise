@@ -22,12 +22,12 @@ const ProductSection = ({
           <Col md={12}>
             <div className="our-collection-heading-wrap">
               <h6>{title}</h6>
-              {/* <Link
-                to={`/Products/${id}?range=100&range=100000&search=&sort=1`}
+              <Link
+                to={`/Products/p/${id}?range=100&range=1000000&search=&sort=1`}
                 className="text-dark"
               >
                 <h6>Show More</h6>
-              </Link> */}
+              </Link>
             </div>
           </Col>
         </Row>
@@ -35,11 +35,11 @@ const ProductSection = ({
           {adPlacement && (
             <Col md={3} xs={12} xl={2}>
               <div className="brand-slider-offer">
-                {/* <Link
-                  to={`/Products/${id}?range=100&range=1000000&search=&sort=1`}
-                > */}
-                <img src={images} alt="natureraise" className="img-fluid" />
-                {/* </Link> */}
+                <Link
+                  to={`/Products/p/${id}?range=100&range=1000000&search=&sort=1`}
+                >
+                  <img src={images} alt="natureraise" className="img-fluid" />
+                </Link>
               </div>
             </Col>
           )}
@@ -71,11 +71,11 @@ const ProductSection = ({
           {!adPlacement && (
             <Col md={3} xs={12} xl={2}>
               <div className="brand-slider-offer">
-                {/* <Link
-                  to={`/Products/${id}?range=100&range=1000000&search=&sort=1`}
-                > */}
-                <img src={images} alt="natureraise" className="img-fluid" />
-                {/* </Link> */}
+                <Link
+                  to={`/Products/p/${id}?range=100&range=1000000&search=&sort=1`}
+                >
+                  <img src={images} alt="natureraise" className="img-fluid" />
+                </Link>
               </div>
             </Col>
           )}
