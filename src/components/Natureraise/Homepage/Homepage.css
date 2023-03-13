@@ -248,7 +248,7 @@ a:hover {
 .our-collection-heading-wrap {
   display: flex;
   justify-content: space-between;
-  padding-bottom: 20px;
+  padding-bottom: 5px;
   color: #000;
 }
 
@@ -307,7 +307,7 @@ a:hover {
 
 @media (max-width: 776px) {
   .product-card-mobile {
-    padding: 10px;
+    padding: 5px 5px 10px 5px;
   }
 }
 @media (min-width: 1440px) {
