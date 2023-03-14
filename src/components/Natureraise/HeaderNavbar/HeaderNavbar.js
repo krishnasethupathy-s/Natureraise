@@ -66,9 +66,10 @@ class HeaderNavbar extends Component {
     this.props.history.push("/");
   };
 
-  product_navigate = (id) => {
-    localStorage.setItem("categories_id", id);
-    this.props.history.push(`/Products/${id}`);
+  product_navigate = () => {
+    // localStorage.setItem("categories_id", id);
+    // this.props.history.push(`/Products/${id}`);
+    if (this.state.search) this.setState({ search: "" });
   };
 
   handle_to_cart_navigation = () => {
@@ -242,9 +243,9 @@ class HeaderNavbar extends Component {
                         return (
                           <NavDropdown.Item
                             as={Link}
-                            // onClick={() => {
-                            //   this.product_navigate(x.id);
-                            // }}
+                            onClick={() => {
+                              this.product_navigate();
+                            }}
                             to={`/Products/${x.id}?range=100&range=1000000&search=&sort=1`}
                             key={x.id}
                           >

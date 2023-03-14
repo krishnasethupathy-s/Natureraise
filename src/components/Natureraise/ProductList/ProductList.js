@@ -241,7 +241,7 @@ class ProductList extends Component {
     ) {
       this.addQueryParam();
     }
-
+    console.log(this.props.location.search, prevProps.location.search);
     if (this.props.location.search !== prevProps.location.search) {
       console.log(this.props.location, prevProps.location);
       this.props.dispatch(ProductActions.empty_message());
@@ -369,11 +369,12 @@ class ProductList extends Component {
     let stringArray = pathname.split("/");
     let path = stringArray.splice(0, stringArray.length - 1).join("/");
     console.log(path);
+    const q = qs.parse(this.props.location.search);
 
     const query = qs.stringify({
       range: this.state.slider_range,
       sort: this.state.sort,
-      search: this.query.search ? this.query.search : this.state.item_name,
+      search: q.search ? q.search : "",
       ...this.state.filters,
     });
     console.log(query);
