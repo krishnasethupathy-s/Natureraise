@@ -916,7 +916,14 @@ class CheckOut extends Component {
                                 <Row>
                                   <Col md={12}>
                                     <Row className="checkout_product_wrap">
-                                      <Col md={2} xs={4}>
+                                      <Col
+                                        md={2}
+                                        xs={3}
+                                        style={{
+                                          paddingLeft: "2px",
+                                          paddingRight: "2px ",
+                                        }}
+                                      >
                                         <img
                                           src={item.image_address}
                                           alt="natureraise"
@@ -931,8 +938,12 @@ class CheckOut extends Component {
 
                                       <Col
                                         md={4}
-                                        xs={8}
+                                        xs={9}
                                         className="checkout_title_wrapper"
+                                        style={{
+                                          paddingLeft: "5px",
+                                          paddingRight: "5px ",
+                                        }}
                                       >
                                         <div className="checkout_title">
                                           <Link
@@ -982,8 +993,13 @@ class CheckOut extends Component {
                                             {!!item.item_size && (
                                               <Col
                                                 md={6}
-                                                xs={8}
+                                                xs={6}
                                                 className="checkout_title_wrapper"
+                                                style={{
+                                                  paddingLeft: "2px",
+                                                  paddingRight: "2px ",
+                                                  paddingTop: "4px ",
+                                                }}
                                               >
                                                 <div className="product_size_wrapper">
                                                   <div className="product_size_wrapper_inner">
@@ -1001,8 +1017,13 @@ class CheckOut extends Component {
                                             {!!item.item_color && (
                                               <Col
                                                 md={6}
-                                                xs={8}
+                                                xs={6}
                                                 className="checkout_title_wrapper"
+                                                style={{
+                                                  paddingLeft: "2px",
+                                                  paddingRight: "2px ",
+                                                  paddingTop: "4px ",
+                                                }}
                                               >
                                                 <div className="product_color_wrapper">
                                                   <div className="product_color_wrapper_inner">
