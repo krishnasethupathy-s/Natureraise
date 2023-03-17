@@ -361,6 +361,11 @@ export const getHomePageProductList = () => (dispatch) => {
   return true;
 };
 
+const resetController = (controller) => ({
+  type: "RESETCONTROLLER",
+  controller,
+});
+let current_id = "";
 export const getItemSearch = (
   id,
   page_number,
@@ -372,9 +377,22 @@ export const getItemSearch = (
   reset = false,
   parent_id = ""
 ) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     const item_sub_category_id = id;
     const item_category_id = parent_id;
+    current_id = id ? id : parent_id ? parent_id : "";
+    const { controller } = getState().ProductActions;
+    let newController = null;
+    if (reset) {
+      console.log("Killing");
+      if (Object.keys(controller).length) controller.abort();
+      newController = new window.AbortController();
+      dispatch(resetController(newController));
+
+      dispatch({ type: "RESETITEMLISTBYSUBCATEGORY" });
+    }
+
+    console.log(newController);
     const Authorization = Config.getRequestToken();
     const query = gql`
       query getItemSearch(
@@ -449,6 +467,11 @@ export const getItemSearch = (
           price_values,
           sort_by,
         },
+        context: {
+          fetchOptions: {
+            signal: newController ? newController.signal : controller.signal,
+          },
+        },
       })
       .then((result) => {
         console.log(result);
@@ -459,14 +482,19 @@ export const getItemSearch = (
             type: "GETITEMLISTBYSUBCATEGORY",
             get_item_list: [],
             reset: true,
+            current_id: "",
           });
           throw new Error("Something went wrong, Please try again!.");
         }
-
+        if (current_id !== id ? id : parent_id ? parent_id : "") {
+          dispatch({ type: "RESETITEMLISTBYSUBCATEGORY" });
+          return;
+        }
         dispatch({
           type: "GETITEMLISTBYSUBCATEGORY",
           get_item_list: result.data.getItemSearch,
           reset,
+          current_id,
         });
         dispatch({ type: "IS_LOADING", is_loading: false });
       })

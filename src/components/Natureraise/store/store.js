@@ -20,6 +20,8 @@ const rootReducer = redux.combineReducers({
   OrderReducer: OrderReducer,
 });
 
+const controller = new window.AbortController();
+
 const migrations = {
   1: (state) => {
     return {
@@ -72,13 +74,22 @@ const migrations = {
       },
     };
   },
+  5: (state) => {
+    return {
+      ...state,
+      ProductActions: {
+        ...state.ProductActions,
+        controller: controller,
+      },
+    };
+  },
 };
 
 const persistConfig = {
   key: "root",
   storage,
   blacklist: ["UserActions"],
-  version: 4,
+  version: 5,
   stateReconciler: autoMergeLevel2,
   migrate: createMigrate(migrations, { debug: false }),
 };

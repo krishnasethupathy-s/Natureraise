@@ -31,6 +31,7 @@ import {
   GET_COUPON_LIST,
 } from "../../actions/Product/ProductActions";
 
+const controller = new window.AbortController();
 const initialState = {
   success_message: "",
   error_message: "",
@@ -69,6 +70,7 @@ const initialState = {
   style2: [],
   category_products: [],
   coupons: [],
+  controller: controller,
 };
 export default (state = initialState, action) => {
   console.log(action);
@@ -188,6 +190,14 @@ export default (state = initialState, action) => {
         ...state,
         recentView: [],
       };
+
+    case "RESETCONTROLLER": {
+      return {
+        ...state,
+        controller: action.controller,
+      };
+    }
+
     case GETITEMLISTBYSUBCATEGORY: {
       if (action.reset) {
         return {
@@ -206,7 +216,6 @@ export default (state = initialState, action) => {
 
       return {
         ...state,
-
         product_list: [...state.product_list, ...action.get_item_list],
       };
     }

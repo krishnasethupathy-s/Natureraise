@@ -732,7 +732,7 @@ class ProductList extends Component {
                             }
                             // hasMore={this.props.hasMore}
                             style={{ overflow: "hidden" }}
-                            scrollThreshold={0.5}
+                            scrollThreshold={0.8}
                             loader={
                               <div
                                 style={{
