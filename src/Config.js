@@ -4,7 +4,7 @@ import { gql } from "@apollo/client";
 
 const getRequestToken = () => {
   //var now = moment(new Date()).format("MMM DD YYYY h:mm");
-  var now = moment(new Date()).format("MMM DD YYYY");
+  var now = moment(new Date()).format("MMM DD YYYY hh");
   var sha1 = require("sha1");
   sha1 = sha1(now + "vimkes");
   return sha1;
