@@ -366,7 +366,101 @@ const resetController = (controller) => ({
   controller,
 });
 let current_id = "";
+
 export const getItemSearch = (
+  id,
+  page_number,
+  data_limit,
+  search_values,
+  filter_values,
+  price_values,
+  sort_by,
+  reset = false,
+  parent_id = ""
+) => {
+  return async (dispatch, getState) => {
+    const item_sub_category_id = id;
+    const item_category_id = parent_id;
+    current_id = id ? id : parent_id ? parent_id : "";
+    const { controller } = getState().ProductActions;
+    let newController = null;
+    if (reset) {
+      console.log("Killing");
+      if (Object.keys(controller).length) controller.abort();
+      newController = new window.AbortController();
+      dispatch(resetController(newController));
+
+      dispatch({ type: "RESETITEMLISTBYSUBCATEGORY" });
+    }
+
+    console.log(newController);
+    const Authorization = Config.getRequestToken();
+
+    fetch(Config.BaseUrl + "ItemSearch", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      },
+     body:JSON.stringify({
+      Authorization,
+      item_sub_category_id,
+      item_category_id,
+      page_number,
+      data_limit,
+      search_values,
+      filter_values,
+      price_values,
+      sort_by,
+     })
+    })
+      .then((res) =>{
+        if(res.ok){
+
+          return res.json()
+        }
+        if(res.status === 500){
+          throw new Error(`${res.status}-internal server error`)
+        }
+      })
+      .then((result) => {
+        console.log(result);
+        const data = result;
+     
+        if (data === null) {
+          dispatch({
+            type: "GETITEMLISTBYSUBCATEGORY",
+            get_item_list: [],
+            reset: true,
+            current_id: "",
+          });
+          throw new Error("Something went wrong, Please try again!.");
+        }
+        if (current_id !== id ? id : parent_id ? parent_id : "") {
+          dispatch({ type: "RESETITEMLISTBYSUBCATEGORY" });
+          return;
+        }
+        dispatch({
+          type: "GETITEMLISTBYSUBCATEGORY",
+          get_item_list: result,
+          reset,
+          current_id,
+        });
+        dispatch({ type: "IS_LOADING", is_loading: false });
+      })
+      .catch((error) => {
+        console.log(error);
+        dispatch({ type: "IS_LOADING", is_loading: false });
+        dispatch({ type: "SUCCESS_MESSAGE", success_title: "catch error" });
+        dispatch({
+          type: "ERROR_MESSAGE",
+          error_title: error.message ?? "something went wrong",
+        });
+      });
+    return true;
+  };
+};
+
+export const getItemSearch1 = (
   id,
   page_number,
   data_limit,

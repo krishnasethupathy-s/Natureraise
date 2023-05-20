@@ -207,7 +207,7 @@ export default (state = initialState, action) => {
         };
       }
 
-      if (action.get_item_list.length === 0) {
+      if (action.get_item_list?.length === 0) {
         return {
           ...state,
           hasMore: false,
