@@ -542,35 +542,12 @@ class ProductList extends Component {
                     {!!this.props.filters.length && (
                       <div className="product_categories common_divison_padding">
                         {this.props.filters.map((data, index) =>
-                          index === 0 ? (
-                            <React.Fragment key={data.id}>
-                              <div className="product_title_parent">
-                                <h3 className="product_titles">
-                                  {data.filter_heading}{" "}
-                                </h3>
-                              </div>
-                              <Filters
-                                values={
-                                  typeof data?.filter_value === "string"
-                                    ? JSON.parse(data?.filter_value)
-                                    : data?.filter_value
-                                }
-                                filterName={data.filter_heading.toLowerCase()}
-                                handlerFilters={this.handleFilters}
-                                persistSelected={
-                                  this.state.selectedValues[
-                                    data.filter_heading.toLowerCase()
-                                  ]
-                                }
-                                resetPersistValues={this.resetSelectedValues}
-                              />
-                            </React.Fragment>
-                          ) : (
+                         (
                             <FilterAccordion
                               title={data.filter_heading}
-                              eventKey={index}
+                              eventKey={data.id}
                               key={data.id}
-                              defaultActiveKey={index}
+                              defaultActiveKey={data.id}
                             >
                               <Filters
                                 values={
