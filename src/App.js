@@ -31,7 +31,6 @@ import BlogList from "./components/BlogList/BlogList";
 import BlogDetails from "./components/BlogDetails/BlogDetails";
 import ProductList from "./components/Natureraise/ProductList/ProductList";
 import ProductDescription from "./components/Natureraise/ProductDescription/ProductDescription";
-import ProductDescription1 from "./components/Natureraise/ProductDescription/ProductDescription1";
 
 import Service from "./components/Natureraise/Service/Service";
 
@@ -191,7 +190,7 @@ function App() {
           exact
           path="/ProductDescription/:id"
           name="ProductDescription Page"
-          render={(props) => <ProductDescription1 {...props} />}
+          render={(props) => <ProductDescription {...props} />}
         />
 
         <Route

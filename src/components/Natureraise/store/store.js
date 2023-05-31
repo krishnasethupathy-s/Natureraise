@@ -83,13 +83,22 @@ const migrations = {
       },
     };
   },
+  6: (state) => {
+    return {
+      ...state,
+      ProductActions: {
+        ...state.ProductActions,
+        relatedProduct: [],
+      },
+    };
+  },
 };
 
 const persistConfig = {
   key: "root",
   storage,
   blacklist: ["UserActions"],
-  version: 5,
+  version: 6,
   stateReconciler: autoMergeLevel2,
   migrate: createMigrate(migrations, { debug: false }),
 };

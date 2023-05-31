@@ -71,7 +71,9 @@ class ProductDescription1 extends Component {
     this.props.dispatch(
       ProductActions.getItemListByMasterId(this.productId, "")
     );
-    this.props.dispatch(ProductActions.getCouponCodeList());
+    this.props.dispatch(
+      ProductActions.getCouponCodeList(this.props.match.params.id)
+    );
 
     console.log(this.props.product_master_list);
   };
@@ -166,7 +168,7 @@ class ProductDescription1 extends Component {
         )
       );
       this.props.dispatch(
-        ProductActions.getItemSearch(
+        ProductActions.getRelatedProduct(
           this.props.product_master_list[0].item_sub_category_id,
           "1",
           "12",
@@ -757,10 +759,13 @@ class ProductDescription1 extends Component {
                                       ₹{coupon.max_cashback_amount}
                                     </strong>
                                   </p>
-                                  <p>
-                                    Min order amount ₹
-                                    {coupon.min_purchase_amount}
-                                  </p>
+                                  {coupon.min_purchase_amount ===
+                                  "0.00" ? null : (
+                                    <p>
+                                      Min order amount ₹
+                                      {coupon.min_purchase_amount}
+                                    </p>
+                                  )}
                                 </Col>
                               </Col>
                             </Row>
@@ -1148,7 +1153,7 @@ class ProductDescription1 extends Component {
 const mapStateToProps = (state) => {
   return {
     product_new_data: state.ProductActions.product_data || [],
-    product_list_data: state.ProductActions.product_list || [],
+    product_list_data: state.ProductActions.relatedProduct || [],
     product_master_list: state.ProductActions.product_master_list || [],
     products_image_list: state.ProductActions.products_image_list || [],
     product_descriptions_list:

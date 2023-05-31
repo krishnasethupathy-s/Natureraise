@@ -66,6 +66,7 @@ const initialState = {
   },
   reviews: [],
   recentView: [],
+  relatedProduct: [],
   style1: [],
   style2: [],
   category_products: [],
@@ -144,6 +145,12 @@ export default (state = initialState, action) => {
         category_products: data,
       };
     }
+
+    case "GETRELATEDPRODUCT":
+      return {
+        ...state,
+        relatedProduct: action.get_item_list,
+      };
 
     case GET_HOME_PAGE_PRODUCTS: {
       const { data } = action;
