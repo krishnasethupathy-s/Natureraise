@@ -1129,7 +1129,7 @@ export const getProductDescriptionList1 = (product_id) => {
 export const validateCouponCode = (order_amount, coupon_code_value) => {
   return async (dispatch) => {
     let coupon_code_for = "1";
-    const Authorization = localStorage.getItem("Authorization");
+    const Authorization = Config.getRequestToken();
     const mutation = `mutation validateCouponCode($coupon_code_for: String, $order_amount: String, $coupon_code_value: String, $Authorization: String) {
       validateCouponCode(coupon_code_for:$coupon_code_for, order_amount:$order_amount, coupon_code_value:$coupon_code_value, Authorization:$Authorization){
           message,coupon_amount,max_cashback_amount,min_purchase_amount

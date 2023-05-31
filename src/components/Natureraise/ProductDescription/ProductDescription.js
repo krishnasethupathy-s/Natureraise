@@ -760,7 +760,7 @@ class ProductDescription1 extends Component {
                                     </strong>
                                   </p>
                                   {coupon.min_purchase_amount ===
-                                  "0.00" ? null : (
+                                  "0.00"? null : (
                                     <p>
                                       Min order amount ₹
                                       {coupon.min_purchase_amount}
@@ -790,10 +790,12 @@ class ProductDescription1 extends Component {
                                       ₹{coupon.max_cashback_amount}
                                     </strong>
                                   </p>
+                                  {coupon.min_purchase_amount ===
+                                  "0.00"? null : (
                                   <p>
                                     Min order amount ₹
                                     {coupon.min_purchase_amount}
-                                  </p>
+                                  </p>)}
                                 </Col>
                               </Col>
                             </Row>
