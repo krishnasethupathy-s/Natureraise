@@ -68,6 +68,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
 }
 .checkout_title_wrapper {
   text-align: center;
@@ -152,7 +153,18 @@
 }
 .summary_amount {
   border-bottom: 1px solid gainsboro;
+  border-top: 1px solid gainsboro;
+  padding-top: 10px;
 }
+
+.coupon {
+  padding-top: 10px;
+}
+
+.coupon h6 {
+  font-size: 14px;
+}
+
 .summary_amount h6 {
   font-size: 14px;
 }
@@ -378,5 +390,61 @@
   }
   .checkout_increment {
     padding-bottom: 10px;
+  }
+
+  .checkout_title_wrapper {
+    justify-content: flex-start;
+    text-align: left;
+    word-wrap: normal;
+  }
+
+  .checkout_title h6 {
+    padding-bottom: 7px;
+    font-size: 12px;
+  }
+
+  .product_amount_wrapper {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .product_amount_wrapper .product_percentage {
+    padding: 6px 6px;
+    font-size: 8px;
+    line-height: 8px;
+    margin-right: 8px;
+    height: 20px;
+  }
+
+  .product_amount_wrapper h6 {
+    font-size: 12px;
+  }
+
+  .product_size_title {
+    font-size: 12px;
+    margin-bottom: 0px;
+    padding-right: 12px;
+  }
+
+  .product_size_wrapper_inner {
+    flex-wrap: nowrap;
+  }
+  .product_size_wrapper_inner h6 {
+    padding: 6px 5px;
+    border: 1px solid #000;
+    margin: 3px;
+    font-size: 8px;
+  }
+
+  .product_color_title {
+    font-size: 12px;
+    margin-bottom: 0px;
+    padding-right: 5px;
+  }
+
+  .product_color_wrapper_box {
+    margin: 3px;
+    height: 15px;
+    width: 15px;
   }
 }

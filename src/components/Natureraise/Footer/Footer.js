@@ -30,7 +30,10 @@ export default class Footer extends Component {
             </Row>
             <Row className="footer_copy_border">
               <div className="footer_copy_writes">
-                <p>Copyright © 2022 NatureRaise. All Rights Reserved</p>
+                <p>
+                  Copyright © 2022 Naturesave by Natureraise. All Rights
+                  Reserved
+                </p>
               </div>
             </Row>
           </Container>

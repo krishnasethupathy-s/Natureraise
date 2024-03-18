@@ -14,7 +14,7 @@ const OrderDetailsCard = ({ products, ...props }) => {
     <div className="order_card_wrap">
       <Link to={`/orderDetails/${props.order_id}`}>
         <Row>
-          <Col md={6}>
+          <Col md={6} sm={12}>
             <div className="order_card_img">
               <img
                 // src="https://www.solarclue.com/image/cache/catalog/Products/Solar%20Water%20Heater/V-Guard/v-guard-solar-water-heater-fpc-systems-nw-500x500-600x600-222x222.png"
@@ -29,15 +29,23 @@ const OrderDetailsCard = ({ products, ...props }) => {
               </div>
             </div>
           </Col>
-          <Col md={2} className="order_card_amount_wrap">
+          <Col md={2} xs={3} className="order_card_amount_wrap">
             <div className="order_card_amount">
               <h6 className="order_card_sub">₹{props.amount}</h6>
             </div>
           </Col>
-          <Col md={4}>
+          <Col md={4} xs={9}>
             <div className="order_card_review_wrap">
               <div>
-                <h6 className="order_review_title">{props.deliverydate}</h6>
+                <h6
+                  className={
+                    props.deleiverystatus === "Cancelled"
+                      ? "order_review_title_c"
+                      : "order_review_title"
+                  }
+                >
+                  {props.deliverydate}
+                </h6>
                 <h6 className="order_review_sub">{props.deleiverystatus}</h6>
               </div>
             </div>

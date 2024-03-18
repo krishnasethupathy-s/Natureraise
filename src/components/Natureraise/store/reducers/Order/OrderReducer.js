@@ -4,11 +4,13 @@ import {
   GET_ORDER_DETAIL_PRODUCTS,
   RESERT_ORDER_DETAIL,
   GET_ORDER_DETAIL_STATUS,
+  GETORDERRETURNREASON,
 } from "../../actions/Order/OrderActions";
 
 const INITIAL_STATE = {
   orders: [],
   hasMore: true,
+  reason: [],
   orderDetail: {
     items: [],
     detail: null,
@@ -102,6 +104,15 @@ export default (state = INITIAL_STATE, action) => {
           ...state.orderDetail,
           status,
         },
+      };
+    }
+
+    case GETORDERRETURNREASON: {
+      const { data } = action;
+
+      return {
+        ...state,
+        reason: data,
       };
     }
 

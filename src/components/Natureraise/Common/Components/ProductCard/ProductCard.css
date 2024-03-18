@@ -110,7 +110,7 @@
 
 @media (max-width: 776px) {
   .product-card-wrap {
-    height: 400px;
+    height: 350px;
   }
   .img-hover-zoom {
     display: flex;
@@ -118,6 +118,23 @@
     align-items: center;
   }
 }
+
+@media (max-width: 576px) {
+  .product-card-wrap {
+    height: 400px;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .product-card-wrap {
+    height: 350px;
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
+  }
+}
+
 /* card */
 
 /* slick-arrow slick-prev */

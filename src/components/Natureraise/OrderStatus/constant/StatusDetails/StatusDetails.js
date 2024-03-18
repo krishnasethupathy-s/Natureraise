@@ -2,10 +2,30 @@ import React from "react";
 import "./StatusDetails.css";
 import { Row, Col } from "react-bootstrap";
 import Stepper from "react-stepper-horizontal";
+import moment from "moment";
 
-const StatusDetails = ({ item, status, openReviewModal }) => {
+const StatusDetails = ({
+  item,
+  status,
+  openReviewModal,
+  openReturnModal,
+  orderDate,
+  returnValidity,
+}) => {
+  const orderDate1 = moment(orderDate, "DD-MM-YYYY").format("MM-DD-YYYY");
+  const returnDate = moment(orderDate, "DD-MM-YYYY")
+    .add(returnValidity, "days")
+    .format("MM-DD-YYYY");
+  // console.log(returnDate, moment(returnDate).isSameOrAfter(moment().format("MM-DD-YYYY")) );
+  // console.log(orderDate1,   moment(orderDate1).isSameOrBefore(moment().format("MM-DD-YYYY")));
+  const isReturnAvaliable =
+    moment(orderDate1).isSameOrBefore(moment().format("MM-DD-YYYY")) &&
+    moment(returnDate).isSameOrAfter(moment().format("MM-DD-YYYY"));
+  // console.log(isReturnAvaliable);
+  // console.log(moment().format("MM-DD-YYYY"));
+
   return (
-    <Row>
+    <Row className="mb-3 border-bottom">
       <Col md={4}>
         <div className="order_track_wrap">
           <img
@@ -31,19 +51,17 @@ const StatusDetails = ({ item, status, openReviewModal }) => {
                 Size: {item.item_size}{" "}
               </h6>
             </div>
-
-            <h6 className="order_subtitle">Qty: {item.cart_list} </h6>
-            <h6 className="order_amount">₹ {item.total_amount}</h6>
           </div>
         </div>
-        <div className="order_return_wrap">
-          <h6 className="order_return_policy">
-            Return policy valid till 30{" "}
-            <span className="order_retrun_sub">Know More</span>
-          </h6>
-        </div>
       </Col>
-      <Col md={5}>
+
+      <Col className="d-flex align-items-center justify-content-center">
+        <h6 className="order_subtitle">Qty: {item.cart_list} </h6>
+      </Col>
+      <Col className="d-flex align-items-center justify-content-center">
+        <h6 className="order_amount">₹ {item.total_amount}</h6>
+      </Col>
+      {/* <Col md={5}>
         <div>
           <div>
             <Stepper
@@ -64,17 +82,45 @@ const StatusDetails = ({ item, status, openReviewModal }) => {
             <p>{status?.status_details}</p>
           </div>
         </div>
-      </Col>
+      </Col> */}
 
       <Col md={3}>
         <div className="order_delivery_wrap">
           <h1 className="order_title">{status?.delivery_time}</h1>
-          <p className="order_sub" onClick={() => openReviewModal(item.id)}>
-            <span>
-              <i className="fa fa-star-o" aria-hidden="true"></i>{" "}
-            </span>
-            RATE AND REVIEW PRODUCT
-          </p>
+          {status?.status === "Delivered" && (
+            <button
+              className="btn order_sub"
+              onClick={() => openReviewModal(item.id)}
+            >
+              <span>
+                <i className="fa fa-star-o" aria-hidden="true"></i>{" "}
+              </span>
+              RATE AND REVIEW PRODUCT
+            </button>
+          )}
+
+          {status?.status === "Delivered" &&
+            isReturnAvaliable &&
+            !!!item?.order_status && (
+              <button
+                className="btn order_sub"
+                onClick={() => openReturnModal(item.id)}
+              >
+                <span>
+                  <i className="fa fa-refresh" aria-hidden="true"></i>{" "}
+                </span>
+                Return Product
+              </button>
+            )}
+          {!!item?.order_status && (
+            <p className=" order_sub_status">
+              {" "}
+              <span>
+                <i className="fa fa-refresh" aria-hidden="true"></i>{" "}
+              </span>
+              {item?.order_status}{" "}
+            </p>
+          )}
           {/* <p className="order_sub">
             <span>
               <i className="fa fa-refresh" aria-hidden="true"></i>{" "}

@@ -28,6 +28,7 @@ import "react-toastify/dist/ReactToastify.css";
 class HeaderNavbar extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       profile_pic: localStorage.getItem("image_address"),
       first_name: localStorage.getItem("first_name"),
@@ -65,9 +66,10 @@ class HeaderNavbar extends Component {
     this.props.history.push("/");
   };
 
-  product_navigate = (id) => {
-    localStorage.setItem("categories_id", id);
-    this.props.history.push(`/Products/${id}`);
+  product_navigate = () => {
+    // localStorage.setItem("categories_id", id);
+    // this.props.history.push(`/Products/${id}`);
+    if (this.state.search) this.setState({ search: "" });
   };
 
   handle_to_cart_navigation = () => {
@@ -87,7 +89,7 @@ class HeaderNavbar extends Component {
       discount: [],
       rating: [],
       sort: 1,
-      range: [100, 100000],
+      range: [100, 1000000],
     });
     this.props.history.push({
       pathname: `/products`,
@@ -98,7 +100,7 @@ class HeaderNavbar extends Component {
   render() {
     return (
       <>
-        <section className="search_inner_navbar">
+        <section className="search_inner_navbar ">
           <Container>
             <Row>
               <Col md={2} className="d-none d-sm-block">
@@ -106,7 +108,7 @@ class HeaderNavbar extends Component {
                   <img src={images.nature_logo} alt="Logo" />
                 </Navbar.Brand>
               </Col>
-              <Col md={6}>
+              <Col md={6} className="mt-3 mt-md-0">
                 <div>
                   <Form onSubmit={this.handleSearch}>
                     <Form.Group controlId="formBasicSearch">
@@ -154,7 +156,7 @@ class HeaderNavbar extends Component {
                           </div>
                           <div></div>
                         </Col>
-                        <Col md={6} xs={6}>
+                        <Col md={8} lg={6} xs={6}>
                           <div>
                             <div>
                               <span>Welcome !</span>
@@ -191,7 +193,7 @@ class HeaderNavbar extends Component {
                             round={true}
                           />
                         </Col>
-                        <Col md={6} xs={6}>
+                        <Col md={8} lg={6} xs={6}>
                           <div>
                             <span>
                               Welcome{" "}
@@ -241,10 +243,10 @@ class HeaderNavbar extends Component {
                         return (
                           <NavDropdown.Item
                             as={Link}
-                            // onClick={() => {
-                            //   this.product_navigate(x.id);
-                            // }}
-                            to={`/Products/${x.id}?range=100&range=100000&search=&sort=1`}
+                            onClick={() => {
+                              this.product_navigate();
+                            }}
+                            to={`/Products/${x.id}?range=100&range=1000000&search=&sort=1`}
                             key={x.id}
                           >
                             {x.item_sub_category_name}

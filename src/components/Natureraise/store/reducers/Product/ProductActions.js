@@ -27,8 +27,11 @@ import {
   ADD_RECENT_VIEW,
   ADD_STYLE1,
   ADD_STYLE2,
+  Add_CATEGORY_PRODUCTS,
+  GET_COUPON_LIST,
 } from "../../actions/Product/ProductActions";
 
+const controller = new window.AbortController();
 const initialState = {
   success_message: "",
   error_message: "",
@@ -53,6 +56,7 @@ const initialState = {
     order_amount: 0,
     mrp_amount: 0,
     coupon_validation_amount: 0,
+    coupon_code: null,
   },
 
   filters: [],
@@ -62,8 +66,12 @@ const initialState = {
   },
   reviews: [],
   recentView: [],
+  relatedProduct: [],
   style1: [],
   style2: [],
+  category_products: [],
+  coupons: [],
+  controller: controller,
 };
 export default (state = initialState, action) => {
   console.log(action);
@@ -130,6 +138,20 @@ export default (state = initialState, action) => {
       };
     }
 
+    case "Add_CATEGORY_PRODUCTS": {
+      const { data } = action.payload;
+      return {
+        ...state,
+        category_products: data,
+      };
+    }
+
+    case "GETRELATEDPRODUCT":
+      return {
+        ...state,
+        relatedProduct: action.get_item_list,
+      };
+
     case GET_HOME_PAGE_PRODUCTS: {
       const { data } = action;
 
@@ -152,6 +174,13 @@ export default (state = initialState, action) => {
 
     case ADD_RECENT_VIEW: {
       const { data } = action;
+
+      if (data.length === 0) {
+        return {
+          ...state,
+        };
+      }
+
       const alreadyExist = state.recentView.some(
         (item) => item.id === data[0].id
       );
@@ -161,6 +190,18 @@ export default (state = initialState, action) => {
       return {
         ...state,
         recentView: [...data, ...state.recentView],
+      };
+    }
+    case "RESET_RECENT_VIEW":
+      return {
+        ...state,
+        recentView: [],
+      };
+
+    case "RESETCONTROLLER": {
+      return {
+        ...state,
+        controller: action.controller,
       };
     }
 
@@ -173,7 +214,7 @@ export default (state = initialState, action) => {
         };
       }
 
-      if (action.get_item_list.length === 0) {
+      if (action.get_item_list?.length === 0) {
         return {
           ...state,
           hasMore: false,
@@ -182,8 +223,15 @@ export default (state = initialState, action) => {
 
       return {
         ...state,
-
         product_list: [...state.product_list, ...action.get_item_list],
+      };
+    }
+
+    case GET_COUPON_LIST: {
+      const { data } = action;
+      return {
+        ...state,
+        coupons: data,
       };
     }
 
@@ -248,10 +296,12 @@ export default (state = initialState, action) => {
           (item) => item.id === product_unique_id
         );
         // console.log(state.product_master_list);
-        // console.log(product_unique_id);
-        // console.log(product_data_1)
-        // var str1 = product_data_1["productImage"];
-        var str1 = state.product_master_list[0]["productImage"];
+        console.log(product_unique_id);
+        console.log(product_data_1);
+        var str1 = product_data_1["productImage"]
+          ? product_data_1["productImage"]
+          : "";
+        // var str1 = state.product_master_list[0]["productImage"];
         console.log(str1);
         if (str1.length > 0) {
           var str2 = str1[0].product_images;
@@ -329,6 +379,8 @@ export default (state = initialState, action) => {
           state.total_amount + cart_products.selling_price * 1;
         let new_save_amount = state.save_amount + cart_products.save_price * 1;
         let mrp_amount = state.mrp_amount + cart_products.retail_price * 1;
+
+        console.log(new_totalamount);
 
         return {
           ...state,
@@ -457,14 +509,23 @@ export default (state = initialState, action) => {
       };
     }
     case COUPON_VALIDATION: {
-      const { coupon_amount } = action;
-      const new_order_amount = +state.cart.order_amount - coupon_amount;
+      const { coupon_amount, coupon_code_value } = action;
+      let new_order_amount = 0;
+      if (coupon_amount !== 0) {
+        new_order_amount = +state.cart.order_amount - +coupon_amount;
+      }
+      if (coupon_amount === 0) {
+        state.cart.items.forEach((item) => {
+          new_order_amount += +item.total_amount * 1;
+        });
+      }
       return {
         ...state,
         cart: {
           ...state.cart,
           coupon_validation_amount: coupon_amount,
           order_amount: new_order_amount,
+          coupon_code: coupon_code_value,
         },
       };
     }
@@ -476,13 +537,17 @@ export default (state = initialState, action) => {
       let new_save_amount = 0;
       let new_mrp_amount = 0;
       data.forEach((item) => {
-        order_amount +=
-          +item.total_amount - +state.cart.coupon_validation_amount;
+        order_amount += +item.total_amount;
 
         new_save_amount +=
           item.save_price === "0.00" ? 0 : +item.save_price * +item.cart_list;
         new_mrp_amount += +item.retail_price * +item.cart_list;
       });
+
+      if (state.cart.coupon_validation_amount) {
+        order_amount -= +state.cart.coupon_validation_amount;
+      }
+
       return {
         ...state,
         cart: {
@@ -515,15 +580,15 @@ export default (state = initialState, action) => {
         items[productIdx].total_amount =
           items[productIdx].special_price === "0.00"
             ? +items[productIdx].selling_price * +items[productIdx].cart_list
-            : items[productIdx].special_price * +items[productIdx].cart_list;
+            : +items[productIdx].special_price * +items[productIdx].cart_list;
         console.log(items[productIdx].total_amount);
 
-        order_amount = +items[productIdx].total_amount * 1;
-        new_save_amount =
-          +state.cart.save_amount + +items[productIdx].save_price * 1;
+        items.forEach((item) => {
+          order_amount += +item.total_amount * 1;
+          new_save_amount += +item.save_price * 1;
 
-        new_mrp_amount =
-          +state.cart.mrp_amount + +items[productIdx].retail_price * 1;
+          new_mrp_amount += +item.retail_price * 1;
+        });
         console.log(order_amount, new_save_amount, new_mrp_amount);
 
         return {
@@ -544,6 +609,29 @@ export default (state = initialState, action) => {
       if (!item) {
         item = state.product_list.find((product) => product.id === productId);
       }
+      if (!item) {
+        item = state.homeProducts.topOffers.find(
+          (product) => product.id === productId
+        );
+      }
+
+      if (!item) {
+        item = state.homeProducts.newComings.find(
+          (product) => product.id === productId
+        );
+      }
+
+      if (!item) {
+        item = state.recentView.find((product) => product.id === productId);
+      }
+
+      if (!item) {
+        item = state.category_products
+          .map((c) => c.data)
+          .flat(1)
+          .find((product) => product.id === productId);
+      }
+
       item.pincode = action.pincode;
       item.cart_list = +item.cart_list + 1;
       item.total_amount =
@@ -583,13 +671,17 @@ export default (state = initialState, action) => {
       let order_amount = 0;
       let new_save_amount = 0;
       let new_mrp_amount = 0;
-      order_amount = +items[productIdx].total_amount * 1;
-      new_save_amount =
-        +state.cart.save_amount + +items[productIdx].save_price * 1;
 
-      new_mrp_amount =
-        +state.cart.mrp_amount + +items[productIdx].retail_price * 1;
-      console.log(order_amount, new_save_amount, new_mrp_amount);
+      items.forEach((item) => {
+        order_amount += +item.total_amount * 1;
+        new_save_amount += +item.save_price * 1;
+
+        new_mrp_amount += +item.retail_price * 1 * +item.cart_list;
+      });
+
+      if (state.cart.coupon_validation_amount) {
+        order_amount -= +state.cart.coupon_validation_amount;
+      }
 
       return {
         ...state,
@@ -619,23 +711,43 @@ export default (state = initialState, action) => {
       let order_amount = 0;
       let new_save_amount = 0;
       let new_mrp_amount = 0;
-      order_amount = +items[productIdx].total_amount * 1;
-      new_save_amount =
-        +state.cart.save_amount - +items[productIdx].save_price * 1;
 
-      new_mrp_amount =
-        +state.cart.mrp_amount - +items[productIdx].retail_price * 1;
-      console.log(order_amount, new_save_amount, new_mrp_amount);
+      items.forEach((item) => {
+        order_amount += +item.total_amount * 1;
+        new_save_amount += +item.save_price * 1;
+
+        new_mrp_amount += +item.retail_price * 1 * +item.cart_list;
+      });
 
       if (
         items[productIdx].cart_list === "0" ||
         items[productIdx].cart_list === 0
       ) {
         items = items.filter((item) => item.id !== id);
-        order_amount -=
-          product.special_price === "0.00"
-            ? product.selling_price
-            : product.special_price;
+        order_amount = 0;
+        new_save_amount = 0;
+        new_mrp_amount = 0;
+        items.forEach((item) => {
+          order_amount += +item.total_amount * 1;
+          new_save_amount += +item.save_price * 1;
+
+          new_mrp_amount += +item.retail_price * 1 * +item.cart_list;
+        });
+      }
+
+      if (order_amount < 0) {
+        order_amount = 0;
+      }
+
+      if (state.cart.coupon_validation_amount) {
+        order_amount -= +state.cart.coupon_validation_amount;
+      }
+
+      if (items.length === 0) {
+        return {
+          ...state,
+          cart: initialState.cart,
+        };
       }
 
       return {
@@ -659,13 +771,23 @@ export default (state = initialState, action) => {
       let order_amount = 0;
       let new_save_amount = 0;
       let new_mrp_amount = 0;
-      order_amount -=
-        product.special_price === "0.00"
-          ? product.selling_price
-          : product.special_price;
-      new_save_amount = +state.cart.save_amount - +product.save_price * 1;
+      items.forEach((item) => {
+        order_amount += +item.total_amount * 1;
+        new_save_amount += +item.save_price * 1;
 
-      new_mrp_amount = +state.cart.mrp_amount - +product.retail_price * 1;
+        new_mrp_amount += +item.retail_price * 1 * +item.cart_list;
+      });
+
+      if (state.cart.coupon_validation_amount) {
+        order_amount -= +state.cart.coupon_validation_amount;
+      }
+
+      if (items.length === 0) {
+        return {
+          ...state,
+          cart: initialState.cart,
+        };
+      }
 
       return {
         ...state,

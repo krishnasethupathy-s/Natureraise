@@ -30,6 +30,8 @@ export const GET_REVIEWS = "GET_REVIEWS";
 export const ADD_RECENT_VIEW = "ADD_RECENT_VIEW";
 export const ADD_STYLE1 = "ADD_STYLE1";
 export const ADD_STYLE2 = "ADD_STYLE2";
+export const Add_CATEGORY_PRODUCTS = "Add_CATEGORY_PRODUCTS";
+export const GET_COUPON_LIST = "GET_COUPON_LIST";
 
 export const empty_message = () => {
   return async (dispatch) => {
@@ -89,9 +91,39 @@ export const getCategory = () => {
         body: JSON.stringify({ Authorization }),
       });
       let responseJsonData = await response.json();
+
+      const sortingValues = [
+        "Solar Water Heater",
+        "Heat Pump",
+        "Water Softener and Filters",
+        "Ro Purifiers",
+        "Pumps and Controllers",
+        "Solar Lighting",
+        "UPS and Batteries",
+        "AC and Inverter",
+      ];
+      const sortedCategory = responseJsonData.sort(
+        (a, b) =>
+          sortingValues.indexOf(a.item_category_name) -
+          sortingValues.indexOf(b.item_category_name)
+      );
+
       dispatch({
         type: "PRODUCTCATEGORIES",
-        category_data_list: responseJsonData,
+        category_data_list: sortedCategory,
+      });
+      const category = sortedCategory;
+
+      // category.forEach((c, idx) => {
+      //   dispatch(
+      //     getItemListBySearchValue(c.id, "1", "5", c.item_category_name)
+      //   );
+      // });
+
+      const data = await getCategoryProducts(category);
+      dispatch({
+        type: Add_CATEGORY_PRODUCTS,
+        payload: { data },
       });
     } catch (error) {
       console.log(error);
@@ -100,9 +132,102 @@ export const getCategory = () => {
   };
 };
 
+const getCategoryProducts = async (category) => {
+  const categoryProducts = category.map((c) =>
+    getItemListBySearchValue1(
+      c.id,
+      "1",
+      "5",
+      c.item_category_name,
+      c.image_address
+    )
+      .then((res) => {
+        const data = res.data.getItemListByCategory;
+
+        return {
+          category_name: c.item_category_name,
+          ad_image: c.image_address,
+          id: c.id,
+          data,
+        };
+      })
+      .catch((e) => console.log(e))
+  );
+
+  return Promise.all(categoryProducts).then((res) => res);
+};
+
+export const getItemListBySearchValue1 = async (
+  id,
+  page_number,
+  data_limit,
+  category_name,
+  image
+) => {
+  const item_name = "";
+  const item_category_id = id;
+  const Authorization = Config.getRequestToken();
+
+  const query = gql`
+    query getItemListByCategory(
+      $Authorization: String
+      $item_category_id: String
+      $page_number: String
+      $data_limit: String
+      $item_name: String
+    ) {
+      getItemListByCategory(
+        Authorization: $Authorization
+        item_category_id: $item_category_id
+        page_number: $page_number
+        data_limit: $data_limit
+        item_name: $item_name
+      ) {
+        item_name
+        item_sub_category_id
+        item_category_name
+        item_category_id
+        retail_price
+        selling_price
+        percentage
+        uom
+        item_size
+        item_color
+        type_name
+        id
+        product_price_id
+        image_address
+        cart_list
+        wish_list
+        net_amount
+        total_amount
+        cart_count
+        brand_name
+        generic_id
+        save_price
+        retail_price
+        special_price
+        availability
+      }
+    }
+  `;
+
+  return Config.client.query({
+    query: query,
+    fetchPolicy: "no-cache",
+    variables: {
+      Authorization,
+      item_category_id,
+      page_number,
+      data_limit,
+      item_name,
+    },
+  });
+};
+
 export const getItemListBySearchValue =
-  (id, page_number, data_limit, search_value) => (dispatch) => {
-    const item_name = search_value;
+  (id, page_number, data_limit, category_name) => (dispatch) => {
+    const item_name = "";
     const item_category_id = id;
     const Authorization = Config.getRequestToken();
 
@@ -123,13 +248,17 @@ export const getItemListBySearchValue =
         ) {
           item_name
           item_sub_category_id
+          item_category_name
+          item_category_id
           retail_price
           selling_price
           percentage
           uom
           item_size
+          item_color
           type_name
           id
+          product_price_id
           image_address
           cart_list
           wish_list
@@ -138,7 +267,10 @@ export const getItemListBySearchValue =
           cart_count
           brand_name
           generic_id
+          save_price
+          retail_price
           special_price
+          availability
         }
       }
     `;
@@ -157,6 +289,16 @@ export const getItemListBySearchValue =
       })
       .then((result) => {
         console.log(result);
+
+        const data = result.data.getItemListByCategory;
+
+        dispatch({
+          type: Add_CATEGORY_PRODUCTS,
+          payload: {
+            category_name,
+            data,
+          },
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -180,6 +322,7 @@ export const getHomePageProductList = () => (dispatch) => {
         item_color
         type_name
         id
+        product_price_id
         image_address
         cart_list
         wish_list
@@ -218,6 +361,12 @@ export const getHomePageProductList = () => (dispatch) => {
   return true;
 };
 
+const resetController = (controller) => ({
+  type: "RESETCONTROLLER",
+  controller,
+});
+let current_id = "";
+
 export const getItemSearch = (
   id,
   page_number,
@@ -226,15 +375,124 @@ export const getItemSearch = (
   filter_values,
   price_values,
   sort_by,
-  reset = false
+  reset = false,
+  parent_id = ""
 ) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     const item_sub_category_id = id;
+    const item_category_id = parent_id;
+    current_id = id ? id : parent_id ? parent_id : "";
+    const { controller } = getState().ProductActions;
+    let newController = null;
+    if (reset) {
+      console.log("Killing");
+      if (Object.keys(controller).length) controller.abort();
+      newController = new window.AbortController();
+      dispatch(resetController(newController));
+
+      dispatch({ type: "RESETITEMLISTBYSUBCATEGORY" });
+    }
+
+    console.log(newController);
+    const Authorization = Config.getRequestToken();
+
+    fetch(Config.BaseUrl + "ItemSearch", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      },
+     body:JSON.stringify({
+      Authorization,
+      item_sub_category_id,
+      item_category_id,
+      page_number,
+      data_limit,
+      search_values,
+      filter_values,
+      price_values,
+      sort_by,
+     })
+    })
+      .then((res) =>{
+        if(res.ok){
+
+          return res.json()
+        }
+        if(res.status === 500){
+          throw new Error(`${res.status}-internal server error`)
+        }
+      })
+      .then((result) => {
+        console.log(result);
+        const data = result;
+     
+        if (data === null) {
+          dispatch({
+            type: "GETITEMLISTBYSUBCATEGORY",
+            get_item_list: [],
+            reset: true,
+            current_id: "",
+          });
+          throw new Error("Something went wrong, Please try again!.");
+        }
+        if (current_id !== id ? id : parent_id ? parent_id : "") {
+          dispatch({ type: "RESETITEMLISTBYSUBCATEGORY" });
+          return;
+        }
+        dispatch({
+          type: "GETITEMLISTBYSUBCATEGORY",
+          get_item_list: result,
+          reset,
+          current_id,
+        });
+        dispatch({ type: "IS_LOADING", is_loading: false });
+      })
+      .catch((error) => {
+        console.log(error);
+        dispatch({ type: "IS_LOADING", is_loading: false });
+        dispatch({ type: "SUCCESS_MESSAGE", success_title: "catch error" });
+        dispatch({
+          type: "ERROR_MESSAGE",
+          error_title: error.message ?? "something went wrong",
+        });
+      });
+    return true;
+  };
+};
+
+export const getItemSearch1 = (
+  id,
+  page_number,
+  data_limit,
+  search_values,
+  filter_values,
+  price_values,
+  sort_by,
+  reset = false,
+  parent_id = ""
+) => {
+  return async (dispatch, getState) => {
+    const item_sub_category_id = id;
+    const item_category_id = parent_id;
+    current_id = id ? id : parent_id ? parent_id : "";
+    const { controller } = getState().ProductActions;
+    let newController = null;
+    if (reset) {
+      console.log("Killing");
+      if (Object.keys(controller).length) controller.abort();
+      newController = new window.AbortController();
+      dispatch(resetController(newController));
+
+      dispatch({ type: "RESETITEMLISTBYSUBCATEGORY" });
+    }
+
+    console.log(newController);
     const Authorization = Config.getRequestToken();
     const query = gql`
       query getItemSearch(
         $Authorization: String
         $item_sub_category_id: String
+        $item_category_id: String
         $page_number: String
         $data_limit: String
         $search_values: String
@@ -245,6 +503,7 @@ export const getItemSearch = (
         getItemSearch(
           Authorization: $Authorization
           item_sub_category_id: $item_sub_category_id
+          item_category_id: $item_category_id
           page_number: $page_number
           data_limit: $data_limit
           search_values: $search_values
@@ -257,6 +516,8 @@ export const getItemSearch = (
           rack_id
           brand_id
           rating_point
+          product_price_id
+
           description
           item_category_id
           retail_price
@@ -282,6 +543,9 @@ export const getItemSearch = (
         }
       }
     `;
+
+    // no_of_records
+    // no_of_reviewers
     Config.client
       .query({
         query: query,
@@ -289,12 +553,18 @@ export const getItemSearch = (
         variables: {
           Authorization,
           item_sub_category_id,
+          item_category_id,
           page_number,
           data_limit,
           search_values,
           filter_values,
           price_values,
           sort_by,
+        },
+        context: {
+          fetchOptions: {
+            signal: newController ? newController.signal : controller.signal,
+          },
         },
       })
       .then((result) => {
@@ -306,14 +576,95 @@ export const getItemSearch = (
             type: "GETITEMLISTBYSUBCATEGORY",
             get_item_list: [],
             reset: true,
+            current_id: "",
           });
           throw new Error("Something went wrong, Please try again!.");
         }
-
+        if (current_id !== id ? id : parent_id ? parent_id : "") {
+          dispatch({ type: "RESETITEMLISTBYSUBCATEGORY" });
+          return;
+        }
         dispatch({
           type: "GETITEMLISTBYSUBCATEGORY",
           get_item_list: result.data.getItemSearch,
           reset,
+          current_id,
+        });
+        dispatch({ type: "IS_LOADING", is_loading: false });
+      })
+      .catch((error) => {
+        console.log(error);
+        dispatch({ type: "IS_LOADING", is_loading: false });
+        dispatch({ type: "SUCCESS_MESSAGE", success_title: "catch error" });
+        dispatch({
+          type: "ERROR_MESSAGE",
+          error_title: error.message ?? "something went wrong",
+        });
+      });
+    return true;
+  };
+};
+
+
+export const getRelatedProduct = (
+  id,
+  page_number,
+  data_limit,
+  search_values,
+  filter_values,
+  price_values,
+  sort_by,
+  reset = false,
+  parent_id = ""
+) => {
+  return async (dispatch, getState) => {
+    const item_sub_category_id = id;
+    const item_category_id = parent_id;
+    const Authorization = Config.getRequestToken();
+
+    fetch(Config.BaseUrl + "ItemSearch", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      },
+     body:JSON.stringify({
+      Authorization,
+      item_sub_category_id,
+      item_category_id,
+      page_number,
+      data_limit,
+      search_values,
+      filter_values,
+      price_values,
+      sort_by,
+     })
+    })
+      .then((res) =>{
+        if(res.ok){
+
+          return res.json()
+        }
+        if(res.status === 500){
+          throw new Error(`${res.status}-internal server error`)
+        }
+      })
+      .then((result) => {
+        console.log(result);
+        const data = result;
+     
+        if (data === null) {
+          dispatch({
+            type: "GETRELATEDPRODUCT",
+            get_item_list: [],
+            reset: true,
+            current_id: "",
+          });
+          throw new Error("Something went wrong, Please try again!.");
+        }
+        
+        dispatch({
+          type: "GETRELATEDPRODUCT",
+          get_item_list: result,
         });
         dispatch({ type: "IS_LOADING", is_loading: false });
       })
@@ -538,6 +889,7 @@ export const getItemListByMasterId = (id, pin) => {
           item_sub_category_id
           item_category_name
           rating_point
+
           brand_id
           description
           retail_price
@@ -560,6 +912,7 @@ export const getItemListByMasterId = (id, pin) => {
           retail_price
           special_price
           availability
+          product_price_id
           productDescription {
             description_title
             description_details
@@ -571,6 +924,8 @@ export const getItemListByMasterId = (id, pin) => {
         }
       }
     `;
+
+    // no_of_reviewers
     Config.client
       .query({
         query: query,
@@ -588,15 +943,28 @@ export const getItemListByMasterId = (id, pin) => {
           dispatch({ type: "IS_LOADING", is_loading: false });
           throw new Error("Something went wrong!, Please Try again");
         }
-
-        dispatch({
-          type: "PRODUCT_MASTER_LIST",
-          product_master_list: result.data.getItemListByMasterId,
-        });
-        dispatch({
-          type: "SUCCESS_MESSAGE",
-          success_title: "PRODUCT_MASTER_LIST_SUCCESS",
-        });
+        if (result.data.getItemListByMasterId.length) {
+          dispatch({
+            type: "PRODUCT_MASTER_LIST",
+            product_master_list: [],
+          });
+          dispatch({
+            type: "PRODUCT_MASTER_LIST",
+            product_master_list: result.data.getItemListByMasterId,
+          });
+          dispatch({
+            type: "SUCCESS_MESSAGE",
+            success_title: "PRODUCT_MASTER_LIST_SUCCESS",
+          });
+        }
+        if (!result.data.getItemListByMasterId.length) {
+          dispatch(empty_message());
+          dispatch({
+            type: "PRODUCT_MASTER_LIST",
+            product_master_list: [],
+          });
+          dispatch({ type: "IS_LOADING", is_loading: false });
+        }
         return true;
       })
       .catch((error) => {
@@ -761,7 +1129,7 @@ export const getProductDescriptionList1 = (product_id) => {
 export const validateCouponCode = (order_amount, coupon_code_value) => {
   return async (dispatch) => {
     let coupon_code_for = "1";
-    const Authorization = localStorage.getItem("Authorization");
+    const Authorization = Config.getRequestToken();
     const mutation = `mutation validateCouponCode($coupon_code_for: String, $order_amount: String, $coupon_code_value: String, $Authorization: String) {
       validateCouponCode(coupon_code_for:$coupon_code_for, order_amount:$order_amount, coupon_code_value:$coupon_code_value, Authorization:$Authorization){
           message,coupon_amount,max_cashback_amount,min_purchase_amount
@@ -793,6 +1161,7 @@ export const validateCouponCode = (order_amount, coupon_code_value) => {
           dispatch({
             type: "COUPON_VALIDATION",
             coupon_amount,
+            coupon_code_value,
           });
           dispatch({
             type: "SUCCESS_MESSAGE",
@@ -827,6 +1196,7 @@ export const addtocartdb = (
   id,
   action_type,
   pincode,
+  product_price_id,
   message = "Item added to the cart"
 ) => {
   return async function (dispatch) {
@@ -834,8 +1204,8 @@ export const addtocartdb = (
     const Authorization = localStorage.getItem("Authorization");
     console.log(id, action_type, Authorization);
     const cart_type = "0";
-    const mutation = `mutation addCartList($Authorization: String, $id: ID, $action_type:String ,$cart_type:String, $pincode: String ) {
-      addCartList(Authorization:$Authorization, id:$id, action_type:$action_type,  cart_type:$cart_type , pincode: $pincode ){
+    const mutation = `mutation addCartList($Authorization: String, $id: ID, $action_type:String ,$cart_type:String, $pincode: String, $product_price_id:String ) {
+      addCartList(Authorization:$Authorization, id:$id, action_type:$action_type,  cart_type:$cart_type , pincode: $pincode, product_price_id: $product_price_id ){
         message
       }
   }`;
@@ -849,7 +1219,14 @@ export const addtocartdb = (
       body: JSON.stringify({
         query: mutation,
         fetchPolicy: "no-cache",
-        variables: { Authorization, id, action_type, cart_type, pincode },
+        variables: {
+          Authorization,
+          id,
+          action_type,
+          cart_type,
+          pincode,
+          product_price_id,
+        },
       }),
     })
       .then((response) => response.json())
@@ -895,6 +1272,7 @@ export const getCartList = () => {
         getCartList(Authorization: $Authorization) {
           item_name
           item_sub_category_id
+          product_price_id
           retail_price
           selling_price
           percentage
@@ -951,14 +1329,16 @@ export const getCartList = () => {
   };
 };
 
-export const addToCartLocal = (id, pincode) => (dispatch) => {
-  dispatch({
-    type: ADD_TO_CART_LOCAL,
-    id,
-    pincode,
-  });
-  dispatch({ type: "IS_LOADING", is_loading: false });
-};
+export const addToCartLocal =
+  (id, pincode = "") =>
+  (dispatch) => {
+    dispatch({
+      type: ADD_TO_CART_LOCAL,
+      id,
+      pincode,
+    });
+    dispatch({ type: "IS_LOADING", is_loading: false });
+  };
 
 export const addToCartIncrementLocal = (id) => (dispatch) => {
   dispatch({
@@ -983,6 +1363,7 @@ export const syncLocalCart = (cartArray) => async (dispatch) => {
     Authorization,
   });
   const cart_list = cartArray;
+  console.log(cart_list);
   const formData = new FormData();
   formData.append("cart_list", JSON.stringify({ cart_list }));
   formData.append("json", form_Data1);
@@ -1001,12 +1382,12 @@ export const syncLocalCart = (cartArray) => async (dispatch) => {
     .then((res) => res.json())
     .then((resJson) => {
       console.log(resJson);
+      dispatch(getCartList());
     })
     .catch((error) => {
       console.log(error);
+      dispatch({ type: "IS_LOADING", is_loading: false });
     });
-
-  dispatch({ type: "IS_LOADING", is_loading: false });
 };
 
 export const resetCart = () => {
@@ -1215,6 +1596,85 @@ export const checkItemAvailability = (ids, pincode) => (dispatch) => {
     })
     .catch((error) => {
       dispatch({ type: "IS_LOADING", is_loading: false });
+      console.log(error);
+    });
+};
+
+export const getCouponCodeList = (id) => (dispatch) => {
+  const Authorization = Config.getRequestToken();
+  const product_id = id;
+  const query = gql`
+    query getCouponCodeListByProductId($Authorization: String, $product_id: String) {
+      getCouponCodeListByProductId(Authorization: $Authorization, product_id: $product_id) {
+        id
+        coupon_code_value
+        coupon_code_percentage
+        min_purchase_amount
+        max_cashback_amount
+        order_amount
+        coupon_amount
+        start_date
+        end_date
+        coupon_code_for
+        message
+      }
+    }
+  `;
+  Config.client
+    .query({
+      query: query,
+      fetchPolicy: "no-cache",
+      variables: { Authorization, product_id },
+    })
+    .then((result) => {
+      console.log(result);
+      const data = result.data.getCouponCodeListByProductId;
+
+      dispatch({
+        type: GET_COUPON_LIST,
+        data,
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const getCouponCodeList1 = () => (dispatch) => {
+  const Authorization = Config.getRequestToken();
+  const query = gql`
+    query getCouponCodeList($Authorization: String) {
+      getCouponCodeList(Authorization: $Authorization) {
+        id
+        coupon_code_value
+        coupon_code_percentage
+        min_purchase_amount
+        max_cashback_amount
+        order_amount
+        coupon_amount
+        start_date
+        end_date
+        coupon_code_for
+        message
+      }
+    }
+  `;
+  Config.client
+    .query({
+      query: query,
+      fetchPolicy: "no-cache",
+      variables: { Authorization },
+    })
+    .then((result) => {
+      console.log(result);
+      const data = result.data.getCouponCodeList;
+
+      dispatch({
+        type: GET_COUPON_LIST,
+        data,
+      });
+    })
+    .catch((error) => {
       console.log(error);
     });
 };

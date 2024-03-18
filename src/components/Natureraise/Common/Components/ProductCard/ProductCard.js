@@ -11,13 +11,13 @@ const ProductCard = (props) => {
         </h6>
         <span className="prodcut-card-arrow"></span>
       </div>
-      <div className="wish_list_icon">
+      {/* <div className="wish_list_icon">
         <i
           className="fa fa-heart"
           aria-hidden="true"
           style={{ color: props?.wishcolor }}
         ></i>
-      </div>
+      </div> */}
       <Link to={`/ProductDescription/${props?.id}`}>
         <div className=" img-hover-zoom">
           <img
@@ -57,9 +57,12 @@ const ProductCard = (props) => {
                   ? props?.selling_price
                   : props?.special_price}{" "}
               </h6>
-              {/* <h6 className="product-card-hightlight-green">
-                ₹ {props?.retail_price}{" "}
-              </h6> */}
+              {props.retail_price === props.selling_price &&
+              props?.special_price === "0.00" ? null : (
+                <h6 className="product-card-hightlight-green">
+                  ₹ {props?.selling_price}{" "}
+                </h6>
+              )}
             </div>
           ) : (
             <div className="product-card-amount-wrapper">
@@ -71,7 +74,10 @@ const ProductCard = (props) => {
               </h6>
               <h6 className="product-card-hightlight-green">
                 ₹
-                {props?.special_price === "0.00"
+                {props?.special_price === "0.00" &&
+                props?.selling_price === "0.00"
+                  ? props?.retail_price
+                  : props?.selling_price === "0.00"
                   ? props?.retail_price
                   : props?.selling_price}{" "}
               </h6>

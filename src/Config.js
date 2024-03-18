@@ -4,7 +4,7 @@ import { gql } from "@apollo/client";
 
 const getRequestToken = () => {
   //var now = moment(new Date()).format("MMM DD YYYY h:mm");
-  var now = moment(new Date()).format("MMM DD YYYY");
+  var now = moment(new Date()).format("MMM DD YYYY hh");
   var sha1 = require("sha1");
   sha1 = sha1(now + "vimkes");
   return sha1;
@@ -19,11 +19,28 @@ const getRequestToken = () => {
 // const BaseUrl = "http://192.168.0.7:8080/";
 
 //  const BaseUrl = 'https://www.app.natureraise.in/';
-const BaseUrl = "https://democrm.vimkes.com/";
-
+// const BaseUrl = "https://democrm.vimkes.com/";
 //const BaseUrl = 'https://www.api.dhiyaonlineshop.com/';
 
-// Razorpay key : rzp_test_iZt5e6oaqwbtfP
+let BaseUrl;
+let Razorpaykey;
+if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
+  Razorpaykey = "rzp_test_iZt5e6oaqwbtfP";
+  // BaseUrl = "https://democrm.vimkes.com/";
+  BaseUrl = "https://www.api.naturesave.in/";
+
+} else {
+  Razorpaykey = "rzp_live_Wrr6uxbeUoLQ9o";
+  BaseUrl = "https://www.api.naturesave.in/";
+}
+
+// Dev
+
+// Prod
+
+const GA = "";
+const gooleLogin =
+  "93793167500-omr4gb2sjr17c2gdcvejklp2dsd9m950.apps.googleusercontent.com";
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
@@ -635,4 +652,9 @@ export default {
   doctor_id,
   chat_token_id,
   room_id,
+
+  //
+  Razorpaykey,
+  GA,
+  gooleLogin,
 };

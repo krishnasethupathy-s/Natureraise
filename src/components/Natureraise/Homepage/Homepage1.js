@@ -18,7 +18,6 @@ import DeliveryProcess from "../Common/Components/DeliveryProcess/DeliveryProces
 import SecondOfferSection from "../Common/Components/SecondOfferSection/SecondOfferSection";
 
 import "./Homepage.css";
-import ProductSection from "./ProductSection";
 class HomePage extends Component {
   constructor(props) {
     super(props);
@@ -35,19 +34,6 @@ class HomePage extends Component {
     window.scrollTo(0, 0);
     this.props.dispatch(Banner.fetchBanners());
 
-    // if (this.props.category) {
-    //   this.props.category.forEach((c) => {
-    //     this.props.dispatch(
-    //       ProductActions.getItemListBySearchValue(
-    //         c.id,
-    //         "1",
-    //         "5",
-    //         c.item_category_name
-    //       )
-    //     );
-    //   });
-    // }
-
     this.props.dispatch(ProductActions.getSubCategoryList("2396"));
     this.props.dispatch(ProductActions.getSubCategoryList("2397"));
     this.props.dispatch(ProductActions.getHomePageProductList());
@@ -55,8 +41,6 @@ class HomePage extends Component {
     setTimeout(() => {
       this.props.dispatch({ type: "IS_LOADING", is_loading: false });
     }, 1000);
-
-    // console.log("Hi", Object.values(this.props.category_products).flat(1));
   }
 
   componentDidUpdate() {
@@ -100,7 +84,7 @@ class HomePage extends Component {
       this.props.dispatch(ProductActions.getCartList());
       this.props.dispatch({ type: "IS_LOADING", is_loading: true });
     } else {
-      this.props.dispatch(ProductActions.addToCartLocal(id, ""));
+      this.props.dispatch(ProductActions.addToCartLocal(id));
       toast.success("Item added to the cart");
     }
     this.props.dispatch({
@@ -151,7 +135,6 @@ class HomePage extends Component {
             slidesToShow: 1,
             slidesToScroll: 1,
             // infinite: true,
-            rows: 5,
           },
         },
       ],
@@ -247,14 +230,14 @@ class HomePage extends Component {
           <DeliveryProcess deliveryprocess={AccountData.DELIVERY_PROCESS} />
         </section>
 
-        {/* !!this.props.homeProducts?.newComings.length && (
+        {!!this.props.homeProducts?.newComings.length && (
           <section className="product-list-wrapper" id="product-list-wrapper">
             <Container>
               <Row>
                 <Col md={12}>
                   <div className="our-collection-heading-wrap">
                     <h6>New Arrivals</h6>
-                     <h6>View all</h6> 
+                    {/* <h6>View all</h6> */}
                   </div>
                 </Col>
               </Row>
@@ -298,22 +281,6 @@ class HomePage extends Component {
               </Row>
             </Container>
           </section>
-                    ) */}
-        {this.props?.category_products.map(
-          ({ id, data: values, category_name, ad_image }, idx) => {
-            return values.length ? (
-              <ProductSection
-                key={id}
-                title={category_name}
-                settings={settings}
-                images={ad_image}
-                data={values}
-                id={values[0]?.item_category_id}
-                adPlacement={Boolean((idx + 1) % 2 === 0)}
-                addToCart={this.add_to_cart}
-              />
-            ) : null;
-          }
         )}
 
         {false && (
@@ -375,14 +342,14 @@ class HomePage extends Component {
           </Container>
         </section> */}
 
-        {/* !!this.props.homeProducts?.topOffers.length && (
+        {!!this.props.homeProducts?.topOffers.length && (
           <section className="product-list-wrapper" id="product-list-wrapper">
             <Container>
               <Row>
                 <Col md={12}>
                   <div className="our-collection-heading-wrap">
                     <h6>Top Offers</h6>
-                     <h6>View all</h6> 
+                    {/* <h6>View all</h6> */}
                   </div>
                 </Col>
               </Row>
@@ -435,11 +402,11 @@ class HomePage extends Component {
               </Row>
             </Container>
           </section>
-                    )*/}
+        )}
 
-        {/* <section className="offers-second-section" id="offers-second-section">
+        <section className="offers-second-section" id="offers-second-section">
           <SecondOfferSection offersdata={this.props.style1} />
-        </section> */}
+        </section>
 
         {!!this.props.recentView.length && (
           <section className="product-list-wrapper" id="product-list-wrapper">
@@ -457,13 +424,11 @@ class HomePage extends Component {
               <Row>
                 <Col md={3} xs={12} xl={2}>
                   <div className="brand-slider-offer">
-                    {!!this.props.category_products.length && (
-                      <img
-                        src={this.props.category_products[0].ad_image}
-                        alt="natureraise"
-                        className="img-fluid"
-                      />
-                    )}
+                    <img
+                      src="https://www.solarclue.com/image/catalog/Sub-Banner/square-banner/Solar-Inverter.png"
+                      alt="natureraise"
+                      className="img-fluid"
+                    />
                   </div>
                 </Col>
                 <Col md={9} xs={12} xl={10}>
@@ -514,8 +479,6 @@ const mapStateToProps = (state) => {
     recentView: state.ProductActions.recentView || [],
     style1: state.ProductActions.style1 || [],
     style2: state.ProductActions.style2 || [],
-    category: state.ProductActions.product_categories_list,
-    category_products: state.ProductActions.category_products,
   };
 };
 

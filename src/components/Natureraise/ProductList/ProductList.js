@@ -10,9 +10,7 @@ import {
   Accordion,
   Spinner,
 } from "react-bootstrap";
-import HeaderNavbar from "../HeaderNavbar/HeaderNavbar";
 import images from "../../constants/images";
-import Footer from "../Footer/Footer";
 import SectionHeader from "../../constants/SectionHeader/SectionHeader";
 import StarRatingComponent from "react-star-rating-component";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -30,9 +28,9 @@ import { connect } from "react-redux";
 import * as ProductActions from "../store/actions/Product/ProductActions";
 import { Redirect } from "react-router-dom";
 import * as qs from "query-string";
+import { Helmet } from "react-helmet-async";
 
 import ProductCard from "../Common/Components/ProductCard/ProductCard";
-import PageLoading from "../../constants/PageLoader/PageLoading";
 import Filters from "./Filters";
 
 import "./ProductList.css";
@@ -54,7 +52,7 @@ const LOCAL_FILTERS = [
 class ProductList extends Component {
   constructor(props) {
     super(props);
-
+    this.query = qs.parse(this.props.location.search);
     this.state = {
       product_slider: images.product_image,
       rating: 1,
@@ -75,17 +73,24 @@ class ProductList extends Component {
       ratingSelect: Array(CUSTOMER_RATING.length).fill(false),
 
       //filters
-      slider_range: [100, 100000],
+      slider_range: [100, 1000000],
       slider_min: 100,
-      slider_max: 100000,
+      slider_max: 1000000,
       sort: 1,
 
       filters: {},
       selectedValues: {},
+      category: "",
     };
 
     this.Authorization = localStorage.getItem("Authorization");
   }
+
+  isParentPath = () => {
+    const { pathname } = this.props.location;
+    const isParent = pathname.split("/").includes("p");
+    return isParent;
+  };
 
   componentDidMount() {
     this.props.dispatch({ type: "IS_LOADING", is_loading: true });
@@ -100,6 +105,7 @@ class ProductList extends Component {
       this.props.dispatch(
         ProductActions.getFilterBySubCategory(productdata_id ?? "")
       );
+      this.getSubCategoryDetail(productdata_id);
     } else {
       this.props.dispatch({
         type: "LOCAL_FILTERS",
@@ -128,18 +134,35 @@ class ProductList extends Component {
       });
 
       this.props.dispatch({ type: "RESETITEMLISTBYSUBCATEGORY" });
-      this.props.dispatch(
-        ProductActions.getItemSearch(
-          productdata_id ? productdata_id : "",
-          "" + page_number,
-          data_limit,
-          item_name,
-          filters, //filter_values
-          slider_range, // price_values
-          "" + sort, // sort_by
-          true
-        )
-      );
+      if (this.isParentPath()) {
+        this.props.dispatch(
+          ProductActions.getItemSearch(
+            "",
+            "" + page_number,
+            data_limit,
+            this.query.search ?? item_name,
+            filters, //filter_values
+            slider_range, // price_values
+            "" + sort, // sort_by
+            true,
+            productdata_id
+          )
+        );
+      } else {
+        this.props.dispatch(
+          ProductActions.getItemSearch(
+            productdata_id ? productdata_id : "",
+            "" + page_number,
+            data_limit,
+            this.query.search ?? item_name,
+            filters, //filter_values
+            slider_range, // price_values
+            "" + sort, // sort_by
+            true,
+            ""
+          )
+        );
+      }
     }
   }
   getSnapshotBeforeUpdate(prevProps, prevState) {
@@ -147,7 +170,7 @@ class ProductList extends Component {
       this.setState({
         page_number: 1,
         categories_id: this.props.match.params.id,
-        slider_range: [100, 100000],
+        slider_range: [100, 1000000],
         sort: 1,
         item_name: "",
         discount: [],
@@ -183,23 +206,30 @@ class ProductList extends Component {
         this.props.dispatch(
           ProductActions.getFilterBySubCategory(productdata_id)
         );
+        this.getSubCategoryDetail(productdata_id);
       } else {
         this.props.dispatch({
           type: "LOCAL_FILTERS",
           // data: LOCAL_FILTERS,
         });
+        this.setState({ category: "" });
       }
 
       this.props.dispatch(
         ProductActions.getItemSearch(
-          productdata_id ? productdata_id : "",
+          this.isParentPath()
+            ? ""
+            : this.state.categories_id
+            ? this.state.categories_id
+            : "",
           "" + page_number,
           data_limit,
-          item_name,
+          this.query.search === "" ? item_name : this.query.search,
           "",
           slider_range,
           "" + sort,
-          true
+          true,
+          this.isParentPath() ? this.state.categories_id : ""
         )
       );
     }
@@ -211,7 +241,7 @@ class ProductList extends Component {
     ) {
       this.addQueryParam();
     }
-
+    console.log(this.props.location.search, prevProps.location.search);
     if (this.props.location.search !== prevProps.location.search) {
       console.log(this.props.location, prevProps.location);
       this.props.dispatch(ProductActions.empty_message());
@@ -219,17 +249,23 @@ class ProductList extends Component {
       this.props.dispatch({ type: "IS_LOADING", is_loading: true });
       this.props.dispatch(
         ProductActions.getItemSearch(
-          categories_id ? categories_id : "",
+          this.isParentPath()
+            ? ""
+            : this.state.categories_id
+            ? this.state.categories_id
+            : "",
           "1",
           data_limit,
           query?.search || "",
           filters,
           slider_range,
           "" + sort,
-          true
+          true,
+          this.isParentPath() ? this.state.categories_id : ""
         )
       );
       this.setState({ page_number: 1, item_name: query?.search });
+      if (categories_id === "") this.setState({ category: "" });
     }
 
     if (this.props.success_message === "ITEM_ADD_TO_CART") {
@@ -252,6 +288,17 @@ class ProductList extends Component {
     console.log(qs.parse(this.props.location.search));
   }
 
+  getSubCategoryDetail = (id) => {
+    const category = this.props.category
+      ?.map((category) => category.itemSubCategory)
+      .reduce((a, b) => a.concat(b), [])
+      .find((item) => item.id === id);
+
+    this.setState({
+      category,
+    });
+  };
+
   onRating_function = () => {
     this.setState((prevState) => ({ rating_status: !prevState.rating_status }));
   };
@@ -272,21 +319,24 @@ class ProductList extends Component {
     this.props.history.push(`/ProductDescription/${item.id}`);
   };
 
-  add_to_cart = (id) => {
+  add_to_cart = (id, product_price_id) => {
     this.props.dispatch(ProductActions.getProductquantity(id, id));
 
-    this.addtocart_function(id);
+    if (this.props.product_quantity === 0) {
+      this.addtocart_function(id, product_price_id);
+    }
   };
 
-  addtocart_function = (id) => {
-    console.log(this.props.product_quantity);
-    if (this.props.product_quantity !== 0) {
-      return;
-    }
-
+  addtocart_function = (id, product_price_id) => {
     if (this.Authorization !== null) {
       this.props.dispatch(
-        ProductActions.addtocartdb(id, "plus", "", "ITEM_ADD_TO_CART")
+        ProductActions.addtocartdb(
+          id,
+          "plus",
+          "",
+          product_price_id,
+          "ITEM_ADD_TO_CART"
+        )
       );
       this.props.dispatch(ProductActions.getCartList());
       this.props.dispatch({ type: "IS_LOADING", is_loading: true });
@@ -312,17 +362,26 @@ class ProductList extends Component {
     console.log(this.state.slider_range);
     console.log("filters", this.state.filters);
 
+    console.log(this.props.params);
+    console.log(this.props.location);
+    let { pathname } = this.props.location;
+
+    let stringArray = pathname.split("/");
+    let path = stringArray.splice(0, stringArray.length - 1).join("/");
+    console.log(path);
+    const q = qs.parse(this.props.location.search);
+
     const query = qs.stringify({
       range: this.state.slider_range,
       sort: this.state.sort,
-      search: this.state.item_name,
+      search: q.search ? q.search : "",
       ...this.state.filters,
     });
     console.log(query);
 
     if (this.state.categories_id) {
       this.props.history.push({
-        pathname: `/Products/${this.state.categories_id}`,
+        pathname: `${path}/${this.state.categories_id}`,
         search: "?" + query,
       });
     } else {
@@ -344,14 +403,19 @@ class ProductList extends Component {
 
     this.props.dispatch(
       ProductActions.getItemSearch(
-        this.state.categories_id ? this.state.categories_id : "",
+        this.isParentPath()
+          ? ""
+          : this.state.categories_id
+          ? this.state.categories_id
+          : "",
         this.state.page_number + 1 + "",
         this.state.data_limit,
         this.state.item_name,
         this.state.filters,
         this.state.slider_range,
         "" + this.state.sort,
-        false
+        false,
+        this.isParentPath() ? this.state.categories_id : ""
       )
     );
     this.setState((prev) => ({ page_number: prev.page_number + 1 }));
@@ -374,77 +438,96 @@ class ProductList extends Component {
   };
 
   render() {
-    const { rating, sort, rating_status } = this.state;
+    const { rating, sort, rating_status, category } = this.state;
 
     return (
-      <section className="product_list_container" id="product_list_container">
-        <PageLoading isLoadingComplete={this.props.is_loading} />
+      <>
+        <Helmet>
+          <title>
+            {category ? category.item_sub_category_name : "Search Results"} |
+            Natureraise
+          </title>
+          <meta property="og:title" content="Natureraise" />
+          <meta property="og:type" content="website" />
 
-        <HeaderNavbar />
-        <SectionHeader
-          about_banner="about_banner"
-          section_title="Shop"
-          section_subtitle="Products"
-        />
-        <div className="product_list_wrap section_padding_top_bottom">
-          <Container>
-            <Row>
-              <Col xs={{ order: 1 }} md={{ span: 3, order: 1 }} xl={3}>
-                <div className="product_list_card sticky-top">
-                  <div className="product_search_wrap">
-                    <Form onSubmit={this.handleSearch}>
-                      <InputGroup>
-                        <Form.Control
-                          className="product_search_input"
-                          type="text"
-                          placeholder="Search Here..."
-                          value={this.state.item_name}
-                          onChange={this.searchHandleChange}
-                        />
+          <meta
+            property="og:description"
+            content={category ? category.description : "Product Search Results"}
+          />
+        </Helmet>
 
-                        <InputGroup.Append>
-                          <button type="submit" className="search_icon_wrap1">
-                            <i className="fa fa-search" aria-hidden="true"></i>
-                          </button>
-                        </InputGroup.Append>
-                      </InputGroup>
-                    </Form>
-                  </div>
-                  <div className=" common_divison_padding">
-                    <div className="product_title_parent">
-                      <h3 className="product_titles">Price Range </h3>
-                    </div>
-                    <ReactSlider
-                      className="horizontal-slider"
-                      thumbClassName="example-thumb"
-                      trackClassName="example-track"
-                      min={this.state.slider_min}
-                      max={this.state.slider_max}
-                      defaultValue={[
-                        this.state.slider_min,
-                        this.state.slider_max,
-                      ]}
-                      value={this.state.slider_range}
-                      ariaLabel={["Lower thumb", "Upper thumb"]}
-                      ariaValuetext={(state) => `Thumb value ${state.valueNow}`}
-                      pearling
-                      onAfterChange={this.changeRangeValue}
-                      renderThumb={(props, state) => (
-                        <div {...props}>
-                          {+state.valueNow < 1000
-                            ? +state.valueNow
-                            : Math.floor(+state.valueNow / 1000) + "K"}
-                        </div>
-                      )}
-                    />
-                    <div>
-                      <h6 className="product_price_values">
-                        Price: ₹ {this.state.slider_range[0]} — ₹{" "}
-                        {this.state.slider_range[1]}
-                      </h6>
-                    </div>
+        <section className="product_list_container" id="product_list_container">
+          <SectionHeader
+            about_banner="about_banner"
+            section_title="Shop"
+            section_subtitle="Products"
+          />
+          <div className="product_list_wrap section_padding_top_bottom">
+            <Container>
+              <Row>
+                <Col xs={{ order: 1 }} md={{ span: 3, order: 1 }} xl={3}>
+                  <div className="product_list_card sticky-top">
+                    {/* <div className="product_search_wrap">
+                      <Form onSubmit={this.handleSearch}>
+                        <InputGroup>
+                          <Form.Control
+                            className="product_search_input"
+                            type="text"
+                            placeholder="Search Here..."
+                            value={this.state.item_name}
+                            onChange={this.searchHandleChange}
+                          />
 
-                    {/* <Form>
+                          <InputGroup.Append>
+                            <button type="submit" className="search_icon_wrap1">
+                              <i
+                                className="fa fa-search"
+                                aria-hidden="true"
+                              ></i>
+                            </button>
+                          </InputGroup.Append>
+                        </InputGroup>
+                      </Form>
+                    </div> */}
+                    <div className=" common_divison_padding">
+                      <div className="product_title_parent">
+                        <h3 className="product_titles">Price Range </h3>
+                      </div>
+                      <ReactSlider
+                        className="horizontal-slider"
+                        thumbClassName="example-thumb"
+                        trackClassName="example-track"
+                        min={this.state.slider_min}
+                        max={this.state.slider_max}
+                        defaultValue={[
+                          this.state.slider_min,
+                          this.state.slider_max,
+                        ]}
+                        value={this.state.slider_range}
+                        ariaLabel={["Lower thumb", "Upper thumb"]}
+                        ariaValuetext={(state) =>
+                          `Thumb value ${state.valueNow}`
+                        }
+                        pearling
+                        onAfterChange={this.changeRangeValue}
+                        renderThumb={(props, state) => (
+                          <div {...props}>
+                            {+state.valueNow < 1000
+                              ? +state.valueNow
+                              : +state.valueNow < 100000
+                              ? Math.floor(+state.valueNow / 1000) + "K"
+                              : Math.floor(+state.valueNow / 100000) + "L"}
+                          </div>
+                        )}
+                      />
+                      <div>
+                        <h6 className="product_price_values">
+                          Price: ₹ {this.state.slider_range[0]} — ₹{" "}
+                          {this.state.slider_range[1]}
+                        </h6>
+                      </div>
+
+                      {/* <Form>
                       <Form.Group controlId="formBasicRange">
                         <Form.Control
                           type="range"
@@ -455,60 +538,38 @@ class ProductList extends Component {
                         />
                       </Form.Group>
                     </Form> */}
-                  </div>
-                  {!!this.props.filters.length && (
-                    <div className="product_categories common_divison_padding">
-                      {this.props.filters.map((data, index) =>
-                        index === 0 ? (
-                          <React.Fragment key={data.id}>
-                            <div className="product_title_parent">
-                              <h3 className="product_titles">
-                                {data.filter_heading}{" "}
-                              </h3>
-                            </div>
-                            <Filters
-                              values={
-                                typeof data?.filter_value === "string"
-                                  ? JSON.parse(data?.filter_value)
-                                  : data?.filter_value
-                              }
-                              filterName={data.filter_heading.toLowerCase()}
-                              handlerFilters={this.handleFilters}
-                              persistSelected={
-                                this.state.selectedValues[
-                                  data.filter_heading.toLowerCase()
-                                ]
-                              }
-                              resetPersistValues={this.resetSelectedValues}
-                            />
-                          </React.Fragment>
-                        ) : (
-                          <FilterAccordion
-                            title={data.filter_heading}
-                            eventKey={index}
-                            key={data.id}
-                          >
-                            <Filters
-                              values={
-                                typeof data?.filter_value === "string"
-                                  ? JSON.parse(data?.filter_value)
-                                  : data?.filter_value
-                              }
-                              filterName={data.filter_heading.toLowerCase()}
-                              handlerFilters={this.handleFilters}
-                              persistSelected={
-                                this.state.selectedValues[
-                                  data.filter_heading.toLowerCase()
-                                ]
-                              }
-                              resetPersistValues={this.resetSelectedValues}
-                            />
-                          </FilterAccordion>
-                        )
-                      )}
                     </div>
-                  )}
-                  {/* {!!!this.props.filters.length && (
+                    {!!this.props.filters.length && (
+                      <div className="product_categories common_divison_padding">
+                        {this.props.filters.map((data, index) =>
+                         (
+                            <FilterAccordion
+                              title={data.filter_heading}
+                              eventKey={data.id}
+                              key={data.id}
+                              defaultActiveKey={data.id}
+                            >
+                              <Filters
+                                values={
+                                  typeof data?.filter_value === "string"
+                                    ? JSON.parse(data?.filter_value)
+                                    : data?.filter_value
+                                }
+                                filterName={data.filter_heading.toLowerCase()}
+                                handlerFilters={this.handleFilters}
+                                persistSelected={
+                                  this.state.selectedValues[
+                                    data.filter_heading.toLowerCase()
+                                  ]
+                                }
+                                resetPersistValues={this.resetSelectedValues}
+                              />
+                            </FilterAccordion>
+                          )
+                        )}
+                      </div>
+                    )}
+                    {/* {!!!this.props.filters.length && (
                     <div className="product_categories common_divison_padding">
                       {LOCAL_FILTERS.map((data, index) =>
                         index === 0 ? (
@@ -552,11 +613,11 @@ class ProductList extends Component {
                       )}
                     </div>
                   )} */}
-                  <div className="common_divison_padding">
-                    {/* <div className="product_title_parent">
+                    <div className="common_divison_padding">
+                      {/* <div className="product_title_parent">
                       <h3 className="product_titles">Bestsellers </h3>
                     </div> */}
-                    {/* {(SLIDER_IMAGE || []).map((x, index) => {
+                      {/* {(SLIDER_IMAGE || []).map((x, index) => {
                       return (
                         <Row key={x.id}>
                           <Col md={4} xs={4}>
@@ -588,121 +649,126 @@ class ProductList extends Component {
                         </Row>
                       );
                     })} */}
-                  </div>
-                </div>
-              </Col>
-              <Col sm={{ order: 1 }} md={9} xl={9}>
-                {!!this.props.error_message && (
-                  <p style={{ textAlign: "center" }}>
-                    {!!Array.isArray(this.props.error_message) &&
-                      this.props.error_message.map((msg, idx) => (
-                        <b key={idx}>{msg}</b>
-                      ))}
-                    {!!!Array.isArray(this.props.error_message) &&
-                      this.props.error_message}
-                  </p>
-                )}
-                {!!!this.props.error_message && (
-                  <>
-                    {" "}
-                    <div className="product_showing_wrap ">
-                      <div className="product_showing_list">
-                        {!!this.props?.product_list_data?.length && (
-                          <h6>
-                            Showing {this.props?.product_list_data[0].rack_id}{" "}
-                            results
-                          </h6>
-                        )}
-                      </div>
-                      <div>
-                        <Form.Control
-                          as="select"
-                          value={sort}
-                          onChange={this.property_data_fun}
-                        >
-                          {SORT_LIST.map((item) => (
-                            <Fragment key={item.id}>
-                              <option key={item.id} value={item.id}>
-                                {item.name}
-                              </option>
-                            </Fragment>
-                          ))}
-                        </Form.Control>
-                      </div>
                     </div>
-                    {!this.props.is_loading &&
-                    !!!this.props.product_list_data.length ? (
-                      <p style={{ textAlign: "center" }}>
-                        <b>New products coming soon!...</b>
-                      </p>
-                    ) : (
-                      <div className="common_divison_padding ">
-                        <InfiniteScroll
-                          dataLength={this.props?.product_list_data?.length} //This is important field to render the next data
-                          next={this.fetchData}
-                          hasMore={
-                            !!!(
-                              this.props?.product_list_data?.length ===
-                              +this.props?.product_list_data[0]?.rack_id
-                            )
-                          }
-                          // hasMore={this.props.hasMore}
-                          style={{ overflow: "hidden" }}
-                          scrollThreshold={0.5}
-                          loader={
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                zIndex: 3,
-                              }}
-                            >
-                              <Spinner
-                                animation="grow"
-                                variant="dark"
-                                size="lg"
-                              >
-                                <span className="sr-only">Loading...</span>
-                              </Spinner>
-                            </div>
-                          }
-                          endMessage={
-                            <p style={{ textAlign: "center" }}>
-                              <b>Yay! You have seen it all</b>
-                            </p>
-                          }
-                        >
-                          <Row>
-                            {this.props?.product_list_data.map((x, index) => (
-                              <Col md={4} xl={4} className="mb-2" key={x.id}>
-                                <ProductCard
-                                  id={x?.id}
-                                  percentage={x?.percentage}
-                                  navigate_function={() => {
-                                    this.navigate_function(x);
-                                  }}
-                                  item_name={x?.item_name}
-                                  special_price={x?.special_price}
-                                  selling_price={x?.selling_price}
-                                  retail_price={x.retail_price}
-                                  image={x?.image_address}
-                                  addToCart={() => this.add_to_cart(x?.id)}
-                                />
-                              </Col>
+                  </div>
+                </Col>
+                <Col sm={{ order: 1 }} md={9} xl={9}>
+                  {!!this.props.error_message && (
+                    <p style={{ textAlign: "center" }}>
+                      {!!Array.isArray(this.props.error_message) &&
+                        this.props.error_message.map((msg, idx) => (
+                          <b key={idx}>{msg}</b>
+                        ))}
+                      {!!!Array.isArray(this.props.error_message) &&
+                        this.props.error_message}
+                    </p>
+                  )}
+                  {!!!this.props.error_message && (
+                    <>
+                      {" "}
+                      <div className="product_showing_wrap ">
+                        <div className="product_showing_list">
+                          {!!this.props?.product_list_data?.length && (
+                            <h6>
+                              Showing {this.props?.product_list_data[0].rack_id}{" "}
+                              results
+                            </h6>
+                          )}
+                        </div>
+                        <div>
+                          <Form.Control
+                            as="select"
+                            value={sort}
+                            onChange={this.property_data_fun}
+                          >
+                            {SORT_LIST.map((item) => (
+                              <Fragment key={item.id}>
+                                <option key={item.id} value={item.id}>
+                                  {item.name}
+                                </option>
+                              </Fragment>
                             ))}
-                          </Row>
-                        </InfiniteScroll>
+                          </Form.Control>
+                        </div>
                       </div>
-                    )}
-                  </>
-                )}
-              </Col>
-            </Row>
-          </Container>
-        </div>
-        <Footer />
-      </section>
+                      {!!!this.props.product_list_data.length &&
+                      !this.props.is_loading ? (
+                        <p style={{ textAlign: "center" }}>
+                          <b>New products coming soon!...</b>
+                        </p>
+                      ) : (
+                        <div className="common_divison_padding ">
+                          <InfiniteScroll
+                            dataLength={this.props?.product_list_data?.length} //This is important field to render the next data
+                            next={this.fetchData}
+                            hasMore={
+                              !!!(
+                                this.props?.product_list_data?.length ===
+                                +this.props?.product_list_data[0]?.rack_id
+                              )
+                            }
+                            // hasMore={this.props.hasMore}
+                            style={{ overflow: "hidden" }}
+                            scrollThreshold={0.8}
+                            loader={
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  zIndex: 3,
+                                }}
+                              >
+                                <Spinner
+                                  animation="grow"
+                                  variant="dark"
+                                  size="lg"
+                                >
+                                  <span className="sr-only">Loading...</span>
+                                </Spinner>
+                              </div>
+                            }
+                            endMessage={
+                              <p style={{ textAlign: "center" }}>
+                                <b>Yay! You have seen it all</b>
+                              </p>
+                            }
+                          >
+                            <Row>
+                              {this.props?.product_list_data.map((x, index) => (
+                                <Col md={4} xl={4} className="mb-2" key={x.id}>
+                                  <ProductCard
+                                    id={x?.id}
+                                    percentage={x?.percentage}
+                                    navigate_function={() => {
+                                      this.navigate_function(x);
+                                    }}
+                                    item_name={x?.item_name}
+                                    special_price={x?.special_price}
+                                    selling_price={x?.selling_price}
+                                    retail_price={x.retail_price}
+                                    image={x?.image_address}
+                                    addToCart={() =>
+                                      this.add_to_cart(
+                                        x?.id,
+                                        x?.product_price_id
+                                      )
+                                    }
+                                  />
+                                </Col>
+                              ))}
+                            </Row>
+                          </InfiniteScroll>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </Col>
+              </Row>
+            </Container>
+          </div>
+        </section>
+      </>
     );
   }
 }
@@ -715,6 +781,7 @@ const mapStateToProps = (state) => {
     error_message: state.ProductActions.error_message,
     hasMore: state.ProductActions.hasMore,
     filters: state.ProductActions.filters,
+    category: state.ProductActions.product_categories_list,
   };
 };
 

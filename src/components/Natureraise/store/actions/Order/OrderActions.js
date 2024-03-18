@@ -11,6 +11,7 @@ export const GET_ORDER_DETAIL = "GET_ORDER_DETAIL";
 export const GET_ORDER_DETAIL_PRODUCTS = "GET_ORDER_DETAIL_PRODUCT";
 export const GET_ORDER_DETAIL_STATUS = "GET_ORDER_DETAIL_STATUS";
 export const RESERT_ORDER_DETAIL = "RESERT_ORDER_DETAIL";
+export const GETORDERRETURNREASON = "GETORDERRETURNREASON";
 
 export const getOrderListPageWise = (page_number, data_limit) => (dispatch) => {
   console.log("Hey");
@@ -277,6 +278,7 @@ export const getOrderDetail = (order_id) => (dispatch) => {
         delivery_city
         delivery_state
         delivery_pincode
+        delivery_date
         delivery_landmark
         delivery_address_type
         lab_address_id
@@ -350,9 +352,17 @@ export const getOrderedProductList = (id) => (dispatch) => {
         delivery_charges
         net_total
         total_amount
+        return_validity
+        refund_availability
+        return_availability
+        order_status
       }
     }
   `;
+
+  // return_validity
+  // refund_availability
+  // return_availability
 
   Config.client
     .query({
@@ -397,10 +407,17 @@ export const getOrderStatusList = (order_id) => (dispatch) => {
       console.log(result);
       const data = result.data.getOrderStatusList;
 
+      if (data === null) {
+        dispatch(resetCart());
+        dispatch(logout_user());
+        throw new Error("Time Expired");
+      }
+
       dispatch({
         type: GET_ORDER_DETAIL_STATUS,
         data,
       });
+      dispatch({ type: "IS_LOADING", is_loading: false });
     })
     .catch((error) => {
       //alert(error);
@@ -412,7 +429,7 @@ export const cancelOrder = (id) => (dispatch) => {
   dispatch({ type: "IS_LOADING", is_loading: true });
   const Authorization = localStorage.getItem("Authorization");
   const query = gql`
-    query cancelOrder($Authorization: String, $id: ID) {
+    mutation cancelOrder($Authorization: String, $id: ID) {
       cancelOrder(Authorization: $Authorization, id: $id) {
         message
       }
@@ -428,16 +445,143 @@ export const cancelOrder = (id) => (dispatch) => {
     .then((result) => {
       console.log(result);
       const data = result.data.cancelOrder;
+      if (data === null) {
+        dispatch(resetCart());
+        dispatch(logout_user());
+        throw new Error("Time Expired");
+      }
+      if (data.message === "SUCCESS") {
+        dispatch({
+          type: "SUCCESS_MESSAGE",
+          success_title: "CANCEL_SUCCESS",
+        });
+        dispatch(getOrderDetail(id));
+        dispatch(getOrderStatusList(id));
+      }
 
-      dispatch(getOrderStatusList(id));
-      dispatch({ type: "IS_LOADING", is_loading: false });
+      if (data.message !== "SUCCESS") {
+        dispatch({
+          type: "SUCCESS_MESSAGE",
+          success_title: "CANCEL_ERROR",
+        });
+        dispatch({ type: "IS_LOADING", is_loading: false });
+      }
     })
     .catch((error) => {
       //alert(error);
       console.log(error);
+      dispatch({
+        type: "SUCCESS_MESSAGE",
+        success_title: "CANCEL_ERROR",
+      });
       dispatch({ type: "IS_LOADING", is_loading: false });
     });
 };
+
+export const addOrderReturn =
+  (order_id, product_ids, defect_type, description) => (dispatch) => {
+    dispatch({ type: "IS_LOADING", is_loading: true });
+    const Authorization = localStorage.getItem("Authorization");
+    const order_return_type = "";
+
+    const query = gql`
+      mutation addOrderReturn(
+        $Authorization: String
+        $order_id: String
+        $order_return_type: String
+        $product_ids: String
+        $defect_type: String
+        $description: String
+      ) {
+        addOrderReturn(
+          Authorization: $Authorization
+          order_id: $order_id
+          order_return_type: $order_return_type
+          product_ids: $product_ids
+          defect_type: $defect_type
+          description: $description
+        ) {
+          message
+        }
+      }
+    `;
+
+    Config.client
+      .query({
+        query: query,
+        fetchPolicy: "no-cache",
+        variables: {
+          Authorization,
+          order_id,
+          order_return_type,
+          product_ids,
+          defect_type,
+          description,
+        },
+      })
+      .then((result) => {
+        console.log(result);
+        const data = result.data.addOrderReturn;
+
+        if (data === null) {
+          dispatch(resetCart());
+          dispatch(logout_user());
+          throw new Error("Time Expired");
+        }
+
+        if (data.message === "SUCCESS") {
+          dispatch({
+            type: "SUCCESS_MESSAGE",
+            success_title: "RETURN_SUCCESS",
+          });
+          dispatch(getOrderDetail(order_id));
+          dispatch(getOrderStatusList(order_id));
+        }
+      })
+      .catch((error) => {
+        //alert(error);
+        console.log(error);
+        dispatch({ type: "IS_LOADING", is_loading: false });
+      });
+  };
+
+export const getOrderReturnReason = () => (dispatch) => {
+  const Authorization = localStorage.getItem("Authorization");
+  const type = `PDT`;
+  const query = gql`
+    query getCategoriesByType($Authorization: String, $type: String) {
+      getCategoriesByType(Authorization: $Authorization, type: $type) {
+        item_category_name
+        id
+      }
+    }
+  `;
+  Config.client
+    .query({
+      query: query,
+      // fetchPolicy: 'no-cache',
+      variables: { Authorization, type },
+    })
+    .then((result) => {
+      console.log(result);
+      const data = result.data.getCategoriesByType;
+      if (data === null) {
+        dispatch(resetCart());
+        dispatch(logout_user());
+        throw new Error("Time Expired");
+      }
+
+      dispatch({
+        type: GETORDERRETURNREASON,
+        data,
+      });
+    })
+    .catch((error) => {
+      //alert(error);
+      console.log(error);
+    });
+};
+
 /*
 let arr = result.data.getOrderStatusList;
       let arr1 = this.state.status_list;
